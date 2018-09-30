@@ -1,0 +1,463 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+  	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="../../script/jquery.md5.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/weiXinPay.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+    #carinfo * { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+     html,body { width: 100%; height: 100%; position: relative;}
+     .divider{height: 10px;background-color: #f5f5f5;}
+    .user{height:50px;width: 100%;padding: 10px;}
+    .user-img{width: 30px;height: 30px;float: left;border-radius: 50%;}
+    .user-name{line-height:30px;font-size:14px;color: #555;padding-left: 10px;width:calc(100% - 60px);height: 30px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+    .car { display: -webkit-box;overflow: hidden;width: 100%;padding:2vw;background-color: #F9F9F9}
+    .pic-area {width: 36vw;height:24vw;text-align: center;border-radius:4%;overflow: hidden;background-color: #F5F5F5;background-size: cover;background-position: center;}
+    .pic {width:100%;display:inline-block;margin: 0 auto;vertical-align:middle;}
+    .wrap {-webkit-box-flex: 1; padding-left:2vw;padding-right: 2vw;}
+    .wrap2 {display: table; height:24vw;width: 100%; }
+    .content {-webkit-box-flex: 1; box-flex: 1; display: table-cell; vertical-align: middle; }
+    .maintitle {height:12vw;line-height: 6vw;font-size:4vw;color: #333;text-align: justify;word-wrap:normal;word-break: break-all;text-overflow: clip; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+    .title {height:5vw;color: #666; font-size:3vw;line-height: 5vw;overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .sale {height:7vw;color: #666; font-size:5vw; }
+    .symbol { color: #f60;float:left;line-height:7vw;}
+    .price {color: #f60;line-height:7vw;}
+    .seller-item{position: relative;height:50px;color:#555}
+    .seller-item-img{height:26px;width: 26px;position: absolute;left:10px;top:12px}
+    .seller-text{position: absolute;left:42px;line-height:50px;font-size:16px;color:#555;white-space: nowrap;text-overflow: ellipsis;padding-right: 10px;}
+    .buyer-item{width: 100%;height: 50px;position: relative;}
+    .buyer-title{line-height:50px;font-size:16px;margin-left: 10px;color:#555;width:60px;float: left;text-align:justify;}
+    .buyer-input{float: left;height:20px;line-height:20px;padding-top:15px;padding-bottom: 15px;font-size:16px; background: transparent;color:#555;outline: none;overflow: hidden;text-overflow: ellipsis;width:calc(100% - 100px);}
+    .buyer-input::-webkit-input-placeholder { /* WebKit browsers */ color:#aaa; }
+    .explain{padding-top:10px;padding-bottom: 20px;}
+    .explain-title{text-align: center;line-height:40px;font-size:20px;color:#F70;font-weight: bold;}
+    .explain-text{text-indent:25px;line-height:30px;font-size:14px;color:#555;text-overflow: ellipsis;padding:0 10px}
+    .explain-footer{height:50px;}
+    .footer {display: flex;flex-wrap: nowrap;height:50px; width: 100%;background-color: #fff;text-align: center;overflow: hidden;position: fixed;bottom: 0;-webkit-box-shadow:0px -1px 5px #eee;}
+    .footer-text{width:66%;height:50px;font-size: 18px;line-height:50px;text-align: left;padding-left: 20px;}
+    .footer-symbol{margin-top: 8px;color:#F70;font-size: 21px;line-height:25px;}
+    .footer-price{margin-top: 8px;color:#F70;font-size: 21px;line-height: 25px;}
+    .footer-btn{width:34%; height:50px;line-height: 50px;color: #FAFAFA;background: -webkit-linear-gradient(left,#FF9F25,#FF5715); background: -o-linear-gradient(left,#FF9F25,#FF5715); background: linear-gradient(left,#FF9F25,#FF5715);}
+</style>
+</head>
+<body>
+<div id="carinfo" v-cloak>
+<div class="user">
+  <img :src="geturl(Publish.User_Pic)" class="user-img">
+  <div class="user-name">{{Publish.User_name}}</div>
+</div>
+<div class="car">
+  <div class="pic-area" :style="{backgroundImage: 'url(' + 'http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/'+Publish.Pic_add+'?x-oss-process=image/resize,w_400' + ')'}">
+    <!-- <img class="pic" :src='"http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+Publish.Pic_add+"?x-oss-process=image/resize,w_400"'> -->
+  </div>
+  <div class="wrap">
+    <div class="wrap2">
+      <div class="content">
+          <div class="maintitle">{{Publish.Title}}</div>
+          <div class="title">{{Publish.City}} | {{parseFloat(Publish.Miles)}}万公里 | {{Translate(Publish.Time_license)}}</div>
+          <div class="bottomline">
+          <div class="sale" v-if = Publish.ID>
+                <span class="symbol">¥</span>
+                <span class="price">{{Publish.Price_out}}万</span>
+                <div class="view-info" >
+                  <span class="title .fr" style="border:thin solid red">推广</span>
+                </div>
+          </div>
+          <div class="sale" v-else>
+              <span class="symbol">¥</span>
+              <span class="price">{{Publish.Price_out}}万</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="seller">
+  <div class="seller-item myborder-bottom" v-if="Publish.User_Company">
+    <img src="../../image/user/store.png" class="seller-item-img">
+    <div class="seller-text overflow-text">车行:&thinsp;{{Publish.User_Company}}</div>
+  </div>
+  <div class="seller-item myborder-bottom" v-if="Publish.User_Phone" v-on:click="call_number(Publish.User_Phone)">
+    <img src="../../image/user/phone.png" class="seller-item-img">
+    <div class="seller-text overflow-text">电话:&thinsp;{{Publish.User_Phone}}</div>
+  </div>
+  <div class="seller-item myborder-bottom" v-if="Publish.User_Address">
+    <img src="../../image/user/address.png" class="seller-item-img">
+    <div class="seller-text overflow-text" >地址:&thinsp;{{Publish.User_Address}}</div>
+  </div>
+</div>
+</div>
+<div class="divider"></div>
+<div class="buyer-item myborder-bottom">
+<div class="buyer-title">交易人:</div>
+<input placeholder="填写您的真实姓名" id="buyername" type="text" class="buyer-input" onKeyUp="value =value.slice(0,16)">
+</div>
+<div class="buyer-item myborder-bottom">
+<div class="buyer-title">手机号:</div>
+<input placeholder="填写您的手机号" id="buyerphone" type="number" class="buyer-input" onKeyUp="value=value.replace(/[^\d]/g,'');value =value.slice(0,11);">
+</div>
+<div class="divider"></div>
+<div class="explain">
+<div class="explain-title">定金支付及退还办法</div>
+<div class="explain-text">为确保买、卖双方公平交易，避免骗定金、车况不符等情况发生，制订定金支付及退还办法如下：</div>
+<div class="explain-text">1.双方在线沟通确认车况后，各支付定金（默认3000元）到平台，线下完成交易（过户或提档完毕），在我的订单“申请退款”返还定金；双方确认退款，平台收取买、卖双方各100元/台服务费，剩余定金自动返还原支付账户；</div>
+<div class="explain-text">2.若无法成交，请申请仲裁，客服人员将凭在线沟通内容进行仲裁，平台收取违约方500元/台服务费，剩余定金赔付另一方；</div>
+<div class="explain-text">3.违约与否、违约程度，将按二手车商通行标准判定，具体咨询客服人员。</div>
+</div>
+<div class="explain-footer"></div>
+<div class="footer">
+<div class="footer-text">
+    <span>定金金额:</span>
+    <span class="footer-symbol">¥</span>
+    <span class="footer-price">3000</span>
+</div>
+<div class="footer-btn" onclick="AddOrder()">
+  支付定金
+</div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+var detail;
+var User_ID=$api.getStorage("User_ID");
+var User_Name = $api.getStorage('User_Info').Name;
+function call_number(phone) {
+  api.call({
+    type: 'tel_prompt',
+    number: phone
+  });
+}
+function AddOrder(){
+  var name=$("#buyername").val();
+  if(!name){
+    $("#buyername").focus();
+    api.toast({
+        msg: '请输入您的姓名',
+        duration: 1000,
+        location: 'middle'
+    });
+    return;
+  }
+  var phonenum=$("#buyerphone").val();
+  if(phonenum.length!=11){
+    $("#buyerphone").focus();
+    api.toast({
+        msg: '请输入正确的手机号码',
+        duration: 1000,
+        location: 'middle'
+    });
+    return;
+  }
+  var Order_ID= getNoncestr();
+  var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+  var row={};
+  row.Order_ID=Order_ID;
+  row.Title="支付定金";
+	row.Publish_ID=api.pageParam.ID;
+  row.Seller_ID=detail.User_ID;
+  row.Buyer_ID=User_ID;
+  row.Name=name;
+  row.Phone=phonenum;
+  row.Time= curr_time;
+  row.Payment=3000;
+  row.Refund =2900;
+  api.ajax({
+      url: 'http://www.chekehome.com/public/index.php/addorder',
+      method: 'post',
+      data: {
+        values: row
+      }
+    },function(ret, err){
+
+      if (ret&&ret.status) {
+          var info=ret;
+          var wxPay = api.require('wxPay');
+          wxPay.payOrder({
+              apiKey: info.appid,
+              orderId: info.prepayid,
+              mchId: info.partnerid,
+              nonceStr: info.noncestr,
+              timeStamp: info.timestamp,
+              package: info.package,
+              sign: info.sign
+           }, function(ret, err) {
+              if (ret.status) {
+                  //推送消息
+                  push(User_Name+"已向您定车，并支付定金到平台，请前往我的订单处理。",User_ID,detail.User_ID,api.pageParam.ID);
+                  //修改
+                  api.ajax({
+                        url: 'http://www.chekehome.com/public/index.php/editpublish',
+                        method: 'post',
+                        data: {
+                          values: {
+                              Publish_ID: api.pageParam.ID,
+                              Selling:'交易',
+                          }
+                        }
+                  }, function(ret, err) {
+
+                  });
+                  //支付成功
+                  api.ajax({
+                      url: 'http://www.chekehome.com/public/index.php/orderpaid',
+                      method: 'post',
+                      data: {
+                          values: {
+                              Order_ID:Order_ID,
+                              User_ID:User_ID
+                          },
+                      }
+                  },function(ret, err){
+                      if (ret) {
+                        api.toast({
+                            msg: '支付成功',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        api.openWin({
+                            name: 'order_header',
+                            url: '../fourth_frame/order/order_header.html',
+                            useWKWebView:true,
+                            bgColor:'#FAFAFA',
+                            pageParam:{
+                              ID:$api.getStorage("User_ID"),
+                              index:0
+                            }
+                        });
+                      }
+                  });
+              }
+              else{
+                api.openWin({
+                    name: 'order_header',
+                    url: '../fourth_frame/order/order_header.html',
+                    useWKWebView:true,
+                    bgColor:'#FAFAFA',
+                    pageParam:{
+                      ID:$api.getStorage("User_ID")
+                    }
+                });
+              }
+          });
+      } else {
+          api.toast({
+              msg: '订单创建失败',
+              duration: 2000,
+              location: 'bottom'
+          });
+      }
+  });
+}
+function push(Message,Host_ID,Client_ID,Publish_ID){
+  Message="#交易提醒#"+Message;
+  if($api.getStorage("login_status")=='true'){
+  api.ajax({
+  url: 'http://www.chekehome.com/public/index.php/getConversation',
+  method: 'post',
+  data: {
+  values: {
+  Sender_ID:Host_ID,
+  Publish_ID:Publish_ID
+  },
+  }
+  },function(ret, err){
+  if (ret) {
+  var Conversation = ret;
+  var rong = api.require('rongCloud2');
+  var conversationTitle=Publish_ID+'%'+Host_ID+'%'+Client_ID;
+  api.addEventListener({
+      name: 'Search_Result'
+   }, function(ret, err){
+      if( ret ){
+          var Search_Result=ret.value.result;
+          if(Search_Result){
+            SendTextMessage(Message,ret.value.Conversation_ID,Publish_ID)
+          }
+          else{
+            rong.createDiscussion({
+            name: conversationTitle,
+            userIdList: [Host_ID, Client_ID]
+             }, function(ret, err) {
+            if (ret.status == 'success'){
+            Conversation_ID=ret.result.discussionId;
+            SendTextMessage(Message,Conversation_ID,Publish_ID,conversationTitle);
+            }
+            });
+          }
+      }
+  });
+  Conversation_Search(Host_ID,Client_ID,Publish_ID);
+  }
+  });
+
+  }else{
+   openLogin();
+  }
+
+}
+function SendTextMessage(Message,Conversation_ID,Publish_ID,conversationTitle){
+      var rong = api.require('rongCloud2');
+      rong.setDiscussionName({
+      discussionId: Conversation_ID,
+      name: conversationTitle
+       }, function(ret, err) {
+
+      });
+      rong.sendTextMessage({
+      conversationType: 'DISCUSSION',
+      targetId:Conversation_ID,
+      text:Message,
+      extra:Publish_ID
+       }, function(ret, err) {
+       if(ret){
+
+      	 api.sendEvent({
+      			 name: 'Message_Send',
+      	 });
+       }
+      });
+}
+function Conversation_Search(User_ID,Client_ID,Publish_ID){
+	var rong = api.require('rongCloud2');
+	rong.getConversationList(function(ret, err) {
+		if (ret) {
+			var result=ret.result;
+			//消息列表为空
+
+			if(result.length==0) {
+				api.sendEvent({
+						name: 'Search_Result',
+						extra: {
+								result:false
+						}
+				});
+			}
+			else{
+				for(var i=0;i<result.length;i++){
+					if(result[i].conversationTitle)
+					{
+						var res=result[i].conversationTitle.split("%");
+						if(res[0]==Publish_ID&&res[1]==User_ID&&res[2]==Client_ID){
+							Conversation_ID=result[i].targetId;
+							api.sendEvent({
+									name: 'Search_Result',
+									extra: {
+											result:true,
+											Conversation_ID:Conversation_ID
+									}
+							});
+							return;
+						}
+						else if(res[0]==Publish_ID&&res[2]==User_ID&&res[1]==Client_ID){
+							Conversation_ID=result[i].targetId;
+							api.sendEvent({
+									name: 'Search_Result',
+									extra: {
+											result:true,
+											Conversation_ID:Conversation_ID
+									}
+							});
+							return;
+						}
+					}
+
+				}
+				api.sendEvent({
+						name: 'Search_Result',
+						extra: {
+								result:false
+						}
+				});
+			}
+
+		}
+	});
+}
+apiready=function(){
+    $("#buyername").val($api.getStorage('User_Info').Name);
+    $("#buyerphone").val($api.getStorage('User_Info').Phone);
+    if(isiPhoneX()){
+      $(".footer").height(80);
+      $(".explain-footer").height(80);
+    }
+    api.ajax({
+          url: 'http://www.chekehome.com/public/index.php/getdetail',
+          method: 'post',
+          data: {
+                values: {
+                    ID: api.pageParam.ID
+                }
+            }
+     }, function(ret, err) {
+        if (ret[0]) {
+            detail=ret[0];
+            var vue=new Vue({
+                  el: '#carinfo',
+                  data: {
+                      Publish:detail
+                  },
+                  mounted:function(){
+                  },
+                  methods:{
+                    Translate:function(date){
+                        date=date.replace("-","年");
+                        date=date.replace("-","月");
+                        date=date.substring(0,date.length-2);
+                        return date;
+                    },
+                    getupdate:function(date){
+                      date=date.substring(0,10);
+                      date=date.replace("-","年");
+                      date=date.replace("-","月");
+                      date=date+"日";
+                      return date;
+                    },
+                    geturl:function(User_Pic){
+                      var imgW=",w_150";
+                      var imgH=",h_150";
+                      var url="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+                      return url;
+                    },
+                    showdescribe:function(data){
+                      if(data.length>70){
+                          $(".describe-more").show();
+                          $(".describe").addClass("describe-part");
+                      }
+                      return data;
+                    },
+                    ShowText:function(text){
+                        return text.replace(/\n|\r\n/g,"<br/>");
+                    },
+                    PartText:function(text){
+                      if(GetLineNumber(text)>4){
+                        $(".describe-more").show();
+                        return "describe-part"
+                      }
+                    },
+                    openSellerDetail:function(ID) {
+                      api.openWin({
+                          name: 'user_header',
+                          url: '../user/user_header.html',
+                          useWKWebView:true,
+                          bgColor:'#FAFAFA',
+                          pageParam:{
+                            ID:ID
+                          }
+                      });
+                    },
+                    GetSpecial:function(Speical){
+                      return JSON.parse(Speical);
+                    }
+                  }
+            });
+        }
+      });
+}
+</script>
+</html>

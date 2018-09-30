@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+  	<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .fr{float: right;}
+        .fl{float: left;}
+        #myheader{height:50px;overflow: hidden;text-align: center;background-color:#fafafa }
+       .back {width:80px;height:40px;position: absolute;left:0px;padding-left: 10px;}
+       .backimg { float: left; height: 16px;padding-top: 18px;padding-bottom:17px; }
+       .finish-btn{position: absolute;right:10px;line-height: 50px;padding-right:5px;font-size: 15px;color:#515151}
+       .mytitle{ display: inline-block; margin: 0 auto; font-size: 16px; color: #515151; text-align: center; line-height: 50px; }
+    </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="myheader" class="myborder-bottom">
+        <div onclick="goback()" class="back">
+          <img src="../../../image/titlebar/back.png" class="backimg">
+        </div>
+        <div class="mytitle">请选择</div>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript">
+function goback(){
+  api.closeWin({
+      name: 'brandselect_header'
+  });
+}
+function uniqueArray(array, key){
+    var result = [array[0]];
+    for(var i = 0; i < array.length; i++){
+        var item = array[i];
+        var repeat = false;
+        for (var j = 0; j < result.length; j++) {
+            if (item[key] == result[j][key]) {
+                repeat = true;
+                break;
+            }
+        }
+        if (!repeat) {
+            result.push(item);
+        }
+    }
+    return result;
+}
+apiready=function(){
+  var name=api.pageParam.name;
+  $(".mytitle").html(name);
+  var myheader = $api.byId('myheader');
+  $api.fixStatusBar(myheader);
+  var myheader = $api.offset(myheader);
+  // //获取车辆品牌数据
+  // var myappid="75089";
+  // var mysecret = "d2a7358680464d8cac8dbd669c79b533";
+  // var parentid=api.pageParam.id;
+  // var url="http://route.showapi.com/1467-2?showapi_appid="+myappid+"&brandId="+parentid+"&showapi_sign="+mysecret;
+  api.ajax({
+        url: 'http://www.chekehome.com/public/index.php/cheke_series',
+        method: 'post',
+        data: {
+              values: {
+                  brandId:api.pageParam.id
+              }
+          }
+  }, function(ret, err) {
+      if (ret) {
+        // console.log(JSON.stringify(ret));
+        var data=ret;
+        var data_valid=[];
+        for(var i=0;i<data.length;i++){
+          data_valid.push(data[i]);
+        }
+        var lists=uniqueArray(data_valid,"series");
+        api.openFrame ({
+              name: 'brandselect',
+              url: './brandselect.html',
+              rect:{
+                  x:0,
+                  y:myheader.h,
+                  w:0.4*api.frameWidth,
+                  h:api.frameHeight-myheader.h
+              },
+              pageParam:{
+                lists:lists
+              },
+              bgcolor:'#e0e0e0',
+              bounces: false,
+              delay:200
+          });
+          api.openFrame ({
+                name: 'brandselect-more',
+                url: './brandselect-more.html',
+                rect:{
+                    x:0.4*api.frameWidth,
+                    y:myheader.h,
+                    w:0.6*api.frameWidth,
+                    h:api.frameHeight-myheader.h
+                },
+                pageParam:{
+                  data:data_valid,
+                  series:lists[0].series
+                },
+                bgcolor:'#e0e0e0',
+                bounces: true,
+          });
+      }
+      else{
+          console.log(err.msg);
+      }
+  });
+}
+
+</script>
+</html>

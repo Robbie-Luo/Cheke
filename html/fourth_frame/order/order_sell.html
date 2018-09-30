@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<title>首页</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+  <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+	<link rel="stylesheet" href="../../../css/mescroll.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../css/idangerous.swiper.css"/>
+	<style>
+		html, body {width: 100%;min-height: 100%;background: #fafafa;}
+		.h80 {height: 80px;}
+		.h40 {height: 40px;}
+		.h20 {height: 20px;}
+    .h10 {height: 10px;background: #fafafa;}
+		.h1 {height: 1px;margin-left: 15px;background: #fafafa;}
+		.fr {float: right;}
+		.fl {float: left;}
+		[v-cloak] {
+		display: none;
+		}
+		* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+		.item {position: relative;background-color:#ffffff }
+		.user{height:50px;width: 100%;padding: 10px;}
+		.user-img{width: 30px;height: 30px;float: left;border-radius: 50%;}
+		.user-name{line-height:30px;font-size:14px;color: #555;padding-left: 10px;width:calc(100% - 140px);white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+		.order-status{float: right;text-align: right;width: 100px;color:#f60;font-size:14px;line-height:30px;height: 30px; }
+		.car {display: box; display: -webkit-box;overflow: hidden;width: 100%;padding:3vw;background-color: #FAFAFA}
+		.pic-area {width: 36vw;height:24vw;text-align: center;border-radius:4%;overflow: hidden;background-color: #F5F5F5;background-size: cover;background-position: center;}
+		.pic {width:100%;display:inline-block;margin: 0 auto;vertical-align:middle;}
+		.wrap {-webkit-box-flex: 1; padding-left:2vw;padding-right: 2vw;}
+		.wrap2 {display: table; height:24vw;width: 100%; }
+		.content {-webkit-box-flex: 1; box-flex: 1; display: table-cell; vertical-align: middle; }
+		.maintitle {height:12vw;line-height: 6vw;font-size:4vw;color: #333;text-align: justify;word-wrap:normal;word-break: break-all;text-overflow: clip; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+		.title {height:5vw;color: #666; font-size:3vw;line-height: 5vw;overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+		.sale {height:7vw;color: #666; font-size:5vw; }
+		.symbol { color: #f60;float:left;line-height:7vw;}
+		.price {color: #f60;line-height:7vw;}
+		.orderinfo{width: 100%;height:50px;padding: 10px;}
+		.order-payment{float: right;text-align: right;font-size: 14px;color:#555;line-height: 30px;}
+		.order-price{font-size: 20px;color:#555;line-height: 30px;}
+		.order-options{width: 100%;height:50px;padding: 10px;}
+		.order-btn{line-height:28px;height:30px;font-size: 14px;border-radius:15px;padding: 0 10px;border: 1px solid #666;color:#666;float: right;text-align: center;margin-left: 10px;}
+		.order-btn-pay{color:#F60;border:1px solid #F60;}
+		.order-btn-confirm{color:#32CD32;border:1px solid #32CD32;}
+		.divider{height:10px;width: 100%;background-color: #FAFAFA}
+ </style>
+</head>
+<body>
+	<div id="mescroll" class="mescroll">
+	<ul id="carlist" class="news-list home-car-list">
+		<li class="item"  v-for="pd in pdlist" v-cloak>
+			<div v-if="User_ID == pd.Seller_ID" @click="OpenOrder(pd.Order_ID)">
+				<div class="user">
+					<div class="order-status" v-if="pd.Status=='NOTPAY'">买方待付款</div>
+					<div class="order-status" v-if="pd.Status=='PAIDB'">等待卖家确认</div>
+					<div class="order-status" v-if="pd.Status=='PAID'">双方已确认</div>
+					<div class="order-status" v-if="pd.Status=='TOREFUNDS'">等待退款确认</div>
+					<div class="order-status" v-if="pd.Status=='TOREFUNDB'">等待退款确认</div>
+					<div class="order-status" v-if="pd.Status=='REFUND'">已退款</div>
+					<div class="order-status" v-if="pd.Status=='FINISH'">交易成功</div>
+					<div class="order-status" v-if="pd.Status=='Arbitration'">等待仲裁</div>
+					<img :src="geturl(pd.cardetail.User_Pic)" class="user-img">
+					<div class="user-name">{{pd.cardetail.User_name}}</div>
+				</div>
+				<div class="car">
+					<div class="pic-area" :style="{backgroundImage: 'url(' + 'http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/'+pd.cardetail.Pic_add+'?x-oss-process=image/resize,w_400' + ')'}"></div>
+					<div class="wrap">
+						<div class="wrap2">
+							<div class="content">
+								<div class="maintitle">{{pd.cardetail.Title}}</div>
+									<div class="title">{{pd.cardetail.City}} | {{parseFloat(pd.cardetail.Miles)}}万公里 | {{Translate(pd.cardetail.Time_license)}}</div>
+								<div class="sale">
+										<span class="symbol">¥</span>
+										<span class="price">{{pd.cardetail.Price_out}}万</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="orderinfo myborder-bottom">
+						<div class="order-payment" v-if="pd.Status=='NOTPAY'">待支付定金：¥ <span class="order-price">{{pd.Payment}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='PAIDB'">等待卖家确认：¥ <span class="order-price">{{pd.Payment}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='PAID'">双方支付定金：¥ <span class="order-price">{{pd.Payment}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='TOREFUNDS'">退款确认：¥ <span class="order-price">{{pd.Refund}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='TOREFUNDB'">退款确认：¥ <span class="order-price">{{pd.Refund}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='REFUND'">已退款：¥ <span class="order-price">{{pd.Payment}}</span></div>
+						<div class="order-payment" v-if="pd.Status=='FINISH'">已退款：¥ <span class="order-price">{{pd.Refund}}</span></div>
+				</div>
+			</div>
+			<div class="order-options" v-if="pd.Status=='PAID'">
+					<div class="order-btn order-btn-confirm" v-on:click="ToRefundALL(pd.Order_ID,'S',pd.Buyer_ID,pd.Publish_ID)">申请退款</div>
+					<div class="order-btn order-btn-del" v-on:click="Arbitration(pd.Seller_ID,pd.Buyer_ID,pd.Order_ID)">申请仲裁</div>
+			</div>
+			<div class="order-options" v-if="pd.Status=='TOREFUNDB'">
+					<div class="order-btn order-btn-confirm" v-on:click="RefundALL(pd.Order_ID,pd.Buyer_ID,pd.Publish_ID)">确认退款</div>
+					<div class="order-btn order-btn-del" v-on:click="Arbitration(pd.Seller_ID,pd.Buyer_ID,pd.Order_ID)">申请仲裁</div>
+			</div>
+			<div class="order-options" v-if="pd.Status=='PAIDB'">
+				<div class="order-btn order-btn-pay" v-on:click="PayOrder(pd.Order_ID,'b',pd.Buyer_ID,pd.Publish_ID)">立即支付</div>
+				<div class="order-btn order-btn-del" v-on:click="RefundOrder(pd.Order_ID+'a',pd.Buyer_ID,pd.Publish_ID)">取消订单</div>
+			</div>
+			<div class="order-options" v-if="pd.Status=='Arbitration'">
+				<div class="order-btn order-btn-del">请等待仲裁</div>
+			</div>
+			<div class="order-options" v-if="pd.Status=='REFUND'">
+				<div class="order-btn order-btn-del" v-on:click="DelOrder(pd.Order_ID)">删除订单</div>
+			</div>
+			<div class="divider"></div>
+		</li>
+	</ul>
+  </div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script src="../../../script/mescroll.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="../../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../script/jquery.md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../script/weiXinPay.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	var User_ID=$api.getStorage("User_ID");
+	var User_Name = $api.getStorage('User_Info').Name;
+	var vm;
+	function openDetail(ID){
+		api.addEventListener({
+				name: 'cardetail_failed'
+		 }, function(ret, err){
+			setTimeout(function(){
+					api.closeWin({
+					    name: ID
+					});
+					api.toast({
+					    msg: '请检查网络设置',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+			},500);
+		});
+		api.openWin({
+			name: ID,
+			url: '../../cardetail/cardetail_footer.html',
+			pageParam:{ID:ID},
+			useWKWebView:true,
+			bgColor:'#FAFAFA',
+		});
+	}
+	function OpenOrder(Order_ID){
+		api.openWin({
+		    name: 'order_detail_header',
+		    url: './order_detail_header.html',
+		    pageParam: {
+		        Order_ID: Order_ID
+		    }
+		});
+	}
+	function DelOrder(Order_ID){
+		api.confirm({
+				title: '取消订单',
+				msg: '真的取消订单吗？',
+				buttons: ['取消','确定']
+			}, function(ret, err){
+				if( ret ){
+					 if(ret.buttonIndex==2)
+					 {
+						 api.ajax({
+									 url: 'http://www.chekehome.com/public/index.php/delorder',
+									 method: 'post',
+									 data: {
+												 values: {
+														 Order_ID: Order_ID
+												 }
+										 }
+						 }, function(ret, err) {
+								 Reload();
+						 });
+					 }
+					 else{
+							return;
+					 }
+				 }
+		});
+	}
+	function PayOrder(Order_ID,Client,Other_ID,Publish_ID){
+		api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/payorder',
+					method: 'post',
+					data: {
+								values: {
+										Order_ID: Order_ID,
+										Client:Client
+								}
+						}
+		 }, function(ret, err) {
+			if(ret&&ret.status){
+				var info=ret;
+				if(info.prepayid){
+					var wxPay = api.require('wxPay');
+					wxPay.payOrder({
+					    apiKey: info.appid,
+					    orderId: info.prepayid,
+					    mchId: info.partnerid,
+					    nonceStr: info.noncestr,
+					    timeStamp: info.timestamp,
+					    package: info.package,
+					    sign: info.sign
+				 	 }, function(ret, err) {
+					    if (ret.status) {
+								api.ajax({
+											url: 'http://www.chekehome.com/public/index.php/editpublish',
+											method: 'post',
+											data: {
+												values: {
+														Publish_ID: Publish_ID,
+														Selling:'交易',
+												}
+											}
+								}, function(ret, err) {
+								});
+								api.toast({
+										 msg: '已下单',
+										 duration: 2000,
+										 location: 'bottom'
+								 });
+
+									push(User_Name+"已同意成交，并支付定金到平台，请尽快交车确认。",User_ID,Other_ID,Publish_ID);
+									//支付成功
+									api.ajax({
+	                    url: 'http://www.chekehome.com/public/index.php/orderpaid',
+	                    method: 'post',
+	                    data: {
+	                        values: {
+	                            Order_ID:Order_ID,
+															User_ID:User_ID
+	                        },
+	                    }
+	                },function(ret, err){
+	                    if (ret) {
+	                        Reload();
+	                    }
+	                });
+					    }
+					});
+				}
+				else{
+					api.toast({
+					    msg: '订单支付请求失败',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+				}
+			}
+			else{
+				api.toast({
+				    msg: '订单支付请求失败',
+				    duration: 2000,
+				    location: 'bottom'
+				});
+			}
+		});
+	}
+	function RefundALL(Order_ID,Other_ID,Publish_ID){
+		api.addEventListener({
+				name: 'refund_finish'
+			}, function(ret, err){
+				api.removeEventListener({
+						name: 'refund_finish'
+				});
+				push(User_Name+"确认退款，祝贺您顺利成交，合作愉快！",User_ID,ret.value.Other_ID,ret.value.Publish_ID);
+				Reload();
+		});
+		api.openFrame({
+				name: 'refund',
+				url: './refund.html',
+				rect: {
+						x:0,
+						y:0,
+				},
+				useWKWebView:true,
+				bounces: false,
+				pageParam:{
+					Order_ID:Order_ID,
+					Other_ID:Other_ID,
+					Publish_ID:Publish_ID,
+				}
+		});
+	}
+	function RefundALLAgain(Order_ID,Other_ID,Publish_ID){
+		api.confirm({
+		    title: '重新退款',
+		    msg: '确认重新申请退款？',
+		    buttons: ['确定', '取消']
+		}, function(ret, err){
+		    if(ret&&ret.buttonIndex==1){
+					api.showProgress({
+							style: 'default',
+							animationType: 'fade',
+							title: '退款受理中',
+							text: '请稍后...',
+							modal: true
+					});
+					api.ajax({
+							 url: 'http://www.chekehome.com/public/index.php/refundall',
+							 method: 'post',
+							 data: {
+										 values: {
+												 Order_ID: Order_ID
+										 }
+								 }
+				  	}, function(ret, err) {
+						api.hideProgress();
+						api.toast({
+						    msg: '退款已重新受理',
+						    duration: 2000,
+						    location: 'bottom'
+						});
+					});
+		    }
+		});
+	}
+	function RefundOrder(Order_ID,Other_ID,Publish_ID){
+		api.confirm({
+				title: '确认取消订单',
+				msg: '确认取消订单？',
+				buttons: ['取消','确定']
+			}, function(ret, err){
+				if(ret){
+					if(ret.buttonIndex==2){
+						api.toast({
+										 msg: '已取消',
+										 duration: 2000,
+										 location: 'bottom'
+								 });
+
+						push(User_Name+"已取消你的订单，定金已退回你的账户，请再与卖方沟通确认交易。",User_ID,Other_ID,Publish_ID);
+						api.ajax({
+									url: 'http://www.chekehome.com/public/index.php/editpublish',
+									method: 'post',
+									data: {
+										values: {
+												Publish_ID: Publish_ID,
+												Selling:'在售',
+										}
+									}
+						}, function(ret, err) {
+
+						});
+						api.ajax({
+									url: 'http://www.chekehome.com/public/index.php/cancelorder',
+									method: 'post',
+									data: {
+												values: {
+														Order_ID: Order_ID
+												}
+										}
+					 	 }, function(ret, err) {
+							 if(ret){
+
+									Reload();
+							 }
+						});
+					}
+					else{
+						 return;
+					}
+				}
+		});
+	}
+	function Arbitration(Client_1,Client_2,Order_ID){
+		api.openWin({
+				name: 'arbitrate_header',
+				url: './arbitrate_header.html',
+				useWKWebView:true,
+				bgColor:'#FAFAFA',
+				pageParam:{
+					Order_ID:Order_ID,
+				}
+		});
+	}
+	function ToRefundALL(Order_ID,Client,Other_ID,Publish_ID){
+		api.confirm({
+				title: '申请退款',
+				msg: '确认申请退款？',
+				buttons: ['取消','确定']
+			}, function(ret, err){
+				if(ret){
+					if(ret.buttonIndex==2){
+					push(User_Name+"已申请退款，请前往我的订单确认退款。",User_ID,Other_ID,Publish_ID);
+						api.ajax({
+									url: 'http://www.chekehome.com/public/index.php/torefund',
+									method: 'post',
+									data: {
+												values: {
+														Order_ID: Order_ID,
+														Client:Client
+												}
+										}
+					 	 }, function(ret, err) {
+							 if(ret){
+
+									Reload();
+							 }
+						});
+					}
+					else{
+						 return;
+					}
+				}
+		});
+	}
+	function push(Message,Host_ID,Client_ID,Publish_ID){
+		Message="#交易提醒#"+Message;
+	  if($api.getStorage("login_status")=='true'){
+	  api.ajax({
+	  url: 'http://www.chekehome.com/public/index.php/getConversation',
+	  method: 'post',
+	  data: {
+	  values: {
+	  Sender_ID:Host_ID,
+	  Publish_ID:Publish_ID
+	  },
+	  }
+	  },function(ret, err){
+	  if (ret) {
+	  var Conversation = ret;
+	  var rong = api.require('rongCloud2');
+	  conversationTitle=Publish_ID+'%'+Host_ID+'%'+Client_ID;
+	  Conversation_Search(Host_ID,Client_ID,Publish_ID,Message,conversationTitle);
+	  }
+	  });
+
+	  }else{
+	   openLogin();
+	  }
+
+	}
+	function SendTextMessage(Message,Conversation_ID,Publish_ID){
+	      var rong = api.require('rongCloud2');
+	      rong.setDiscussionName({
+	      discussionId: Conversation_ID,
+	      name: conversationTitle
+	       }, function(ret, err) {
+
+	      });
+	      rong.sendTextMessage({
+	      conversationType: 'DISCUSSION',
+	      targetId:Conversation_ID,
+	      text:Message,
+	      extra:Publish_ID
+	       }, function(ret, err) {
+	       if(ret){
+
+	      	 api.sendEvent({
+	      			 name: 'Message_Send',
+	      	 });
+	       }
+	      });
+	}
+	function Conversation_Search(User_ID,Client_ID,Publish_ID,Message,conversationTitle){
+		var rong = api.require('rongCloud2');
+		rong.getConversationList(function(ret, err) {
+			if (ret) {
+				var result=ret.result;
+				//消息列表为空
+
+				if(result.length==0) {
+					rong.createDiscussion({
+					name: conversationTitle,
+					userIdList: [User_ID, Client_ID]
+					 }, function(ret, err) {
+					if (ret.status == 'success'){
+					Conversation_ID=ret.result.discussionId;
+					SendTextMessage(Message,Conversation_ID,Publish_ID);
+
+					}
+					});
+				}
+				else{
+					for(var i=0;i<result.length;i++){
+						if(result[i].conversationTitle)
+						{
+							var res=result[i].conversationTitle.split("%");
+							if(res[0]==Publish_ID&&res[1]==User_ID&&res[2]==Client_ID){
+								Conversation_ID=result[i].targetId;
+								SendTextMessage(Message,Conversation_ID,Publish_ID)
+								return;
+							}
+							else if(res[0]==Publish_ID&&res[2]==User_ID&&res[1]==Client_ID){
+								Conversation_ID=result[i].targetId;
+								SendTextMessage(Message,Conversation_ID,Publish_ID)
+								return;
+							}
+						}
+
+					}
+					rong.createDiscussion({
+					name: conversationTitle,
+					userIdList: [User_ID, Client_ID]
+					 }, function(ret, err) {
+					if (ret.status == 'success'){
+					Conversation_ID=ret.result.discussionId;
+					SendTextMessage(Message,Conversation_ID,Publish_ID);
+
+					}
+					});
+				}
+
+			}
+		});
+	}
+	apiready=function(){
+		api.addEventListener({ name: 'New_Message' }, function(ret, err){ Reload(); });
+		api.addEventListener({ name: 'Order_Changed' }, function(ret, err){ Reload(); });
+		vm = new Vue({
+								el: "#carlist",
+								data: {
+									mescroll: null,
+									pdlist: []
+								},
+								mounted: function() {
+									var self = this;
+									self.mescroll = new MeScroll("mescroll", {
+										up: {
+												callback: self.upCallback,
+												isBounce: false,
+												//page:{size:8},
+												toTop:{
+													src : "../../../image/titlebar/backtotop.png",
+												},
+												empty:{
+												  tip:'没有相关订单~',
+													warpId:"carlist",
+												},
+											}
+									 });
+								},
+								methods: {
+										Translate:function(date){
+												date=date.replace("-","年");
+												date=date.replace("-","月");
+												date=date.substring(0,date.length-2);
+												return date;
+										},
+				            getupdate:function(date){
+				              date=date.substring(0,10);
+				              date=date.replace("-","年");
+				              date=date.replace("-","月");
+				              date=date+"日";
+				              return date;
+				            },
+				            geturl:function(User_Pic){
+				              var imgW=",w_150";
+				              var imgH=",h_150";
+				              var url="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+				              return url;
+				            },
+										upCallback: function(page) {
+											var self = this;
+											getListDataFromNet(page.num, page.size, function(curPageData) {
+											if(page.num == 1) self.pdlist = [];
+												self.pdlist = self.pdlist.concat(curPageData);
+											  self.mescroll.endSuccess(curPageData.length);
+											}, function() {
+												self.mescroll.endErr();
+												api.toast({
+														msg: '网络错误',
+														duration: 2000,
+														location: 'bottom'
+												});
+											});
+										},
+							   },
+				});
+	}
+	function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+			var data;
+			api.ajax({
+						url: 'http://www.chekehome.com/public/index.php/getsellerorder',
+						method: 'post',
+						data:{
+							values:{
+									User_ID:User_ID
+							}
+						}
+				 }, function(ret, err) {
+						if (ret) {
+							successCallback&&successCallback(ret);//成功回调
+						}
+						else{
+							errorCallback&&errorCallback();
+						}
+			});
+	}
+	function Reload(){
+		api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/getsellerorder',
+					method: 'post',
+					data:{
+						values:{
+								User_ID:User_ID
+						}
+					}
+			 }, function(ret, err) {
+					if (ret&&ret.length) {
+						vm.pdlist=ret;
+					}
+					else{
+						window.location.href=window.location.href;
+					}
+		});
+	}
+</script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>HTML</title>
+  <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+  <script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+      html {width: 100%;height: 100%;background:transparent;}
+      body {background: rgba(0,0,0,0.3);width: 100%;height: 100%;}
+      .t1{display:none;position:absolute; background-color: #FAFAFA; width: 80%;left:10% ;border-radius:10px;}
+      .title{padding-top: 10px;margin:0 auto;width: 100%;text-align: center;line-height:40px;font-size: 18px}
+      .search {position: relative;height: 40px; margin-left: 20px;margin-right: 20px;border-radius: 5px;border:solid 1px; margin-top: 20px; border-color: #888; font-size: 13px;}
+      .search-input{ width:100%;text-align:left;border :none;line-height: 14px;padding: 10px;font-size: 14px;outline: none;}
+      .list-scale{position:absolute;right:10px;line-height: 40px;height: 40px;border :none;background:transparent;text-align: right;line-height:30px;font-size:14px; outline: none;width:40px;}
+      .fr{float: right;}.fl{float: left;}
+      .explain-text{text-indent: 25px;line-height: 30px;font-size: 14px;padding: 0 15px;}
+      .buttons{margin-top:5px;line-height:50px;height:50px;}
+      .leftbutton{position:absolute;left:50px;}
+      .rightbutton{position:absolute;right:50px;}
+	</style>
+</head>
+<body>
+  <div class="t1">
+  <div class="title">退款须知</div>
+  <div class="explain-text">
+    “确认退款”代表双方已成交（过户、提档完毕或双方已达成一致交车）；“确认退款”后，不再接受仲裁申请。
+  </div>
+  <div class="buttons">
+    <div class="leftbutton" onclick="cancel()">取消</div>
+    <div class="rightbutton" onclick="confirm()">确定</div>
+  </div>
+</div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script>
+  function amount(th){
+    th.value = th.value.slice(0,7);
+    var regStrs = [
+        ['^0(\\d+)$', '$1'], //禁止录入整数部分两位以上，但首位为0
+        ['[^\\d\\.]+$', ''], //禁止录入任何非数字和点
+        ['\\.(\\d?)\\.+', '.$1'], //禁止录入两个以上的点
+        ['^(\\d+\\.\\d{2}).+', '$1'] //禁止录入小数点后两位以上
+    ];
+    for(i=0; i<regStrs.length; i++){
+        var reg = new RegExp(regStrs[i][0]);
+        th.value = th.value.replace(reg, regStrs[i][1]);
+    }
+  }
+  function cancel() {
+    api.closeFrame({
+        name: 'refund'
+    });
+  }
+  function confirm(){
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '退款受理中',
+        text: '请稍后...',
+        modal: true
+    });
+    Order_ID = api.pageParam.Order_ID;
+    Other_ID = api.pageParam.Other_ID;
+    Publish_ID = api.pageParam.Publish_ID;
+    api.ajax({
+          url: 'http://www.chekehome.com/public/index.php/refundall',
+          method: 'post',
+          data: {
+                values: {
+                    Order_ID: Order_ID
+                }
+            }
+     }, function(ret, err) {
+        var result1=JSON.parse(ret[0]);
+        var result2=JSON.parse(ret[1]);
+        console.log(JSON.stringify(result1));
+        console.log(JSON.stringify(result2));
+        if(result1.result_code=="SUCCESS"&&result2.result_code=="SUCCESS"){
+          api.ajax({
+                    url: 'http://www.chekehome.com/public/index.php/editpublish',
+                    method: 'post',
+                    data: {
+                      values: {
+                          Publish_ID: api.pageParam.Publish_ID,
+                          Selling:'已售',
+                      }
+                    }
+               }, function(ret, err) {
+                api.hideProgress();
+                api.sendEvent({
+                    name: 'Reload_Fourth',
+                });                                
+                api.sendEvent({
+                    name: 'refund_finish',
+                    extra: {
+                      Order_ID: Order_ID,
+                      Other_ID: Other_ID,
+                      Publish_ID:Publish_ID
+                    }
+                });
+                api.closeFrame({
+                    name: 'refund'
+                });
+          });
+        }
+        else{
+            api.toast({
+                msg: "退款失败，请稍后重试",
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.hideProgress();
+            api.closeFrame({
+                name: 'refund'
+            });
+        }
+
+    });
+  }
+  apiready = function(){
+      $(".t1").css("top",0.5*(api.frameHeight-$(".t1").height()));
+      $(".t1").show();
+  }
+</script>
+</html>

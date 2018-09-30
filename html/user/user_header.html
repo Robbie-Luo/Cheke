@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href=" ../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href=" ../../css/common.css" />
+   <script src=" ../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .fr{float: right;}
+        .fl{float: left;}
+         #myheader{height:50px;overflow: hidden;text-align: center;background-color:#fafafa;position: relative;}
+        .back {width:80px;height:40px;position: absolute;left:0px;padding-left: 10px;}
+        .backimg {
+          float: left;
+          height: 16px;padding-top: 18px;padding-bottom:17px;
+        }
+        .forward {position: absolute;right:0px;width:80px;height:40px;padding-right: 15px;}
+        .forwardimg {float: right;height: 22px;padding-top: 14px;}
+        .finish-btn{position: absolute;right:10px;line-height: 50px;padding-right:5px;font-size: 15px;color:#515151}
+        .mytitle{
+          width: 60%;
+          display: inline-block;
+          margin: 0 auto;
+          font-size: 16px;
+          color: #515151;
+          text-align: center;
+          line-height: 50px;
+          white-space:nowrap;
+          overflow:hidden;
+          text-overflow:ellipsis;
+        }
+        .confirm-btn{
+            position: fixed;
+            bottom:0px;
+            line-height: 45px;
+            font-size: 15px;
+            color:#515151;
+            width: 100%;
+            text-align: center;
+            background-color: #FDDC3C;
+          }
+    </style>
+</head>
+
+<body>
+  <div id="wrap">
+        <div id="myheader" class="myborder-bottom">
+            <div onclick="goback()" class="back">
+              <img src="../../image/titlebar/back.png" class="backimg">
+            </div>
+            <div onclick="share()" class="forward">
+              <img src="../../image/titlebar/forward.png" class="forwardimg">
+            </div>
+            <div class="mytitle">个人信息</div>
+
+        </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+var detail;
+function goback(){
+   api.closeWin({
+       name: 'user_header'
+   });
+  }
+function share(){
+    api.openFrame({
+        name: 'shareframe',
+        url: './share.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            ID:api.pageParam.ID,
+            detail:detail,
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0)',
+        vScrollBarEnabled: false,
+        hScrollBarEnabled: false
+    });
+  }
+apiready=function(){
+  var myheader = $api.byId('myheader');
+  $api.fixStatusBar(myheader);
+  var myheader = $api.offset(myheader);
+  api.ajax({
+      url: 'http://www.chekehome.com/public/index.php/getUserInfo',
+      method: 'post',
+      data: {
+          values: {
+              ID:api.pageParam.ID
+          },
+      }
+  },function(ret, err){
+      if(ret){
+        detail = ret;
+        if(ret.CompanyName){
+          $(".mytitle").html(ret.CompanyName);
+        }
+        else{
+          $(".mytitle").html(ret.Name);
+        }
+
+      }
+  });
+  api.openFrame ({
+        name:"user_frame",
+        url: './user.html',
+        rect:{
+            x:0,
+            y:myheader.h,
+            w:'auto',
+            h:api.frameHeight-myheader.h
+        },
+        pageParam:{
+          ID:api.pageParam.ID
+        },
+        bgcolor:'#e0e0e0',
+        bounces: true,
+        delay:200
+    });
+}
+</script>
+</html>

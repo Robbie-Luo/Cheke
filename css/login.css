@@ -1,0 +1,217 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    font-size: 62.5%;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    html, body {
+        font-size: 50%;
+    }
+}
+
+svg {
+    display: inline-block;
+    float: left;
+    width: 2rem;
+    height: 2rem;
+    overflow: visible;
+}
+
+.svg-icon {
+    cursor: pointer;
+}
+
+.svg-icon path {
+    stroke: rgba(255, 255, 255, 0.9);
+    fill: none;
+    stroke-width: 1;
+}
+
+input, button {
+    outline: none;
+    border: none;
+}
+
+.login {
+    position: relative;
+    background: -webkit-linear-gradient(top, rgba(146, 135, 187, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    background: linear-gradient(to bottom, rgba(146, 135, 187, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    -webkit-transition: opacity 0.1s, -webkit-transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
+    transition: opacity 0.1s, -webkit-transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
+    transition: opacity 0.1s, transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
+    transition: opacity 0.1s, transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25), -webkit-transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+.login.inactive {
+    opacity: 0;
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+
+
+.login_row {
+    position: relative;
+    height: 40px;
+    margin-top: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login_icon {
+    float: left;
+    width: 10%;
+    height: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.login_icon.name path {
+    stroke-dasharray: 73.50196075439453;
+    stroke-dashoffset: 73.50196075439453;
+    -webkit-animation: animatePath 3s 0.5s forwards;
+    animation: animatePath 3s 0.5s forwards;
+}
+
+.login_icon.pass path {
+    stroke-dasharray: 92.10662841796875;
+    stroke-dashoffset: 92.10662841796875;
+    -webkit-animation: animatePath 3s 0.5s forwards;
+    animation: animatePath 3s 0.5s forwards;
+}
+
+.login_input_name {
+    float: left;
+    width: calc(90% - 20);
+    height: 100%;
+    padding-left: 10px;
+    font-size: 15px;
+    background: transparent;
+    color: #FFFFFF;
+}
+.login_input_pass {
+    float: left;
+    width: 50%;
+    height: 100%;
+    padding-left: 10px;
+    font-size: 15px;
+    background: transparent;
+    color: #FFFFFF;
+}
+.myinput::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #e0e0e0;
+}
+.myinput:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #e0e0e0;
+}
+.myinput::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #e0e0e0;
+}
+.myinput:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #e0e0e0;
+}
+.login_submit:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+    width: 3rem;
+    height: 3rem;
+    border: 2px dotted #fff;
+    border-radius: 50%;
+    border-left: none;
+    border-bottom: none;
+    -webkit-transition: opacity 0.3s 0.4s;
+    transition: opacity 0.3s 0.4s;
+    opacity: 0;
+    -webkit-animation: rotate 0.5s 0.4s infinite linear;
+    animation: rotate 0.5s 0.4s infinite linear;
+}
+
+.login_submit.processing {
+    width: 40px;
+    font-size: 0;
+}
+
+.login_submit.processing:after {
+    opacity: 1;
+    -webkit-animation: rotate 0.5s 0.4s infinite linear;
+    animation: rotate 0.5s 0.4s infinite linear;
+}
+
+.ripple {
+    position: absolute;
+    width: 15rem;
+    height: 15rem;
+    margin-left: -7.5rem;
+    margin-top: -7.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    -webkit-animation: animRipple 0.4s;
+    animation: animRipple 0.4s;
+    border-radius: 50%;
+}
+
+@-webkit-keyframes animRipple {
+    to {
+        -webkit-transform: scale(3.5);
+        transform: scale(3.5);
+        opacity: 0;
+    }
+}
+
+@keyframes animRipple {
+    to {
+        -webkit-transform: scale(3.5);
+        transform: scale(3.5);
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes rotate {
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes animatePath {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes animatePath {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+   　　color: #fff;
+　　}
+　　input:-moz-placeholder, textarea:-moz-placeholder {
+   　　color:#fff;
+　　}
+　　input::-moz-placeholder, textarea::-moz-placeholder {
+   　　color:#fff;
+　　}
+　　input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+   　　color:#fff;
+　　}

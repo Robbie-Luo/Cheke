@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>HTML</title>
+
+  <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+
+	<style>
+		html {width: 100%;height: 100%;background:transparent;}
+		body {background: rgba(0,0,0,0.1);width: 100%;height: 100%;}
+
+		.floatbox {position: absolute; text-align: center; background: #fff; top: 0;width:100%}
+    .list-item{position: relative;height:50px;width:100%}
+    .list-item-active{background-color: #F5F5F5;}
+    .list-title{text-align: left;line-height:50px;font-size:14px;padding-left:20px;color:#515151;max-width: 100px;}
+    	</style>
+</head>
+<body>
+	<div class="floatbox">
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(0,0)">
+          <div class="list-title">不限</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(0,1,'1年以内')">
+          <div class="list-title">1年以内</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(1,3,'1-3年')">
+          <div class="list-title">1-3年</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(3,5,'3-5年')">
+          <div class="list-title">3-5年</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(5,8,'5-8年')">
+          <div class="list-title">5-8年</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(8,10,'8-10年')">
+          <div class="list-title">8-10年</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetAge(10,0,'10年以上')">
+          <div class="list-title">10年以上</div>
+      </div>
+
+	</div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script>
+	function match(src, target){
+        var mark = false;
+        if(src === target){
+            mark = true;
+            return mark;
+        }else{
+            do{
+                src = src.parentNode;
+                if(src === target){
+                    mark = true;
+                    return mark;
+                }
+            }while(src !== document.body && src !== document.documentElement);
+            return mark;
+        }
+  }
+  function SetAge(year_min,year_max,text){
+    var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+    var Car_Age_Max=0,Car_Age_Min=0;
+    if(year_min){
+      Car_Age_Max=(parseInt(curr_time.substring(0,4))-year_min).toString()+curr_time.substring(4,curr_time.length);
+    }
+    if(year_max){
+      Car_Age_Min=(parseInt(curr_time.substring(0,4))-year_max).toString()+curr_time.substring(4,curr_time.length);
+    }
+    api.sendEvent({
+        name: 'SetCondition_Age',
+        extra: {
+          'Car_Age_Max': Car_Age_Max,
+          'Car_Age_Min': Car_Age_Min,
+          'Car_Year_Min':year_min,
+          'Car_Year_Max':year_max,
+          'text': text
+        }
+    });
+  }
+  apiready = function(){
+      var body = $api.dom('body');
+      $api.addEvt(body,'touchend',function(e){
+        api.setFrameGroupAttr({
+            name: 'filter_frame_group',
+            hidden: true
+        });
+      });
+  }
+</script>
+</html>

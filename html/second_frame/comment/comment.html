@@ -1,0 +1,634 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+  	<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        html,body {width: 100%;background: #FFFFFF;}
+   		 .fl{float:left}.fr{float:right}
+   		 [v-cloak] {
+   		  display: none;
+   		 }
+   		.news{width:100%;overflow: hidden;}
+   		.news-item {padding:15px 15px 15px 15px;background-color: #FFFFFF;}
+   		.news-title{height:50px;}
+   		.news-head-image{height:40px;width:40px;float:left;margin-right:10px;border-radius: 100%;position: relative;background-color: #F8F8F8}
+      .news-head{height:40px;width:100%;position: relative;}
+      .news-username{position: absolute;left:50px;top:0;font-size:16px;line-height:25px;color:#555;width: calc(100% - 100px);height: 25px;}
+      .news-time{position: absolute;left:50px;top:25px;width: calc(100% - 60px);height: 15px;line-height:15px;color:#888;font-size:12px;}
+      .news-text{line-height:25px;font-size: 16px;padding-top: 10px;padding-left:2px;text-align: justify;word-wrap:break-word; }
+  		.news-photos{background-color:#fff;width: 100%;height:50%;overflow: hidden;position: relative;margin-top:10px;}
+   		.news-photo{background-color:#fff; overflow: hidden;background-position: center;background-repeat: no-repeat;background-size: cover;}
+   		.news-cover1{width:66%;height:100%;float:left;border-radius:10px 0 0 10px;}
+   		.news-cover23{width:33%;height:100%;float:right;position: relative;}
+   		.news-cover2{width:100%;height:49%;border-radius:0 10px 0 0;}
+   		.news-cover3{width:100%;height:49%;position: absolute;bottom: 0;border-radius:0 0 10px 0;}
+   		.news-cover-left{width:49.5%;height:100%;position: absolute;left: 0;border-radius:10px 0 0 10px;}
+   		.news-cover-right{width:49.5%;height:100%;position: absolute;right: 0;border-radius:0 10px 10px 0;}
+   		.news-cover-center{width:100%;height:100%;border-radius: 10px;}
+   		.news-cover-more{position: absolute;right:5px;bottom:5px;height: 20px;width:20px;border-radius: 100%;background-color: rgba(0,0,0,0.5);}
+   		.news-photo-num{font-size:14px;color:#eee;text-align: center;line-height: 22px;width: 100%}
+   		.news-info{height:24px;line-height: 24px;position: relative;margin-top: 15px;}
+      .news-location-img{ height:16px;float: left;padding-right:5px;padding-top:4px;padding-bottom:4px;}
+  		.news-location{ font-size: 14px;line-height:24px;height:24px;color: #8593B0;float: left;width:calc(100% - 110px);}
+   		.news-view{height:20px;line-height:20px;position: absolute;right:0}
+   		.view-text{line-height:24px;color:#666;font-size:13px;}
+   		.divider{height:10px;width:100%;background-color: #F5F5F5;}
+      .love{height: 40px;position: relative;}
+      .love-image{line-height:40px;height:20px;padding:10px 0px 10px 0px;float: left;}
+      .love-num{font-size: 14px;float: left;padding-left: 5px;color:#777}
+      .love-title{width: 60px;padding-left: 15px;float: left;font-size: 15px;line-height: 40px;}
+      .love-pics{position: absolute;left:70px;width: calc(100% -70px);height: 26px;padding-top: 7px;padding-bottom: 7px;}
+      .love-pic{width:26px;height: 26px;margin-right:14px;border-radius: 100%;background-color: #F8F8F8; }
+      .love-more{width:26px;height:26px;border-radius: 100%;margin-top:1px;}
+      .comments{background-color: #fff;margin-bottom:45px;}
+      .title{color: #333;font-size:15px;height:40px;line-height:40px;}
+      .inwrap {padding-right: 15px;padding-left: 15px;}
+      .comments{padding-bottom: 50px;}
+      .comment {padding-top:10px;padding-bottom: 10px;}
+  		.comment-image{height:45px;width:45px;float:left;border-radius: 100%}
+  		.comment-area{padding-left:60px;}
+      .comment-delete{line-height: 25px;color:#8593B0;text-decoration:underline;font-size:12px;float: right;}
+  		.comment-username{font-size: 16px;line-height:25px;font-weight: bold;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+  		.comment-text{line-height:24px;font-size: 15px;word-wrap:normal;word-break: break-all;padding-right: 20px;}
+  		.comment-date{font-size:13px;color:#999;line-height:25px;float: right;}
+  		.comment-reply{padding:5px 0 5px 0;background-color: #F5F5F5;margin:5px 0px 5px 0px; }
+  		.comment-reply-item{font-size: 14px;line-height:25px;padding-left: 5px;}
+  		.comment-reply-name{color:#8593B0;float:left; }
+  		.comment-reply-more{color:#8593B0}
+      .reply-name{max-width: 30vw;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
+      .no-comment{height:100px;line-height: 100px;color:#aaa;text-align: center;}
+      .chatbox{ display: none;min-height:50px; width: 100%; position: fixed; bottom:0; background-color: #fff;-webkit-box-shadow:0px -5px 10px #eee;}
+      .comment-input{ position: absolute;bottom:11px;left:10px; font-size: 15px; color: #333; width:calc(100% - 90px); line-height:16px;height:20px;padding: 6px;outline: none;style:none; border-bottom: 1px solid #FDDC3C ;resize:none;}
+      .comment-send{ position: absolute;bottom:11px;right:10px;width:50px; height:30px; line-height: 30px; text-align: center; font-size: 15px; font-weight: 500; color: #666;background-color: #FFDC3C;border-radius:5px;outline: none;}
+    </style>
+</head>
+<body>
+      <div class="news" id="update" v-cloak>
+  				<div class="news-item">
+  					<div class="news-title">
+  						<img :src="HeadImgSrc(pd)" class="news-head-image" v-on:click.stop="openuser(pd.User_ID)">
+  							<div class="news-head">
+  								<div class="news-username overflow-text">
+  										{{pd.User_name}}
+  								</div>
+  								<div class="news-time">{{pd.Time}}</div>
+  							</div>
+  					</div>
+  					<div class="news-text" v-html="ShowText(pd.Text)"></div>
+  					<div class="news-photos" v-if="getimgnum(pd)>3">
+  							<div class="news-photo news-cover1" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+  							<div class="news-cover23">
+  								<div class="news-photo news-cover2" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+  							  <div class="news-photo news-cover3" :style="{backgroundImage: 'url(' + geturl(pd,2) + ')'}" v-on:click="browseimg(pd,3)">
+  							  	<div class="news-cover-more"><div class="news-photo-num">{{getimgnum(pd)}}</div></div>
+  							  </div>
+  							</div>
+  					</div>
+  					<div class="news-photos" v-if="getimgnum(pd)==3">
+  							<div class="news-photo news-cover1" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+  							<div class="news-cover23">
+  								<div class="news-photo news-cover2" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+  							  <div class="news-photo news-cover3" :style="{backgroundImage: 'url(' + geturl(pd,2) + ')'}" v-on:click="browseimg(pd,3)"></div>
+  							</div>
+  					</div>
+  					<div class="news-photos" v-if="getimgnum(pd)==2">
+  							<div class="news-photo news-cover-left" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+  							<div class="news-photo news-cover-right" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+  					</div>
+  					<div class="news-photos" v-if="getimgnum(pd)==1">
+  							<div class="news-photo news-cover-center" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+  					</div>
+  					<div class="news-info" v-cloak>
+  								<img src="../../../image/titlebar/address.png" class="news-location-img" v-show="pd.Location!='undefine'">
+  								<div class="news-location overflow-text" v-show="pd.Location!='undefine'">{{pd.Location}}</div>
+  								<div class="news-view">
+  										<span class="view-text">浏览量：{{pd.PageView+1}}</span>
+  								</div>
+  							</div>
+  				 	</div>
+  			  </div>
+  		</div>
+      <div class="loves" id="loves" v-cloak>
+          <div class="divider" v-if="loves.length>0"></div>
+          <div class="love" v-if="loves.length>0">
+            <div class="love-title" v-on:click="dolove()" v-if="isloved">
+              <img src="../../../image/titlebar/loved.png" class="love-image active">
+              <span class="love-num">{{total}}</span>
+            </div>
+            <div class="love-title" v-on:click="dolove()" v-else>
+              <img src="../../../image/titlebar/love.png" class="love-image">
+              <span class="love-num">{{total}}</span>
+            </div>
+            <div class="love-pics">
+              <img src="../../../image/user_default.png" :src="HeadImgSrc(love)" alt="" class="love-pic" v-for="(love,index) in loves" v-if="index<max-1" v-on:click.stop="openuser(love.User_ID)">
+              <img src="../../../image/more.png" class="love-more" v-show="loves.length>max-1">
+            </div>
+          </div>
+          <div class="divider"></div>
+      </div>
+      <div class="comments inwrap" id="comments" v-cloak>
+      		<div class="title myborder-bottom">
+      			<span>最新评论</span>
+      		</div>
+          <div class="no-comment" v-show="comments.length==0 ">还没有人评论</div>
+          <div class="comment myborder-bottom" v-for="comment in comments" v-cloak>
+              <img :src="HeadImgSrc(comment)" class="comment-image" v-on:click.stop="openuser(comment.User_ID)" v-cloak>
+              <div class="comment-area" v-on:click="comment_reply(comment)">
+                <div class="comment-date">{{Time_Format(comment.Time)}}</div>
+                <div class="comment-username">
+                    {{comment.User_name}}
+                </div>
+                <div class="comment-delete" v-if="comment.User_ID==User_ID" v-on:click.stop="comment_delete(comment)">删除</div>
+                <div class="comment-text" v-html="ShowText(comment.Comment_Text)"></div>
+                <div class="comment-reply" v-show="comment.Reply.length">
+                    <div class="comment-reply-item" v-for="(reply,index) in comment.Reply" v-if="index<3">
+                      <div class="comment-reply-text" v-html="ShowReply(reply,comment)"></div>
+                    </div>
+                    <div class="comment-reply-item" v-show="comment.Reply.length>3">
+                      <div class="comment-reply-more">共{{comment.Reply.length}}条回复>></div>
+                    </div>
+              </div>
+              </div>
+
+          </div>
+      </div>
+      <div class="chatbox" id="chatbox">
+          <textarea class="comment-input" type="text" placeholder="评论..." id="comment" maxlength="100"></textarea>
+          <div class="comment-send" onclick="sendcomment()">发送</div>
+      </div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script src="../../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    var User_ID=$api.getStorage("User_ID");
+    var vmloves,vmcomment;
+    Date.prototype.Format = function (fmt) { //author: meizz
+      var o = {
+          "M+": this.getMonth() + 1, //月份
+          "d+": this.getDate(), //日
+          "h+": this.getHours(), //小时
+          "m+": this.getMinutes(), //分
+          "s+": this.getSeconds(), //秒
+          "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+          "S": this.getMilliseconds() //毫秒
+      };
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+      for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+      return fmt;
+    }
+    function ScrollToBottom(){
+      $("html body").scrollTop($("html body").height());
+    }
+    function sendcomment(text){
+      if($api.getStorage("login_status")=='true'){
+        var Comment_Text;
+        if(text) Comment_Text=text;
+        else Comment_Text=$(".comment-input").val();
+        $(".comment-input").val('');
+        var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+        if(Comment_Text){
+          api.ajax({
+              url: 'http://www.chekehome.com/public/index.php/addcomment',
+              method: 'post',
+              data: {
+                  values: {
+                      Update_ID:api.pageParam.Update_ID,
+                      User_ID:User_ID,
+                      Comment_Text:Comment_Text,
+                      Time:curr_time
+                  },
+              }
+          },function(ret, err){
+            api.sendEvent({
+                name: 'reply_updated',
+            });
+          });
+        }
+      }
+    }
+    function loadcomment(){
+      api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getcomment',
+            method: 'post',
+            data:{
+              values:{
+                Update_ID:api.pageParam.Update_ID
+              }
+            },
+        },function(ret, err){
+            if (ret) {
+                  vmcomment = new Vue({
+                         el: "#comments",
+                         data: {
+                           comments:ret
+                         },
+                         mounted: function() {
+
+                         },
+                         methods: {
+                           HeadImgSrc:function(pd){
+                               var imgW=",w_150";
+                               var imgH=",h_150";
+                               return "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+pd.User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+                           },
+                           ShowText:function(text){
+             									return text.replace(/\n|\r\n/g,"<br/>");
+             							 },
+                           ShowReply:function(reply,comment){
+                              var text=reply.Reply_Text;
+                              if (reply.Reply_Target!=comment.User_ID){
+                                text='<a style="color:#8593B0" class="reply-name">'+reply.Reply_name+'</a>回复<a style="color:#8593B0" class="reply_name">'+reply.Target_name+'<span style="color:#000000">: '+text+'&thinsp;</span></a>';
+                              }
+                              else{
+                                text='<a style="color:#8593B0" class="reply-name">'+reply.Reply_name+'<span style="color:#000000">: '+text+'&thinsp;</span></a>';
+                              }
+                              return text.replace(/\n|\r\n/g,"<br/>");
+                           },
+                           Time_Format:function(t){
+                               var curr_time=new Date().Format("yyyy-MM-dd");
+                               var date=t.substring(0,10);
+                               var time=t.slice(11,16);
+                               if(curr_time==date) return time;
+                               else {
+                                 return date.substring(5,10).replace("-","/");
+                               }
+                           },
+                           comment_reply:function(comment){
+                               api.openWin({
+                                   name: 'reply_header',
+                                   url: '../reply/reply_header.html',
+                                   useWKWebView:true,
+                                   bgColor:'#FAFAFA',
+                                   pageParam: {
+                                      comment:comment
+                                   }
+                               });
+                           },
+                           comment_delete:function(comment){
+                             api.confirm({
+                                 title: '删除评论',
+                                 msg: '确定要删除这条评论吗？',
+                                 buttons: ['确定', '取消']
+                              }, function(ret, err){
+                                 if( ret.buttonIndex==1 ){
+                                      api.ajax({
+                                            url: 'http://www.chekehome.com/public/index.php/delcomment',
+                                            method: 'post',
+                                            data:{
+                                              values:{
+                                                Comment_ID:comment.Comment_ID,
+                                                Update_ID:api.pageParam.Update_ID
+                                              }
+                                            },
+
+                                        },function(ret, err){
+                                            if (ret) {
+                                                api.sendEvent({
+                                                    name: 'reply_updated',
+                                                });
+                                            }
+                                          });
+                                 }
+                             });
+                           }
+                         }
+                  });
+            }
+      });
+    }
+    function loadloves(){
+      var max=parseInt((api.frameWidth-70)/40);
+      api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getloves',
+            method: 'post',
+            data: {
+              values: {
+                Update_ID:api.pageParam.Update_ID,
+              },
+            }
+        },function(ret, err){
+            if (ret) {
+              var loves=[];
+              var isloved=false;
+              var total=ret.length;
+              for(var i=0;i<ret.length;i++){
+                if(ret[i].User_ID==User_ID){
+                  isloved=true;
+                  break;
+                }
+              }
+              for(var i=0;i<=max;i++){
+                if(ret[i]) loves.push(ret[i]);
+              }
+              vmloves = new Vue({
+                     el: "#loves",
+                     data: {
+                        loves:loves,
+                        max:max,
+                        total:total,
+                        isloved:isloved
+                     },
+                     methods:{
+                       HeadImgSrc:function(love){
+                           var imgW=",w_100";
+                           var imgH=",h_100";
+                           return "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+love.User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+                       },
+                       dolove:function(){
+                         if($api.getStorage("login_status")=='true'){
+                           if(this.isloved){
+          										api.ajax({
+          										    url: 'http://www.chekehome.com/public/index.php/dellove',
+          										    method: 'post',
+          										    data: {
+          										        values: {
+          										            Parent_ID:api.pageParam.Update_ID,
+          																User_ID:User_ID,
+          										        },
+          										    }
+          										},function(ret, err){
+          											if(ret){
+          												vmloves.isloved=false;
+                                 vmloves.total=vmloves.total-1;
+                                 reloadloves();
+          											}
+          										});
+          									}
+          									else{
+          										var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+        											api.ajax({
+        													url: 'http://www.chekehome.com/public/index.php/addlove',
+        													method: 'post',
+        													data: {
+        															values: {
+        																	Parent_ID:api.pageParam.Update_ID,
+        																	User_ID:User_ID,
+        																	Time:curr_time
+        															},
+        													}
+        											},function(ret, err){
+        												if(ret){
+                                 vmloves.isloved=true;
+                                 vmloves.total=vmloves.total+1;
+                                 reloadloves();
+        												}
+        											});
+          									}
+                         }
+         							},
+                     }
+              });
+          }
+      });
+    }
+    function reloadloves(){
+      var max=parseInt((api.frameWidth-70)/40);
+      api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getloves',
+            method: 'post',
+            data: {
+              values: {
+                Update_ID:api.pageParam.Update_ID,
+              },
+            }
+        },function(ret, err){
+            if (ret) {
+              var loves=[];
+              var isloved=false;
+              var total=ret.length;
+              for(var i=0;i<ret.length;i++){
+                if(ret[i].User_ID==User_ID){
+                  isloved=true;
+                  break;
+                }
+              }
+              for(var i=0;i<=max;i++){
+                if(ret[i]) loves.push(ret[i]);
+              }
+              vmloves.loves=loves;
+          }
+      });
+      api.sendEvent({
+          name: 'dolove',
+      });
+    }
+    function reloadcomment(){
+      api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getcomment',
+            method: 'post',
+            data:{
+              values:{
+                Update_ID:api.pageParam.Update_ID
+              }
+            },
+        },function(ret, err){
+            if (ret) {
+                vmcomment.comments=ret;
+            }
+      });
+      api.sendEvent({
+          name: 'dolove',
+      });
+    }
+    function LoadChatBox(){
+      var H=api.frameHeight;
+      var panelHeight,inputBarHeight;
+      var UIChatBox = api.require('UIChatBox');
+      UIChatBox.open({
+          placeholder: '评论...',
+          maxRows: 4,
+          emotionPath: 'widget://res/img/emotion',
+          texts: {
+              sendBtn: {
+                  title: '发送'
+              }
+          },
+          styles: {
+              inputBar: {
+                  borderColor: '#eee',
+                  bgColor: '#FEFEFE'
+              },
+              inputBox: {
+                  borderColor: '#eee',
+                  bgColor: '#FFFFFF'
+              },
+              keyboardBtn: {
+                  normalImg: 'widget://res/img/key1.png'
+              },
+              indicator: {
+                  target: 'both',
+                  color: '#c4c4c4',
+                  activeColor: '#FFEE00'
+              },
+              sendBtn: {
+                  titleColor: '#000',
+                  bg: '#FDDC3C',
+                  titleSize: 14
+              }
+          },
+          extras: {
+              titleSize: 10,
+              titleColor: '#a3a3a3',
+              btns: [{
+                  title: '图片',
+                  normalImg: 'widget://res/img/album1.png',
+                  activeImg: 'widget://res/img/album2.png'
+              }]
+          }
+       }, function(ret, err) {
+          if (ret) {
+            if(ret.eventType == "send"){
+              sendcomment(ret.msg);
+              UIChatBox.closeKeyboard();
+            }
+          }
+      });
+      UIChatBox.addEventListener({
+          target: 'inputBar',
+          name: 'move'
+       }, function(ret, err) {
+          if (ret) {
+            setTimeout(function(){
+              if(api.frameHeight!=H){
+                $(".bottom").height(ret.panelHeight+ret.inputBarHeight+20);//new
+              }
+              else{
+                if(ret.panelHeight>0){
+                  $(".bottom").height(ret.panelHeight);
+                }
+                else{
+                  $(".bottom").height(0);
+                }
+              }
+              ScrollToBottom();
+            },200);
+          }
+      });
+    }
+    function openuser(ID){
+        api.openWin({
+            name: 'user_header',
+            url: '../../user/user_header.html',
+            useWKWebView:true,
+            bgColor:'#FAFAFA',
+            pageParam: {
+                ID: ID
+            }
+        });
+    }
+    apiready=function(){
+      $(".news-photos").height(api.frameWidth/2);
+      User_ID=$api.getStorage("User_ID");
+      $("input").focus(function(){
+        ScrollToBottom();
+      });
+      api.addEventListener({
+          name:'keyboardshow'
+       },function(ret, err){
+          $(".chatbox").css("bottom",ret.h);
+      });
+      api.addEventListener({
+          name:'keyboardhide'
+       },function(ret, err){
+          $(".chatbox").css("bottom",0);
+      });
+      api.addEventListener({
+          name: 'reply_updated'
+       }, function(ret, err){
+         api.sendEvent({
+             name: 'update_refresh',
+         });
+         reloadcomment();
+      });
+      api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getupdatebyid',
+            method: 'post',
+            data: {
+                values: {
+                    Update_ID:api.pageParam.Update_ID,
+                    User_ID:User_ID
+                },
+            }
+        },function(ret, err){
+            if (ret) {
+                  var vm = new Vue({
+                         el: "#update",
+                         data: {
+                           mescroll: null,
+                           pd:ret[0],
+                           User_ID:User_ID
+                         },
+                         mounted: function() {
+
+                         },
+                         methods: {
+                             getimgnum:function(pd){
+                                 if(pd.Pic_array=="null") return 0;
+                                 else return pd.Pic_array.split("-").length;
+                             },
+                             geturl: function(pd,index){
+                               var path= pd.Pic_array.split("-")[index];
+                               var imgW=",w_600";
+                               var imgH=",h_450";
+                               var url="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+path+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+                               return url;
+                             },
+                             HeadImgSrc:function(pd){
+                                 var imgW=",w_200";
+                                 var imgH=",h_200";
+                                 return "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+pd.User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+                             },
+                             ShowText:function(text){
+               									return text.replace(/\n|\r\n/g,"<br/>");
+               							},
+                             browseimg: function (pd,index){
+                                 var imgstr=pd.Pic_array;
+                                 var imgarr=imgstr.split("-");
+                                 var data=[];
+                                 for(var i=0;i<imgarr.length;i++){
+                                     data.push("http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+imgarr[i]);
+                                 }
+                                 api.openWin({
+                                     name: 'browse_img',
+                                     url: '../browse_img.html',
+                                     useWKWebView:true,
+                                     bgColor:'#FAFAFA',
+                                     pageParam:{
+                                       data:data,
+                                       index:index
+                                     }
+                                 });
+                             },
+                             opencomment:function(pd){
+                                $("#comment").focus();
+                             },
+                             dolove:function(pd){
+
+                             },
+
+                           }
+                  });
+            }
+      });
+      if($api.getStorage("login_status")=='true'){
+        if(isAndroid()){
+          $(".chatbox").show();
+        }
+        else{
+          LoadChatBox();
+        }
+      }
+      else{
+        $(".chatbox").hide();
+      }
+      loadloves();
+      loadcomment();
+    }
+</script>
+</html>

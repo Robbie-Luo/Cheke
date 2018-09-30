@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>HTML</title>
+
+  <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+
+	<style>
+		html {width: 100%;height: 100%;background:transparent;}
+		body {background: rgba(0,0,0,0.1);width: 100%;height: 100%;}
+
+		.floatbox {position: absolute; text-align: center; background: #fff; top: 0;width:100%}
+    .list-item{position: relative;height:50px;width:100%}
+    .list-item-active{background-color: #F5F5F5;}
+    .list-title{float:left;line-height:50px;font-size:14px;padding-left:20px;color:#515151;}
+	</style>
+</head>
+<body>
+	<div class="floatbox">
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetSort(0)">
+          <div class="list-title">按发布时间排序(默认)</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetSort(1)">
+          <div class="list-title">价格从低到高</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetSort(2)">
+          <div class="list-title">价格从高到低</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetSort(3)">
+          <div class="list-title">车龄从低到高</div>
+      </div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script>
+	function goback(){
+    api.setFrameGroupAttr({
+        name: 'filter_frame_group',
+        hidden: true
+    });
+	}
+  function SetSort(index){
+      api.sendEvent({
+          name: 'SetSort_Index',
+          extra: {
+              Sort_Index:index
+          }
+      });
+  }
+  apiready = function(){
+      var body = $api.dom('body');
+      $api.addEvt(body,'touchend',function(e){
+          goback();
+      });
+  }
+</script>
+</html>

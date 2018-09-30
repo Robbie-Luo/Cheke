@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        #header{height:50px;overflow: hidden;text-align: center;background-color:#FDDC3C }
+        .back {width:80px;height:40px;position: absolute;left:0px;padding-left: 10px;}
+        .backimg { float: left; height: 16px;padding-top: 17px;padding-bottom: 17px; }
+        .search-btn{float: right;line-height:50px;padding-right: 10px;color:#515151;outline: none;}
+        .search {position: absolute;left:40px;right: 50px;background-color: #F0E68C;color: #515151;height:35px;margin-top: 8px; border-radius: 30px;}
+        .search-img {vertical-align: top; width: 20px; padding-top: 7px;padding-right: 10px;float: left;margin-left: 10px;}
+        .search-input{position: absolute;left:30px;line-height:16px;height:25px;font-size: 14px;padding: 5px;outline: none;color:#515151;width:calc(100% - 70px)}
+        .search-input::-webkit-input-placeholder { /* WebKit browsers */
+            color:#666;
+        }
+        .search-img-del{width: 20px; padding-top: 10px;padding-right: 10px;float: right;display: none}
+    </style>
+  </head>
+  <body>
+  <form id="header">
+    <div onclick="goback()" class="back">
+      <img src="../../image/titlebar/back.png" class="backimg">
+    </div>
+    <form>
+      <input class="search-btn" onclick="dosearch()" type="submit" value="搜索">
+      <div class="search" action="dosearch()">
+          <img src="../../image/titlebar/search.png" class="search-img">
+          <img src="../../image/titlebar/clear.png" class="search-img-del">
+          <input type="text" class="search-input" id="input" placeholder="输入想找的车">
+      </div>
+    </form>
+  </div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript">
+   function goback () {
+     $("#input").blur();
+     setTimeout(function(){
+       api.closeWin({name:'search'});
+     },200);
+    }
+    function dosearch(){
+      var SearchHistory=[];
+      var value=document.getElementById("input").value;
+      if(value){
+        $("#input").blur();
+        if($api.getStorage('SearchHistory')){
+          SearchHistory=$api.getStorage('SearchHistory');
+          for(var i=0;i<SearchHistory.length;i++){
+            if(SearchHistory[i]==value){
+              SearchHistory.splice(i,1);
+            }
+          }
+          SearchHistory.push(value);
+          if(SearchHistory.length>10){
+            SearchHistory.splice(0,SearchHistory.length-10);
+          }
+        }
+        else{
+          SearchHistory.push(document.getElementById("input").value);
+        }
+        $api.setStorage('SearchHistory',SearchHistory);
+        api.sendEvent({
+            name: 'SetCondition_Search',
+            extra: {
+                Search:value
+            }
+        });
+      }
+      else{
+        $("#input").blur();
+        setTimeout(function(){
+          api.closeWin({name:'search'});
+        },200);
+      }
+    }
+    // 完成首页初始化
+    apiready = function(){
+      var header = $api.byId('header');
+      $api.fixStatusBar(header);
+      var header = $api.offset(header);
+      $(".search-input").on("keyup",function(){
+        if($(".search-input").val()){
+          $(".search-img-del").show();
+        }
+        else{
+          $(".search-img-del").hide();
+        }
+      });
+      $(".search-img-del").click(function(){
+          $(".search-input").val('');
+          $(".search-img-del").hide();
+      });
+      api.openFrame ({
+            name: 'search_body',
+            url: './search_body.html',
+            rect:{
+                x:0,
+                y:header.h,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    };
+  </script>
+</html>

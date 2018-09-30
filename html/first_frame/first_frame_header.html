@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<title>首页</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+  <link rel="stylesheet" type="text/css" href="../../css/idangerous.swiper.css"/>
+	<link rel="stylesheet" href="../../css/mescroll.min.css">
+	<style>
+	html, body {width: 100%;min-height: 100%;background-color: #FAFAFA}
+	/*第一头部*/
+	.topbar{height:50px;position:relative;background: #FDDC3C;}
+	.citylist {height: 50px; width: 60px;line-height: 50px;padding-left: 10px; font-size: 15px; color: #515151;overflow: hidden;}
+	.citylistarrow{position: absolute;left:45px;top:18px;right:20px; width:15px}
+	.cityname{ color:#515151; width: 35px; line-height:50px; max-width: 35px; text-overflow:ellipsis; margin-right:-5px; }
+	.search {height: 35px;line-height: 35px; border-radius: 30px; position: absolute;left:68px;top: 8px;right:20px;background-color: #F0E68C;}
+	.cond-search{position: absolute;left:30px;color: #515151;line-height: 25px;font-size: 14px;outline: none;color:#515151;padding:5px;width:calc(100% - 70px);}
+	.cond-search::-webkit-input-placeholder { /* WebKit browsers */ color:#666; }
+	.search-img { width: 20px; padding-top: 7px;padding-right: 10px;float: left;margin-left:10px;}
+	.search-img-del{width: 20px; padding-top: 10px;padding-right: 10px;float: right;display: none}
+	.tool_icon {height:30px;padding: 10px 10px 10px 25px;}
+	.filter-bar {width:100%;height:40px; background-color:#FAFAFA;overflow: hidden;}
+	.filter-divider{width:1px;height:40px;background-color:#aaa;margin-top:0px;transform: scale(0.5,0.5);}
+	.filter-bar ul {display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+	.filter-bar li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;text-align: center;line-height:40px;font-size: 13px;}
+	.filter-active{color:#f70;font-weight: bold;}
+	.filter-png{vertical-align: top; width: 12px; padding-top: 13px;padding-left: 2px;}
+	.conditions{height:34px;background-color: #F5F5F5;}
+	.condition{height:24px;line-height:24px;font-size: 12px;float:left;padding:0 5px 0 5px;margin: 5px 0 0 10px;text-align:center; border-radius:5px;color: #333;border: 1px solid #FDDC3C}
+	 /* 第二头部 */
+
+ </style>
+</head>
+<body>
+  <div id="firstHeader" class="titlebar activebar">
+        <div class="topbar">
+          <div class="citylist fl" id="citylist" tapmode="" onclick="openCitylist()"><p class="cityname fl">全国</p>
+          <img src="../../image/titlebar/down.png" class="citylistarrow fl"></div>
+          <div class="search" >
+              <img src="../../image/titlebar/search.png" class="search-img" onclick="openSearch()">
+              <img src="../../image/titlebar/clear.png" class="search-img-del">
+              <input class="cond-search" placeholder="输入想找的车" onclick="openSearch()" readonly="true">
+          </div>
+          <!-- <img src="../../image/titlebar/sift.png" class="tool_icon fr" onclick="MoreFilter()"> -->
+        </div>
+        <div class="filter-bar myborder-bottom">
+          <ul>
+            <li onclick="openfilter(0)" class="cond-sort">排序<img src="../../image/titlebar/filter-arrow.png" class="filter-png"></li>
+            <hr class="filter-divider"></hr>
+            <li onclick="openfilter(1)" class="cond-brand">品牌<img src="../../image/titlebar/filter-arrow.png" class="filter-png"></li>
+            <hr class="filter-divider"></hr>
+            <li onclick="openfilter(2)" class="cond-price">价格<img src="../../image/titlebar/filter-arrow.png" class="filter-png"></li>
+            <hr class="filter-divider"></hr>
+            <li onclick="openfilter(3)" class="cond-age">车龄<img src="../../image/titlebar/filter-arrow.png" class="filter-png"></li>
+            <hr class="filter-divider"></hr>
+            <li onclick="MoreFilter()" class="cond-more">筛选<img src="../../image/titlebar/filter-arrow.png" class="filter-png"></li>
+          </ul>
+        </div>
+      </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/mescroll.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+var Conditions={};
+var Locations={};
+var isFilterShow=false;
+var firstHeader;
+var sw=true;
+var firstHeaderOffset ;
+function addEvents(){
+	api.addEventListener({
+	    name: 'CitySelect'
+  	}, function(ret, err){
+	    if( ret ){
+				api.removeEventListener({
+						name: 'CitySelect'
+				});
+        api.sendEvent({
+            name: 'SetCondition_City',
+            extra: {
+                Province: ret.value.province,
+                City: ret.value.city
+            }
+      	});
+	    }
+	});
+	api.addEventListener({
+			name: 'Conditions_Reset'
+	 }, function(ret, err){
+			Conditions={};
+			var text='<img src="../../image/titlebar/filter-arrow.png" class="filter-png">';
+			$(".cond-sort").removeClass("filter-active");
+			$(".cond-brand").html('品牌'+text);
+			$(".cond-brand").removeClass("filter-active");
+			$(".cond-price").html('价格'+text);
+			$(".cond-price").removeClass("filter-active");
+			$(".cond-age").html('车龄'+text);
+			$(".cond-age").removeClass("filter-active");
+			$(".cond-more").html('筛选'+text);
+			$(".cond-more").removeClass("filter-active");
+			$(".search-img-del").hide();
+			$(".cond-search").val("");
+			api.removeEventListener({
+			    name: 'Conditions_Reset'
+			});
+			RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_City'
+	 }, function(ret, err){
+	 var row={};
+	 var selectname;
+	 row.City=ret.value.City;
+	 row.Province=ret.value.Province;
+	 if(ret.value.City != '')
+	 {selectname = ret.value.City;}
+	 else if(ret.value.Province != ''){
+			 selectname = ret.value.Province;
+	 }
+	 else {
+		 selectname = '全国';
+	 }
+	 $(".cityname").html(selectname.substring(0,2));
+	 Locations=row;
+	 api.removeEventListener({
+			 name: 'SetCondition_City'
+	 });
+	 RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_Brand'
+	 }, function(ret, err){
+		 Conditions.Car_Brand=ret.value.Car_Brand;
+		if(ret.value.Car_Brand){
+			$(".cond-brand").html(ret.value.Car_Brand.substring(0,6));
+			$(".cond-brand").addClass("filter-active");
+		}
+		else{
+			var text='品牌<img src="../../image/titlebar/filter-arrow.png" class="filter-png">';
+			$(".cond-brand").html(text);
+			$(".cond-brand").removeClass("filter-active");
+		}
+		api.removeEventListener({
+ 			 name: 'SetCondition_Brand'
+ 	 });
+		RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_Price'
+	 }, function(ret, err){
+			 Conditions.Car_Price_Min=ret.value.Car_Price_Min;
+			 Conditions.Car_Price_Max=ret.value.Car_Price_Max;
+			 if(ret.value.text){
+					$(".cond-price").html(ret.value.text);
+					$(".cond-price").addClass("filter-active");
+			 }
+			 else{
+				 var text='价格<img src="../../image/titlebar/filter-arrow.png" class="filter-png">';
+				 $(".cond-price").html(text);
+				 $(".cond-price").removeClass("filter-active");
+			 }
+			 api.removeEventListener({
+					name: 'SetCondition_Price'
+			 });
+			 RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_Age'
+	 }, function(ret, err){
+			 Conditions.Car_Age_Min=ret.value.Car_Age_Min;
+			 Conditions.Car_Age_Max=ret.value.Car_Age_Max;
+			 Conditions.Car_Year_Min=ret.value.Car_Year_Min;
+			 Conditions.Car_Year_Max=ret.value.Car_Year_Max;
+			 if(ret.value.text){
+					$(".cond-age").html(ret.value.text);
+					$(".cond-age").addClass("filter-active");
+			 }
+			 else{
+				 var text='车龄<img src="../../image/titlebar/filter-arrow.png" class="filter-png">';
+				 $(".cond-age").html(text);
+				 $(".cond-age").removeClass("filter-active");
+			 }
+			 api.removeEventListener({
+					name: 'SetCondition_Age'
+			 });
+			 RefreshFirst();
+	});
+	api.addEventListener({
+			 name: 'SetSort_Index'
+	 }, function(ret, err){
+		Conditions.Sort_Index=ret.value.Sort_Index;
+		if(ret.value.Sort_Index){
+			 $(".cond-sort").addClass("filter-active");
+		}
+		else{
+			 $(".cond-sort").removeClass("filter-active");
+		}
+		api.removeEventListener({
+			 name: 'SetSort_Index'
+		});
+		RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_More'
+	 }, function(ret, err){
+		 Conditions={};
+		 var text='<img src="../../image/titlebar/filter-arrow.png" class="filter-png">';
+		 $(".cond-brand").html('品牌'+text);
+		 $(".cond-brand").removeClass("filter-active");
+		 $(".cond-price").html('价格'+text);
+		 $(".cond-price").removeClass("filter-active");
+		 $(".cond-age").html('车龄'+text);
+		 $(".cond-age").removeClass("filter-active");
+		 $(".search-img-del").hide();
+		 $(".cond-search").val("");
+			Conditions=ret.value.Conditions;
+			api.closeWin({
+					name: "filter_more_header"
+			});
+			if(ret.value.Conditions){
+				 $(".cond-more").addClass("filter-active");
+			}
+			else{
+				 $(".cond-more").removeClass("filter-active");
+			}
+			api.removeEventListener({
+				name: 'SetCondition_More'
+			});
+			RefreshFirst();
+	});
+	api.addEventListener({
+			name: 'SetCondition_Search'
+	 }, function(ret, err){
+			api.closeWin({
+				name: 'search'
+			});
+			Conditions.Search=ret.value.Search;
+			$(".cond-search").val(ret.value.Search);
+			$(".search-img-del").show();
+			$(".search-img-del").click(function(){
+					$(".search-img-del").hide();
+					$(".cond-search").val("");
+					Conditions.Search='';
+					api.removeEventListener({
+							name: 'SetCondition_Search'
+					});
+					RefreshFirst();
+			});
+			api.removeEventListener({
+					name: 'SetCondition_Search'
+			});
+			RefreshFirst();
+	});
+}
+function SetConditions(){
+		Conditions={};
+		addEvents();
+}
+function RefreshFirst(){
+		// api.closeFrameGroup({
+		//   name: 'filter_frame_group'
+		// });
+		// curr_filter_index=-1;
+		// addEvents();
+		// api.sendEvent({
+		//     name: 'RefreshFirst',
+		// });
+		api.sendEvent({
+		    name: 'SendConditions',
+		    extra: {
+					Conditions:Conditions,
+					Locations:Locations
+		    }
+		});
+		addEvents();
+}
+function MoreFilter(){
+	api.closeFrameGroup({
+		name: 'filter_frame_group'
+	});
+  api.openWin({
+      name: 'filter_more_header',
+      url: 'filter_more/filter_more_header.html',
+			useWKWebView:true,
+			bgColor:'#FAFAFA',
+      pageParam:{
+        name:'filter_more_header',
+        title:"更多筛选",
+        page:'filter_more',
+				Conditions:Conditions
+      },
+  });
+}
+function openfilter(index){
+		api.sendEvent({
+		    name: 'SetFilterIndex',
+		    extra: {
+		        index:index
+		    }
+		});
+}
+function openSearch(){
+    api.openWin({
+    name: 'search',
+    url: '../search/search.html',
+    });
+}
+function openCitylist(){
+  api.openWin({
+    name: 'citylist_header',
+    url: '../citylist/citylist_header.html',
+    useWKWebView:true,
+    bgColor:'#FAFAFA',
+  });
+}
+function Reload(){
+	// api.closeFrame({
+	// 		name: 'first_frame_body'
+	// });
+	// api.openFrame({
+	// 		name: 'first_frame_body',
+	// 		url: 'first_frame.html',
+	// 		rect: {
+	// 				x: 0,
+	// 				y: firstHeaderOffset.h+api.pageParam.h,
+	// 				w: 'auto',
+	// 				h: api.winHeight-firstHeaderOffset.h-api.pageParam.h-api.pageParam.footerheight
+	// 		},
+	// 		pageParam:{
+	// 			Conditions:Conditions,
+	// 			Locations:Locations
+	// 		}
+	// });
+	api.sendEvent({
+	    name: 'SendConditions',
+	    extra: {
+				Conditions:Conditions,
+				Locations:Locations
+	    }
+	});
+	setTimeout(function(){
+		api.addEventListener({
+				name: 'RefreshFirst'
+		 }, function(ret, err){
+			 api.removeEventListener({
+	 				name: 'RefreshFirst'
+	 		});
+			Reload();
+		});
+	},300);
+}
+apiready=function(){
+	SetConditions();
+	// api.addEventListener({
+	// 		name: 'RefreshFirst'
+	//  }, function(ret, err){
+	// 	 api.removeEventListener({
+ // 				name: 'RefreshFirst'
+ // 		});
+	// 	Reload();
+	// });
+  firstHeader = $api.byId('firstHeader');
+  firstHeaderOffset = $api.offset(firstHeader);
+  // // api.openFrame({
+  // //     name: 'first_frame',
+  // //     url: 'first_frame.html',
+  // //     rect: {
+  // //         x: 0,
+  // //         y: firstHeaderOffset.h+api.pageParam.h,
+  // //         w: 'auto',
+  // //         h: api.winHeight-firstHeaderOffset.h-api.pageParam.h-api.pageParam.footerheight
+  // //     },
+  // // });
+
+}
+</script>
+</html>

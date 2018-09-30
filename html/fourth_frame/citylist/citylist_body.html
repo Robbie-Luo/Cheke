@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title></title>
+		<script type="text/javascript" src="../../../script/vue.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+		<style>
+		* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+		html,body { -webkit-touch-callout:none; -webkit-text-size-adjust:none; -webkit-tap-highlight-color:rgba(0, 0, 0, 0); -webkit-user-select:none; width: 100%; }
+		body { line-height: 1; font-size: 0.8rem; color: #212121; background-color: #FFF; outline: 0; }[v-cloak] { display: none; }
+		#main{display: none}
+		.list-header { background-color: #F5F5F5; color: #555; line-height: 2rem ; padding-left: 15px; font-weight: 600;}
+		.city{font-size: 3.3vw;text-align: center;padding: 3vw 0 3vw 0;border: 1px solid;border-radius:5px;overflow: hidden;line-height: 24px;white-space: nowrap;text-overflow: ellipsis;}
+		.hot-cities{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding:3%}
+		.hot-city{width:29.3%;margin-left:2%;margin-right: 2%;margin-top: 8px;margin-bottom: 8px;}
+		.all-city{width:29.3%;margin-left:2%;margin-right: 2%;margin-top: 5px;margin-bottom: 10px;}
+		.location-img{position: relative;height:50px;width: 40px;padding:14px 5px 16px 15px;float: left;}
+		.list-item{ width: 100%; min-height:50px; position: relative; }
+		.list-name{ line-height:50px; font-size: 14px;padding-left: 20px; white-space: nowrap; text-overflow: ellipsis; }
+		.list-child{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;vertical-align: middle;padding-bottom: 10px;padding-left:3%;padding-right: 3%}
+		.toggleright{position: absolute;right:0;top:0;height:50px;padding: 18px;transform: rotate(-90deg);}
+		.toggledown{position: absolute;right:0;top:0;height:50px;padding: 18px;}
+		.finish-btn{position: absolute;right:10px;line-height: 50px;padding-right:5px;font-size: 15px;color:#515151}
+		.active{border:1px solid #FDDC3C;color:#FDDC3C}
+	</style>
+	</head>
+	<body>
+		<div class="list-header">
+			全国推广
+		</div>
+		<div class="list-item myborder-bottom" ><div class="list-name">全国</div></div>
+		<div class="list-header">
+			华东地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >山东省</div>
+				<div class="hot-city city" >江苏省</div>
+				<div class="hot-city city" >安徽省</div>
+				<div class="hot-city city" >浙江省</div>
+				<div class="hot-city city" >福建省</div>
+				<div class="hot-city city" >上海市</div>
+		</div>
+		<div class="list-header">
+			华南地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >广东省</div>
+				<div class="hot-city city" >广西壮族自治区</div>
+				<div class="hot-city city" >海南省</div>
+		</div>
+		<div class="list-header">
+			华中地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >湖北省</div>
+				<div class="hot-city city" >湖南省</div>
+				<div class="hot-city city" >河南省</div>
+				<div class="hot-city city" >江西省</div>
+		</div>
+		<div class="list-header">
+			华北地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >北京市</div>
+				<div class="hot-city city" >天津市</div>
+				<div class="hot-city city" >河北省</div>
+				<div class="hot-city city" >山西省</div>
+				<div class="hot-city city" >内蒙古自治区</div>
+		</div>
+		<div class="list-header">
+			西北地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >宁夏回族自治区</div>
+				<div class="hot-city city" >新疆维吾尔自治区</div>
+				<div class="hot-city city" >青海省</div>
+				<div class="hot-city city" >陕西省</div>
+				<div class="hot-city city" >甘肃省</div>
+		</div>
+		<div class="list-header">
+			西南地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >四川省</div>
+				<div class="hot-city city" >云南省</div>
+				<div class="hot-city city" >贵州省</div>
+				<div class="hot-city city" >西藏自治区</div>
+				<div class="hot-city city" >重庆市</div>
+		</div>
+		<div class="list-header">
+			东北地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >辽宁省</div>
+				<div class="hot-city city" >吉林省</div>
+				<div class="hot-city city" >黑龙江省</div>
+		</div>
+		<div class="list-header">
+			港澳台地区
+		</div>
+		<div class="hot-cities list-child">
+				<div class="hot-city city" >台湾省</div>
+				<div class="hot-city city" >香港特别行政区</div>
+				<div class="hot-city city" >澳门特别行政区</div>
+		</div>
+	</div>
+	<script src="../../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../../script/api.js"></script>
+	<script>
+	var selection=[];
+	function sendText(){
+	  api.sendEvent({
+	      name: 'Set_BroadCity',
+	      extra: {
+	          value:selection
+	      }
+	  });
+	}
+	apiready=function(){
+					var cities=["山东省","江苏省","安徽省","浙江省","福建省","上海市",
+					"广东省","广西壮族自治区","海南省",
+					"湖北省","湖南省","河南省","江西省",
+					"北京市","天津市","河北省","山西省","内蒙古自治区",
+					"宁夏回族自治区","新疆维吾尔自治区","青海省","陕西省","甘肃省",
+					"四川省","云南省","贵州省","西藏自治区","重庆市",
+					"辽宁省","吉林省","黑龙江省",
+				"台湾省","香港特别行政区","澳门特别行政区"];
+				$('.list-name').click(function(){
+					if($(this).hasClass("active")){
+							$(this).removeClass("active");
+							$('.hot-city').removeClass("active");
+							selection = [];
+
+					}
+					else{
+							$(this).addClass("active");
+							$('.hot-city').addClass("active");
+							selection = cities;
+					}
+									sendText();
+				});
+				$('.hot-city').click(function(){
+			    if($(this).hasClass("active")){
+			        $(this).removeClass("active");
+							for(var i=0; i<selection.length; i++) {
+						    if(selection[i] == $(this).html()) {
+						      selection.splice(i, 1);
+						      break;
+						    }
+						  }
+
+			    }
+			    else{
+			        $(this).addClass("active");
+							selection.push($(this).html());
+			    }
+									sendText();
+			  });
+	}
+	</script>
+</html>

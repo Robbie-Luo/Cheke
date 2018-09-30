@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>HTML</title>
+  <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html {width: 100%;height: 100%;background:transparent;}
+		body {background: rgba(0,0,0,0.1);width: 100%;height: 100%;}
+		.floatbox {position: absolute; text-align: center; background: #fff; top: 0;width:100%}
+    .list-item{position: relative;height:50px;width:100%}
+    .list-item-active{background-color: #F5F5F5;}
+    .list-title{float:left;line-height:50px;font-size:14px;padding-left:20px;color:#515151;max-width: 100px;}
+    </style>
+</head>
+<body>
+	<div class="floatbox">
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(0,0)">
+          <div class="list-title0 list-title">不限</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(0,4,'4万以内')">
+          <div class="list-title0 list-title">4万以内</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(4,8,'4-8万')">
+          <div class="list-title1 list-title">4-8万</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(8,15,'8-15万')">
+          <div class="list-title2 list-title">8-15万</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(15,25,'15-25万')">
+          <div class="list-title3 list-title">15-25万</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(25,40,'25-40万')">
+          <div class="list-title3 list-title">25-40万</div>
+      </div>
+      <div class="list-item myborder-bottom" tapmode="list-item-active" onclick="SetPrice(40,0,'40万以上')">
+          <div class="list-title7 list-title">40万以上</div>
+      </div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script>
+	function match(src, target){
+        var mark = false;
+        if(src === target){
+            mark = true;
+            return mark;
+        }else{
+            do{
+                src = src.parentNode;
+                if(src === target){
+                    mark = true;
+                    return mark;
+                }
+            }while(src !== document.body && src !== document.documentElement);
+
+            return mark;
+        }
+  }
+  function SetPrice(car_price_min,car_price_max,text){
+    api.sendEvent({
+        name: 'SetCondition_Price',
+        extra: {
+          'Car_Price_Max': car_price_max,
+          'Car_Price_Min': car_price_min,
+          'text': text
+        }
+    });
+  }
+  apiready = function(){
+        var body = $api.dom('body');
+        $api.addEvt(body,'touchend',function(e){
+          api.setFrameGroupAttr({
+              name: 'filter_frame_group',
+              hidden: true
+          });
+        });
+  }
+</script>
+</html>

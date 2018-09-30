@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>发现</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/LCalendar.css" />
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		html, body {width: 100%;background: #ffffff;box-sizing: border-box;} *,*:before,*:after{ box-sizing: inherit; }
+		.h1 {height: 1px;margin-left: 15px;background: #ffffff;}
+		.fr {float: right;}
+		.fl {float: left;}
+		input::-webkit-input-placeholder {color:#aaa; }
+		.hightitem {background-color: #fff;}
+		/*上传图片*/
+		.container{width:100%;padding: 0;}
+		.z_photo { width:100%; overflow:hidden;}
+		.z_newimg {width:100%;}
+		.z_addimg {width: 33.33%;height:80px;float: left;overflow: hidden;position: relative;}
+		.z_file { width: 33.33%;float: left;border-radius: 5px; background: url(../../image/z_add.png) no-repeat;background-size: 75% 80%;background-position: center;position: relative;}
+		.z_cover{ display: inline-block; transform: rotate(-45deg); position:absolute; width:100%; text-align: center; top:10%; left:-35%; font-size:10px; background-color: #FDDC3C; }
+		.form-list{padding-bottom:50px;}
+		.main-title{font-size:14px;height:40px;background-color:#F5F5F5;color:#787878;line-height:40px;padding-left: 10px;padding-right: 10px;}
+		.advice-pricein{font-size:14px;height:40px;background-color:#F5F5F5;color:#FF6666;line-height:40px;padding-left: 10px;padding-right: 10px;}
+		.info{float: left;color:#787878;}
+		.clear{float:right;color:#787878;}
+		.active{border:#FDDC3C 1px solid;background-color:#FFFFFF;color:#606060;}
+		.list-item{position: relative;height:50px;overflow: hidden;}
+		.list-item-active{background-color: #F5F5F5;}
+		.list-img{position:absolute;height:10px;top:20px;right:10px;}
+		.list-title{line-height:50px;font-size:14px;margin-left: 10px;color:#555;width:75px;float: left}
+		.list-input{float: left;line-height:20px;padding-top:15px;padding-bottom: 15px;font-size:14px; background: transparent;color:#555;outline: none;overflow: hidden;text-overflow: ellipsis;width:calc(100% - 120px);}
+		.list-scale{position:absolute;right:15px;text-align: right;line-height:50px;font-size:14px;color:#555;outline: none;width:50px;}
+		.list-describe-area{position:relative;padding:15px 15px 15px 15px;resize:none}
+		.list-describe{width:100%;height:125px;line-height:25px;font-size:15px;background: transparent;outline: none;border: none;resize:none;}
+		.list-ul{position: absolute;top:50px;height:50px;}
+		.list-options{float:left;line-height:50px;height:50px;padding-top:10px;}
+		.list-option{width:80px;margin-right:20px;float: left;text-align: center;font-size:14px;border-radius:5px; text-align:center;background-color: #F5F5F5;border: 1px solid #F5F5F5;color: #A5A5A5; font-size: 14px;line-height:28px;height:30px;margin-right: 10px;}
+		.list-scrolls{overflow:scroll;float: left;line-height:50px;height:50px;padding-top:10px;width:calc(100% - 85px);}
+		.list-scroll{width:400%}
+		.list-input-color{width:40px;}
+		.list-colors{overflow:scroll;float:left;height:50px;width:calc(100% - 150px);}
+		.list-color{width:1000%;padding-left: 5px;}
+		.list-color-icon{float: left;height:20px;width:20px;margin-top: 13px;margin-right: 10px;border-radius: 100%;outline: none;border:1px solid #eee;}
+		.list-color-other{float: left;height:22px;width:22px;margin-top: 12px;margin-right: 10px;outline: none;}
+		.color-active{-webkit-box-shadow:0px 0px 10px #bbb;border: 1px #bbb;height:28px;width:28px;margin-top:10px;}
+		.other-active{height:28px;width:28px;margin-top:10px;margin-right:10px;}
+		#color-other{background-image: url(../../image/other.png);background-position: center;background-size: cover;margin-right:0px;}
+		.active{border:#FDDC3C 1px solid;background-color:#FFFFFF;color:#606060;}
+		.list-more{float:left;width:10px;height:30px;}
+		.list-color-more{float: left;width:1px;height:20px;}
+		.list-options-more{ display: -webkit-box; -webkit-box-orient: horizontal; height:40px; margin: 0; padding: 0; }
+		/*.bottom-area{height:40px;width:100%;background-color:#F5F5F5;position: relative;}*/
+		.wordsnum{color:#888}
+		.special-options{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding: 10px 1.5% 10px 1.5%;}
+		.special-option{width:30%;margin:0px 1.5% 10px 1.5%;font-size: 14px;text-align: center;padding-top:10px;padding-bottom: 10px;border: 1px solid;border-radius:5px;overflow: hidden;line-height: 24px;white-space: nowrap;text-overflow: ellipsis;}
+		.special-active{border: 1px solid #FFDC3C;color:#FFDC3C}
+		.special-num{position: absolute;right:15px;line-height:50px;font-size:14px;color:#555;}
+		.confirm-btn{ position: fixed; bottom:0px; width: 100%; height:50px; background-color: #FAFAFA; -webkit-box-shadow:0px -1px 5px #ddd; }
+		.confirm{ color:#555; width: 100%; line-height: 50px; text-align: center; font-size: 16px;
+			background: -webkit-linear-gradient(top,#ffee22, #FFD03C);		}
+	</style>
+</head>
+<body>
+	<div class="main-title">
+		<div class="info">上传照片（已选择0/15）</div>
+	</div>
+	<div class="container">
+		<div class="z_photo">
+			<div class="z_file" onclick="imgAdd()">
+			</div>
+		</div>
+	</div>
+	<div class="form-list">
+		<div class="main-title">车辆信息</div>
+		<div id="type-option">
+			<div class="list-item">
+				<div class="list-title">车辆类型</div>
+				<div class="list-scrolls">
+					<ul class="list-scroll">
+						<li class="list-option active">轿车</li>
+						<li class="list-option">SUV</li>
+						<li class="list-option">MPV</li>
+						<li class="list-option">面包车</li>
+						<li class="list-option">工程车</li>
+						<li class="list-option">客车</li>
+						<li class="list-option">皮卡</li>
+						<li class="list-option">跑车</li>
+						<li class="list-more"></li>
+					</ul>
+				</div>
+				<input id="cartype" type="text" readonly="true" class="list-input" style="display:none">
+			</div>
+		</div>
+		<div class="list-item myborder-bottom myborder-top" tapmode="list-item-active" onclick="selectBrand()">
+			<div class="list-title">品牌型号</div>
+			<img class="list-img" src="../../image/titlebar/right-arrow.png">
+			<input placeholder="请选择" id="carbrand" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">车身颜色</div>
+			<input value="白色" id="carcolor" type="text" readonly="true" class="list-input list-input-color">
+			<div class="list-colors">
+				<div class="list-color">
+					<div class="list-color-icon color-active" readonly="true" style="background-color:#FFFFF0;" name="白色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#515151" name="黑色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#eeeeee" name="银色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#C0C0C0" name="灰色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#DC143C" name="红色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#6495ED" name="蓝色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#CD853F" name="棕色"></div>
+					<div class="list-color-icon" readonly="true" style="background-color:#FFDC3C" name="黄色"></div>
+					<div class="list-color-other" readonly="true" style="background-color:rgba(0,0,0,0)" name="其他" id="color-other"></div>
+					<div class="list-color-more"></div>
+				</div>
+			</div>
+		</div>
+		<div class="list-item myborder-bottom" tapmode="list-item-active" onclick="selectCity()">
+			<div class="list-title">所在城市</div>
+			<img class="list-img" src="../../image/titlebar/right-arrow.png">
+			<input placeholder="请选择" id="carcity" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="list-item myborder-bottom selectdate" tapmode="list-item-active">
+			<div class="list-title">上牌日期</div>
+			<img class="list-img" src="../../image/titlebar/right-arrow.png">
+			<input placeholder="请选择" id="firstdate" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">行驶里程</div>
+			<input placeholder="万公里" type="text" readonly="true" class="list-scale">
+			<input placeholder="最多两位小数" id="carmiles" type="tel" onKeyUp="amount(this)" class="list-input">
+		</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">批发报价</div>
+			<input placeholder="万元" type="text" readonly="true" class="list-scale">
+			<input placeholder="请输入预期价格" id="priceout" type="number" onKeyUp="amount(this)" class="list-input">
+		</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">VIP底价</div>
+			<input placeholder="万元" type="text" readonly="true" class="list-scale">
+			<input placeholder="至少低于批发报价3000元" id="pricein" type="number" onKeyUp="amount(this)" class="list-input">
+		</div>
+		<div class="advice-pricein">VIP底价共享，全城经纪人帮卖，成交效率提高10倍</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">排放标准</div>
+			<input placeholder="国五" id="cardischarge" type="text" style="display:none" class="list-input">
+			<div class="list-scrolls">
+				<ul class="list-scroll" id="discharge-option">
+					<li class="list-option active">国五</li>
+					<li class="list-option">国四</li>
+					<li class="list-option">国三</li>
+					<li class="list-option">国二</li>
+					<li class="list-option">国一</li>
+					<li class="list-more"></li>
+				</ul>
+			</div>
+		</div>
+		<div class="list-item myborder-bottom">
+			<div class="list-title">燃油类型</div>
+			<input id="cargass" type="text" style="display:none" class="list-input">
+			<div class="list-scrolls">
+				<ul class="list-scroll" id="gass-option">
+					<li class="list-option active">汽油</li>
+					<li class="list-option">柴油</li>
+					<li class="list-option">电力</li>
+					<li class="list-option">混动</li>
+					<li class="list-option">燃气</li>
+					<li class="list-more"></li>
+				</ul>
+			</div>
+		</div>
+		<div class="list-item special" tapmode="list-item-active">
+			<div class="list-title">亮点配置</div>
+			<div class="special-num">已选(0/20)</div>
+			<input placeholder="" id="carspecial" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="special-options">
+			<div class="special-option">内饰整洁</div>
+			<div class="special-option">电动后备箱</div>
+			<div class="special-option">多功能方向盘</div>
+			<div class="special-option">动力强劲</div>
+			<div class="special-option">代步省油</div>
+			<div class="special-option">全景天窗</div>
+			<div class="special-option">胎压监测</div>
+			<div class="special-option">倒车影像</div>
+			<div class="special-option">定速巡航</div>
+			<div class="special-option">一键启动</div>
+			<div class="special-option">上坡辅助</div>
+			<div class="special-option">座椅加热</div>
+			<div class="special-option">真皮座椅</div>
+			<div class="special-option">座椅记忆</div>
+			<div class="special-option">自动头灯</div>
+		</div>
+		<div class="main-title">车况描述
+			<div class="wordsnum fr">0/500</div>
+		</div>
+		<div class="list-describe-area">
+			<textarea placeholder="请输入车况具体描述" type="text" readonly="true" class="list-describe myborder-bottom" id="cardescribe" onclick="editdescribe()"></textarea>
+		</div>
+	</div>
+	<div class="confirm-btn uploading" style="display:none">
+		<div class="confirm">上传中，请稍后...</div>
+	</div>
+	<div class="confirm-btn begin" onclick="PrepareUpload()">
+		<div class="confirm">立即发布</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/LCalendar.js" type="text/javascript"></script>
+<script>
+	var User_ID = $api.getStorage("User_ID");
+	var row = {};
+	var img_arr = [];
+	var isSpecialShow = false;
+	var province = "全国",
+		city = "全国";
+	var upload_switch = true;
+	apiready = function() {
+		if (isiPhoneX()) {
+			$(".confirm-btn").height(80);
+		}
+		if (api.pageParam.ID) {
+			load(api.pageParam.ID);
+		}
+		api.addEventListener({
+			name: 'Set_Describe'
+		}, function(ret, err) {
+			setData('cardescribe', ret.value.value);
+		});
+		api.addEventListener({
+			name: 'Set_Date'
+		}, function(ret, err) {
+			setData(ret.value.type, ret.value.value);
+		});
+		api.addEventListener({
+			name: 'Set_Brand'
+		}, function(ret, err) {
+			setData('carbrand', ret.value.value);
+		});
+		api.addEventListener({
+			name: 'Publish_Upload'
+		}, function(ret, err) {
+			PrepareUpload();
+		});
+		$(".z_file").height(api.frameWidth / 4);
+		$(".z_addimg").height(api.frameWidth / 4);
+		$(".list-option").width((api.frameWidth - 125) / 3);
+		setEvent();
+	}
+
+	function load(ID) {
+		api.ajax({
+			url: 'http://www.chekehome.com/public/index.php/getdetail',
+			method: 'post',
+			data: {
+				values: {
+					ID: api.pageParam.ID
+				}
+			}
+		}, function(ret, err) {
+			if (ret) {
+				var fileList;
+				var imgContainer = document.getElementsByClassName('z_photo')[0];
+				var imgArr = [];
+				var max = 15 - document.getElementsByClassName("z_addimg").length;
+				var selectPic = api.require('selectPic');
+				var param = {
+					maxNum: max //用户选择的最多图片张数
+				};
+				imgArr = ret[0].Pic_array.split("-");
+				for (var i = 0; i < imgArr.length; i++) {
+					var imgW = ",w_240";
+					var imgH = ",h_180";
+					var url = "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + imgArr[i] + "?x-oss-process=image/resize,m_fill" + imgH + imgW;
+					imgArr[i] = url;
+					var img = document.createElement("img");
+					var btn = document.getElementsByClassName("z_file")[0];
+					img.setAttribute("src", imgArr[i]);
+					img.setAttribute("class", "z_newimg");
+					var imgAdd = document.createElement("div");
+					imgAdd.setAttribute("class", "z_addimg");
+					imgAdd.appendChild(img);
+					imgContainer.insertBefore(imgAdd, btn);
+					setAttribute();
+					imgRemove();
+				}
+				if (ret[0].Province != ret[0].City) {
+					$("#carcity").val(ret[0].Province + ret[0].City);
+				} else {
+					$("#carcity").val(ret[0].City);
+				}
+				$("#carbrand").val(ret[0].Car_brand);
+				var str = ret[0].Time_license.substring(0, 4) + "年" + ret[0].Time_license.substring(5, 7) + "月"
+				$("#firstdate").val(str);
+				$("#carmiles").val(parseFloat(ret[0].Miles));
+				$("#priceout").val(parseFloat(ret[0].Price_out));
+				$("#pricein").val(parseFloat(ret[0].Price_in));
+				$("#cartype").val(ret[0].Car_type);
+				$("#cargass").val(ret[0].Car_gass);
+				$("#cardischarge").val(ret[0].Discharge);
+				$("#carcolor").val(ret[0].Color);
+				var Special = JSON.parse(ret[0].Special);
+				$(".special-num").html("已选(" + Special.length + "/20)");
+				$(".special-option").each(function() {
+					for (var i = 0; i < Special.length; i++) {
+						if ($(this).html() == Special[i]) {
+							$(this).addClass("special-active");
+							break;
+						}
+					}
+				});
+				$(".list-color-icon").each(function() {
+					if ($(this).attr("name") == ret[0].Color) $(this).addClass("color-active");
+					else {
+						$(this).removeClass("color-active");
+					}
+				});
+				//车辆类型点击事件
+				$("#type-option .list-option").each(function() {
+					if ($(this).html() == ret[0].Car_type) $(this).addClass("active");
+					else $(this).removeClass("active");
+				});
+				//排放类型点击事件
+				$("#discharge-option .list-option").each(function() {
+					if ($(this).html() == ret[0].Discharge) $(this).addClass("active");
+					else $(this).removeClass("active");
+				});
+				//燃油类型点击事件
+				$("#gass-option .list-option").each(function() {
+					if ($(this).html() == ret[0].Car_gass) $(this).addClass("active");
+					else $(this).removeClass("active");
+				});
+				$("#cardescribe").val(ret[0].Description);
+				var _length = $("#cardescribe").val().length;
+				$(".wordsnum").html(_length + '/500');
+			}
+		});
+	}
+
+	function imgAdd() {
+		var fileList;
+		var imgContainer = document.getElementsByClassName('z_photo')[0];
+		var imgArr = [];
+		var max = 15 - document.getElementsByClassName("z_addimg").length;
+		var selectPic = api.require('selectPic');
+		var param = {
+			maxNum: max //用户选择的最多图片张数
+		};
+		selectPic.showPics(param, function(ret, err) {
+			if (isAndroid()) {
+				imgArr = ret.data;
+			} else {
+				var address = ret.data;
+				address = address.substring(2, address.length - 2);
+				imgArr = address.replace(/"/g, "").split(",");
+			}
+			for (var i = 0; i < imgArr.length; i++) {
+				var img = document.createElement("img");
+				var btn = document.getElementsByClassName("z_file")[0];
+				img.setAttribute("src", imgArr[i]);
+				img.setAttribute("class", "z_newimg");
+				var imgAdd = document.createElement("div");
+				imgAdd.setAttribute("class", "z_addimg");
+				imgAdd.appendChild(img);
+				imgContainer.insertBefore(imgAdd, btn);
+				setAttribute();
+				imgRemove();
+			}
+		});
+	}
+
+	function imgRemove() {
+		var imgList = document.getElementsByClassName("z_addimg");
+		var imgContainer = document.getElementsByClassName('z_photo')[0];
+		$(".info").html("上传照片（已选择" + imgList.length + "/15）");
+		if (imgList.length == 15) {
+			$(".z_file").hide();
+		} else {
+			$(".z_file").show();
+		}
+		for (var j = 0; j < imgList.length; j++) {
+			imgList[j].index = j;
+			imgList[j].onclick = function() {
+				var t = this;
+				if (t.index == 0) {
+					api.actionSheet({
+						title: '',
+						cancelTitle: '取消',
+						buttons: ['删除']
+					}, function(ret, err) {
+						if (ret.buttonIndex == 1) {
+							imgContainer.removeChild(t);
+							imgRemove();
+							if (t.index == 0 && document.getElementsByClassName("z_addimg").length > 0) {
+								setImgCover();
+							}
+						}
+					});
+				} else {
+					api.actionSheet({
+						title: '',
+						cancelTitle: '取消',
+						buttons: ['删除', '设为封面', '清空']
+					}, function(ret, err) {
+						if (ret.buttonIndex == 1) {
+							imgContainer.removeChild(t);
+							imgRemove();
+							if (t.index == 0 && document.getElementsByClassName("z_addimg").length > 0) {
+								setImgCover();
+							}
+						}
+						if (ret.buttonIndex == 2) {
+							var tmp = imgList[0].children[0].src;
+							imgList[0].children[0].src = t.children[0].src;
+							t.children[0].src = tmp;
+							imgContainer.insertBefore(t, imgContainer.children[1]);
+						}
+						if (ret.buttonIndex == 3) {
+							RemoveAll();
+						}
+					});
+				}
+
+			}
+		}
+	}
+
+	function RemoveAll() {
+		var imgList = document.getElementsByClassName("z_addimg");
+		var imgContainer = document.getElementsByClassName('z_photo')[0];
+		var length = imgList.length;
+		for (var i = 0; i < length; i++) {
+			imgContainer.removeChild(imgList[0]);
+		}
+		$(".info").html("上传照片（已选择" + imgList.length + "/15）");
+	}
+
+	function amount(th) {
+		th.value = th.value.slice(0, 10);
+		var regStrs = [
+			['^0(\\d+)$', '$1'], //禁止录入整数部分两位以上，但首位为0
+			['[^\\d\\.]+$', ''], //禁止录入任何非数字和点
+			['\\.(\\d?)\\.+', '.$1'], //禁止录入两个以上的点
+			['^(\\d+\\.\\d{2}).+', '$1'] //禁止录入小数点后两位以上
+		];
+		for (i = 0; i < regStrs.length; i++) {
+			var reg = new RegExp(regStrs[i][0]);
+			th.value = th.value.replace(reg, regStrs[i][1]);
+		}
+		if (th.value > 10000) {
+			th.value = th.value / 10000;
+		}
+	}
+
+	function setImgCover() {
+		var cover_img = document.getElementsByClassName("z_addimg")[0];
+		var cover_title = document.createElement("div");
+		cover_title.setAttribute("class", "z_cover");
+		cover_title.innerHTML = "封面";
+		cover_img.appendChild(cover_title);
+	}
+
+	function setAttribute() {
+		$(".z_file").height(api.frameWidth / 4);
+		$(".z_addimg").height(api.frameWidth / 4);
+		$(".z_newimg").css("min-height", api.frameWidth / 4);
+		setImgCover();
+	}
+
+	function setEvent() {
+		//颜色点击事件
+		$(".list-color-icon").click(function() {
+			setData("carcolor", $(this).attr("name"));
+			$(".color-active").removeClass("color-active");
+			$(".other-active").removeClass("other-active");
+			$(this).addClass("color-active");
+		});
+		$(".list-color-other").click(function() {
+			setData("carcolor", $(this).attr("name"));
+			$(".color-active").removeClass("color-active");
+			$(".other-active").removeClass("other-active");
+			$(this).addClass("other-active");
+		});
+		//城市点击事件
+		city = $api.getStorage('Location').city;
+		if (city == "全国") {
+			province = "";
+			city = "";
+		} else {
+			province = $api.getStorage('Location').province;
+			city = $api.getStorage('Location').city;
+			$("#carcity").val(province + city);
+		}
+		//车辆类型点击事件
+		$("#type-option .list-option").click(function() {
+			setData('cartype', $(this).html());
+			$("#type-option .active").removeClass("active");
+			$(this).addClass("active");
+		});
+		//排放类型点击事件
+		$("#discharge-option .list-option").click(function() {
+			setData('cardischarge', $(this).html());
+			$("#discharge-option .active").removeClass("active");
+			$(this).addClass("active");
+		});
+		//燃油类型点击事件
+		$("#gass-option .list-option").click(function() {
+			setData('cargass', $(this).html());
+			$("#gass-option .active").removeClass("active");
+			$(this).addClass("active");
+		});
+		//变速器点击事件
+		$("#transmission-option .list-option").click(function() {
+			setData('cartransmission', $(this).html());
+			$("#transmission-option .active").removeClass("active");
+			$(this).addClass("active");
+		});
+		//车辆用途点击事件
+		$("#usage-option .list-option").click(function() {
+			setData('carusage', $(this).html());
+			$("#usage-option .active").removeClass("active");
+			$(this).addClass("active");
+		});
+		//日期选择事件
+		$(".selectdate").click(function() {
+			var inputid = $(this).children("input").attr('id');
+			api.openFrame({
+				name: 'selectDate',
+				url: './selectDate.html',
+				rect: {
+					x: 0,
+					y: 0,
+					w: 'auto',
+					h: 'auto'
+				},
+				pageParam: {
+					type: inputid
+				},
+				bounces: false,
+				bgColor: 'rgba(255,255,255,0)',
+				vScrollBarEnabled: false,
+				hScrollBarEnabled: false
+			});
+		});
+		$(".carusage").click(function() {
+			$(".usage-active").removeClass("usage-active");
+			$(this).addClass("usage-active");
+		});
+		$(".special-options").hide();
+		$(".special").click(function() {
+			if (isSpecialShow) {
+				isSpecialShow = !isSpecialShow;
+				$(".special-options").hide();
+			} else {
+				isSpecialShow = !isSpecialShow;
+				$(".special-options").show();
+			}
+		});
+		$(".special-option").click(function() {
+			if ($(this).hasClass("special-active")) {
+				$(this).removeClass("special-active")
+			} else {
+				$(this).addClass("special-active")
+			}
+			$(".special-num").html("已选(" + $(".special-active").length + "/20)");
+		});
+		$('#cardescribe').on('keyup', function() {
+			var _length = $(this).val().length;
+			$(".wordsnum").html(_length + '/500');
+		});
+	}
+
+	function setData(id, value) {
+		var input = document.getElementById(id);
+		input.value = value;
+		var _length = $("#cardescribe").val().length;
+		$(".wordsnum").html(_length + '/500');
+	}
+
+	function selectBrand() {
+		api.openWin({
+			name: 'carselect',
+			url: 'carselect/carselect_header.html',
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+		});
+		api.addEventListener({
+			name: 'typeSelected'
+		}, function(ret, err) {
+			api.closeWin({
+				name: 'brandselect'
+			});
+			api.closeWin({
+				name: 'carselect'
+			});
+		});
+
+	}
+
+	function selectCity() {
+		api.addEventListener({
+			name: 'CarCitySelect'
+		}, function(ret, err) {
+			if (ret) {
+				province = ret.value.province;
+				city = ret.value.city;
+				if (province != city) setCity(province + city);
+				else setCity(city);
+				api.removeEventListener({
+					name: 'CarCitySelect'
+				});
+			}
+		});
+		api.openWin({
+			name: 'carcity_header',
+			url: 'carcity/carcity_header.html',
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+		});
+	}
+
+	function setCity(city) {
+		$("#carcity").val(city);
+	}
+
+	function editdescribe() {
+		api.openWin({
+			name: 'cardescribe_header',
+			url: './cardescribe/cardescribe_header.html',
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+			pageParam: {
+				data: $("#cardescribe").val()
+			}
+		});
+	}
+	Date.prototype.Format = function(fmt) { //author: meizz
+		var o = {
+			"M+": this.getMonth() + 1, //月份
+			"d+": this.getDate(), //日
+			"h+": this.getHours(), //小时
+			"m+": this.getMinutes(), //分
+			"s+": this.getSeconds(), //秒
+			"q+": Math.floor((this.getMonth() + 3) / 3), //季度
+			"S": this.getMilliseconds() //毫秒
+		};
+		if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+		for (var k in o)
+			if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+		return fmt;
+	}
+	//生成uuid
+	function uuid(len, radix) {
+		var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+		var uuid = [],
+			i;
+		radix = radix || chars.length;
+		if (len) {
+			// Compact form
+			for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+		} else {
+			// rfc4122, version 4 form
+			var r;
+
+			// rfc4122 requires these characters
+			uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+			uuid[14] = '4';
+
+			// Fill in random data.  At i==19 set the high bits of clock sequence as
+			// per rfc4122, sec. 4.1.5
+			for (i = 0; i < 36; i++) {
+				if (!uuid[i]) {
+					r = 0 | Math.random() * 16;
+					uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+				}
+			}
+		}
+		return uuid.join('');
+	}
+
+	function PrepareUpload() {
+		var date = new Date();
+		var timestamp = new Date().getTime();
+		var curr_time = new Date().Format("yyyy-MM-dd hh:mm:ss");
+		if (api.pageParam.ID) Publish_ID = api.pageParam.ID;
+		else Publish_ID = uuid(10, 32);
+		row = {};
+		var special = [];
+		$(".special-active").each(function() {
+			special.push($(this).html());
+		});
+		row.Special = JSON.stringify(special);
+		row.Time_update = curr_time;
+		row.Publish_ID = Publish_ID;
+		row.User_ID = User_ID;
+		var imgList = document.getElementsByClassName("z_newimg");
+		if (imgList.length < 3) {
+			api.toast({
+				msg: "请至少选择三张照片",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#carbrand").val()) {
+			row.Title = $("#carbrand").val();
+			row.Car_brand = $("#carbrand").val();
+		} else {
+			api.toast({
+				msg: "请填写品牌型号",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#carcity").val()) {
+			row.Province = province;
+			row.City = city;
+		} else {
+			api.toast({
+				msg: "请选择所在城市",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#firstdate").val()) {
+			var str = $("#firstdate").val();
+			str = str.replace("年", "-");
+			str = str.replace("月", "-01");
+			row.Time_license = str;
+		} else {
+			api.toast({
+				msg: "请填写上牌日期",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#carmiles").val()) {
+			row.Miles = $("#carmiles").val();
+		} else {
+			api.toast({
+				msg: "请填写行驶里程",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#priceout").val()) {
+			row.Price_out = $("#priceout").val();
+		} else {
+			api.toast({
+				msg: "请填写对外报价",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#pricein").val()) {
+			if ($("#pricein").val() > $("#priceout").val() - 0.3) {
+				api.toast({
+					msg: "VIP底价至少低于对外报价3000元",
+					duration: 2000,
+					location: 'middle'
+				});
+				return;
+			} else {
+				row.Price_in = $("#pricein").val();
+			}
+		} else {
+			api.toast({
+				msg: "请填写VIP底价",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if ($("#cartype").val()) {
+			row.Car_type = $("#cartype").val();
+		} else {
+			row.Car_type = "轿车";
+		}
+		if ($("#cargass").val()) {
+			row.Car_gass = $("#cargass").val();
+		} else {
+			row.Car_gass = "汽油";
+		}
+		if ($("#cardischarge").val()) {
+			row.Discharge = $("#cardischarge").val();
+		} else {
+			row.Discharge = "国五";
+		}
+
+		if ($("#carcolor").val()) {
+			row.Color = $("#carcolor").val();
+		} else {
+			row.Color = "其他";
+		}
+
+		if ($("#cardescribe").val()) {
+			row.Description = $("#cardescribe").val();
+		} else {
+			api.toast({
+				msg: "请填写车况描述",
+				duration: 2000,
+				location: 'middle'
+			});
+			return;
+		}
+		if (upload_switch) {
+			upload_switch = false;
+			Upload(Publish_ID);
+		}
+	}
+
+	function Upload(Publish_ID) {
+		$(".uploading").show();
+		$(".begin").hide();
+		//监听上传完成时间
+		api.addEventListener({
+			name: 'img_finish'
+		}, function(ret, err) {
+			row.Pic_add = img_arr[0];
+			row.Pic_array = img_arr.join("-");
+			row.Selling = "在售";
+			if (api.pageParam.ID) {
+				api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/editpublish',
+					method: 'post',
+					data: {
+						values: row
+					}
+				}, function(ret, err) {
+					if (ret) {
+						FinishUpload();
+						alert("更新成功！");
+						api.sendEvent({
+							name: 'publish_updated',
+						});
+						api.sendEvent({
+							name: 'publish_success'
+						});
+					} else {
+						FinishUpload();
+						api.toast({
+							msg: '服务器未响应',
+							duration: 2000,
+							location: 'bottom'
+						});
+					}
+				});
+			} else {
+				api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/publish',
+					method: 'post',
+					data: {
+						values: row
+					}
+				}, function(ret, err) {
+					if (ret) {
+						FinishUpload();
+						alert("发布成功！");
+						api.sendEvent({
+							name: 'publish_updated',
+						});
+						api.sendEvent({
+							name: 'publish_success'
+						});
+					} else {
+						FinishUpload();
+						api.toast({
+							msg: '服务器未响应',
+							duration: 2000,
+							location: 'bottom'
+						});
+					}
+				});
+			}
+		});
+		api.showProgress({
+			style: 'default',
+			animationType: 'fade',
+			title: '正在上传...',
+			text: '请稍后',
+			modal: true
+		});
+		var url_arr = [];
+		$(".z_newimg").each(function() {
+			var url = $(this).attr("src");
+			url_arr.push(url);
+		});
+		var aliyunOSS = api.require('aliyunOSS');
+		aliyunOSS.initOSSClient({
+			endpoint: 'https://oss-cn-hangzhou.aliyuncs.com',
+			accessKeyId: 'LTAIycPWB6k789IZ',
+			accessKeySecret: "EtkQfEjnPkxE2WLv2GZv5d5ZDAVEH8",
+		}, function(ret, err) {
+			if (ret) {
+				var imgList = document.getElementsByClassName("z_newimg");
+				img_arr = [];
+				var upload_success = 0;
+				api.addEventListener({
+					name: 'imguploaded'
+				}, function(ret, err) {
+					if (upload_success == url_arr.length) return;
+					var str = "(" + (upload_success + 1) + "/" + url_arr.length + ")";
+					api.showProgress({
+						style: 'default',
+						animationType: 'fade',
+						title: "上传图片...",
+						text: str,
+						modal: true
+					});
+					var url = url_arr[upload_success];
+					if (!(url.indexOf('http') == 0)) {
+						var timestamp = new Date().getTime();
+						var filename = 'publish/' + Publish_ID + '/' + timestamp + '.jpg';
+						img_arr.push(filename);
+						var imageFilter = api.require('imageFilter');
+						imageFilter.compress({
+							img: url,
+							scale: 0.8,
+							save: {
+								album: false,
+								imgPath: "fs://",
+								imgName: timestamp + '.jpg'
+							},
+							quality: 0.8
+						}, function(ret, err) {
+							if (ret.status) {
+								var aliyunOSS = api.require('aliyunOSS');
+								aliyunOSS.upload({
+									file: "fs://" + timestamp + ".jpg",
+									bucketName: "cheke-oss",
+									objectKey: filename
+								}, function(ret, err) {
+									if (ret && ret.oper) {
+										if (ret.oper == "complete") {
+											api.sendEvent({
+												name: 'imguploaded'
+											});
+										}
+									}
+								});
+							} else {
+								api.hideProgress();
+								return false;
+							}
+						});
+					} else {
+						var name = url.split("?")[0].split("/");
+						var filename = name[3] + "/" + name[4] + "/" + name[5];
+						img_arr.push(filename);
+						api.sendEvent({
+							name: 'imguploaded'
+						});
+					}
+					upload_success++;
+					if (upload_success == url_arr.length) {
+						api.removeEventListener({
+							name: 'imguploaded'
+						});
+						api.sendEvent({
+							name: 'img_finish',
+						});
+						return;
+					}
+				});
+				api.sendEvent({
+					name: 'imguploaded',
+				});
+			} else {
+				// console.log(err.msg)
+			}
+		});
+	}
+
+	function FinishUpload() {
+		api.hideProgress();
+		upload_switch = true;
+		$(".begin").show();
+		$(".uploading").hide();
+	}
+</script>
+
+</html>

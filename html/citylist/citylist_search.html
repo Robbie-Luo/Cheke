@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title></title>
+		<script type="text/javascript" src="../../script/vue.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+        .list-item{ width: 100%; min-height:50px; position: relative; }
+        .list-name{ line-height:50px; font-size: 14px;padding-left: 20px; white-space: nowrap; text-overflow: ellipsis; }
+        #main,[v-cloak] { display: none; }
+	  </style>
+	</head>
+	<body>
+    <div id="main">
+      <div class="list-item myborder-bottom" v-if="!cities.length"><div class="list-name">无结果</div></div>
+      <div class="list-item myborder-bottom" v-for="city in cities" v-on:click="SendCity(city.name)">
+        <div class="list-name">{{city.name}}</div>
+      </div>
+    </div>
+	</body>
+	<script src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script>
+  var vm;
+	function GetProvince(name){
+		var map = api.require('bMap');
+		map.getOfflineCityList(function(ret){
+			if(ret.status){
+					var allcities=[];
+					for(var i=1;i<ret.records.length;i++){
+						if(ret.records[i].cityID>3000) break;
+						allcities.push(ret.records[i]);
+					}
+					for(var i=0;i<allcities.length;i++){
+						var p=allcities[i];
+						if(p.name==name){
+							api.sendEvent({
+									name: 'find_cityprovince',
+									extra: {
+											province: p.name,
+											city: name
+									}
+							});
+							return;
+						}
+						else if(p.childCities){
+							for(var j=0;j<p.childCities.length;j++){
+								var c=p.childCities[j];
+								if(c.name==name){
+									api.sendEvent({
+											name: 'find_cityprovince',
+											extra: {
+													province: p.name,
+													city: name
+											}
+									});
+									return;
+								}
+							}
+						}
+					}
+			}
+		});
+	}
+	apiready=function(){
+    var map = api.require('bMap');
+    map.searchCityByName({
+        name: api.pageParam.value
+     }, function(ret) {
+        var cities=[];
+        if (ret.status) {
+          for(var i=0;i<ret.records.length;i++){
+            var city=ret.records[i];
+            if(city.cityID!=1&&city.cityID<3000&&city.cityType!=1){
+              cities.push(ret.records[i]);
+            }
+					}
+        }
+        vm = new Vue({
+          el: '#main',
+          data: {
+              cities:cities
+          },
+          mounted: function() {
+            $("#main").show();
+          },
+          methods:{
+						SendCity:function(name){
+							api.addEventListener({
+									name: 'find_cityprovince'
+							}, function(ret, err){
+								api.sendEvent({
+									 name: 'CitySelect',
+									 extra: {
+											 province: ret.value.province,
+											 city: ret.value.city
+									 }
+							 });
+							 api.closeWin({
+									 name: 'citylist_header'
+							 });
+
+							});
+							GetProvince(name);
+           }
+         }
+        });
+    });
+    api.addEventListener({
+        name: 'CitySearch'
+     }, function(ret, err){
+        if( ret ){
+             dosearch(ret.value.value);
+        }
+    });
+	}
+  function dosearch(value){
+    var map = api.require('bMap');
+    map.searchCityByName({
+        name:value
+     }, function(ret) {
+        var cities=[];
+        if (ret.status) {
+          for(var i=0;i<ret.records.length;i++){
+            var city=ret.records[i];
+            if(city.cityID!=1&&city.cityID<3000&&city.cityType!=1){
+              cities.push(ret.records[i]);
+            }
+					}
+        }
+        vm.cities=cities;
+    });
+  }
+	</script>
+</html>

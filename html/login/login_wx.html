@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="copyright" content="www.apicloud.com" />
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>登陆</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/login.css" />
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+	 	html { position: fixed;top:0;left: 0; height:100%; overflow: hidden; }
+		body{ overflow: hidden; }
+		.backimg { width:100%; background: no-repeat top; background-image: url("../../image/login/login_bg.jpg"); background-color: #FFFFFF; background-size:cover; background-attachment: fixed; }
+		.fl{float: left;} .fr{float: right;} .left_back { position: absolute; left: 20px; top: 40px; height: 30px; }
+		.login{ width:100%; position:absolute; top:0; }
+		.login_welcome{ font-size: 45px; padding-left: 15%; width:100%; color:#f5f5f5; }
+		.login_form { margin-left: 15%; margin-right: 15%; width: 70%; text-align: center; }
+		.login_clear{ position: absolute; height:15px; width: 15px; right: 5px; bottom: 12px; background-image: url(../../image/login/goback.png); background-size: cover; background-repeat: no-repeat; display: none; } .login_code { float: right; width:100px; height: 30px; line-height: 30px; background: #FDDC3C; color: #555; font-size: 13px; text-align: center; border-radius:15px; }
+		.login_submit { position: relative; width: 100%; height: 40px; color: #e0e0e0; margin-top: 40px; background: #FDDC3C; font-size: 18px; border-radius: 20px; cursor: pointer;  }
+		.login_more{ width:100%; text-align: center; font-size: 20px; color: #fff; padding-top: 30px; }
+		.login_more_btn{ width:80%; margin-left:10%; margin-right: 10%; }
+		.divider{ color:#F5F5F5; margin: 0 auto; font-size: 20px; line-height: 60px; width:40%; }
+		.divider-line{ width:30%; height:1px; margin-top: 30px; background-color: #F5F5F5; }
+		ul {display: -webkit-box; display: -webkit-flex; display: flex; }
+		li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1; }
+		.login_weixin {background: url(../../image/login/login_wechat.png) no-repeat center 4px; }
+		.login_qq {background: url(../../image/login/login_qq.png) no-repeat center 4px; }
+		.login_weibo {background: url(../../image/login/login_weibo.png) no-repeat center 4px; }
+		.login_btn {width: 99%; height: 100px;padding-top: 25px;background-position-y: 4px; background-size: 60px;
+		font-size: 12px; color: #515151;}
+		#login_txt{color:#515151;}
+	</style>
+</head>
+<body>
+		<div class="backimg"></div>
+		<div class="login">
+			<img src="../../image/login/login_back.png" class="left_back" onclick="goback()">
+			<div class="login_welcome">绑定<br>手机号码</div>
+      <div class="login_form">
+        <div class="login_row">
+          <svg class="login_icon name svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8" />
+          </svg>
+          <input type="tel" class="login_input_name myinput" placeholder="请输入手机号" onKeyUp="value=value.replace(/[^\d]/g,'');value =value.slice(0,11);"/>
+					<button type="button" class="login_clear"></button>
+        </div>
+        <div class="login_row">
+          <svg class="login_icon pass svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 20,20 20,8 0,8z M10,13 10,16z M4,8 a6,8 0 0,1 12,0" />
+          </svg>
+          <input type="number" class="login_input_pass myinput" placeholder="请输入验证码" onKeyUp="value=value.replace(/[^\d]/g,'');value =value.slice(0,6);"/>
+					<button type="button" class="login_code" onclick="SendMessage()">发送验证码</button>
+        </div>
+        <button type="button" class="login_submit"><span id="login_txt">确定</span></button>
+      </div>
+    </div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+	var Time_Count=60,Code;
+	function goback() {
+		api.closeWin({
+			name: 'login_WX'
+		});
+	};
+	function setUserinfo(ret){
+		$api.setStorage('User_ID', ret.ID);
+		$api.setStorage('User_Info',ret);
+		$api.setStorage('login_status',true);
+		$api.setStorage('VIP',ret.VIP);
+		api.sendEvent({
+				name: 'loginSuccess',
+				extra: {
+						User_ID: ret.ID,
+						User_Info: ret,
+						login_status:true
+				}
+		});
+		api.closeToWin({
+		    name: 'root',
+				animation:{
+					type:"push",                //动画类型（详见动画类型常量）
+				}
+		});
+	}
+	//发送验证码
+	function SendMessage(){
+		var phonenum=$(".login_input_name").val();
+		if(phonenum.length!=11){
+			api.toast({
+			    msg: '请输入正确的手机号码',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			$(".login_input_name").focus();
+			return;
+		}
+		Tick();
+		Code="";
+		for(var i=0;i<6;i++){
+			Code+=Math.floor(Math.random()*10);
+		}
+		var row={};
+		row.phone=phonenum;
+		row.code=Code;
+		api.ajax({
+					url: 'http://www.chekehome.com/SmsDemo/SmsDemo.php/?phone='+phonenum+'&code='+Code,
+			}, function(ret, err) {
+						api.toast({
+						    msg: '验证码已发送',
+						    duration: 2000,
+						    location: 'bottom'
+						});
+		});
+	}
+	//一分钟倒计时
+	function Tick(){
+		$(".login_code").html(Time_Count+"s");
+		$(".login_code").attr("disabled","true");
+			var int=setInterval(function(){
+					if(Time_Count==1) {
+						window.clearInterval(int);
+						$(".login_code").html("发送验证码");
+						Time_Count=60;
+						$(".login_code").removeAttr("disabled");
+						return;
+					}
+					Time_Count--;
+					$(".login_code").html(Time_Count+"s");
+			},1000);
+	}
+	function WX_newuser(){
+		var wx = api.require('wx');
+		var ret=api.pageParam.ret;
+  	var url=ret.headimgurl;
+		var name=ret.nickname;
+		var row={};
+		row.Phone=$(".login_input_name").val();
+		row.Name=ret.nickname.substring(0,10);
+		row.WX_ID=api.pageParam.WX_ID;
+		row.Picture="user/user_default.png";
+		row.WX_UID = ret.unionid; //利用UNION_ID进行标识
+		api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/AddNewUser',
+					method: 'post',
+					data: {
+								values: row
+						}
+			}, function(ret, err) {
+				if(ret){
+					UploadAvatar(ret,url);
+				}
+		});
+  }
+	//手机号码登陆
+	function phone_login(){
+			var value=$(".login_input_name").val();
+			var pass=$(".login_input_pass").val();
+			if(!pass){
+				api.toast({
+				    msg: '请输入验证码',
+				    duration: 2000,
+				    location: 'bottom'
+				});
+				$(".login_input_pass").focus();
+				return false;
+			}
+			if(pass!=Code){
+				api.toast({
+				    msg: '验证码错误！',
+				    duration: 2000,
+				    location: 'bottom'
+				});
+				$(".login_input_pass").focus();
+				return false;
+			}
+			//判断是否是新手机号
+			api.ajax({
+			    url: 'http://www.chekehome.com/public/index.php/PhoneLogin',
+			    method: 'post',
+			    data: {
+			        values: {
+			            Phone: value,
+			        },
+			    }
+		 	},function(ret, err){
+		    if (ret.status) {
+					var row={};
+					row.ID=ret.ID;
+					row.WX_ID=api.pageParam.WX_ID;
+					api.ajax({
+								url: 'http://www.chekehome.com/public/index.php/UpdateUserInfo',
+								method: 'post',
+								data: {
+											values: row
+									}
+						}, function(ret, err) {
+							if(ret){
+								setUserinfo(ret);
+							}
+						});
+				}
+				else{
+					WX_newuser();
+				}
+			});
+	}
+	function UploadAvatar(ret,url){
+				var id=ret.ID;
+	      var filename='user/'+id+'/avater.jpg';
+				var aliyunOSS = api.require('aliyunOSS');
+		    aliyunOSS.initOSSClient({
+		        endpoint : 'https://oss-cn-hangzhou.aliyuncs.com',
+		        accessKeyId : 'LTAIycPWB6k789IZ',
+		        accessKeySecret:"EtkQfEjnPkxE2WLv2GZv5d5ZDAVEH8",
+		    },function(ret,err){
+		      if(ret){
+						api.download({
+						    url: url,
+						    savePath: 'fs://avater.jpg',
+						    report: true,
+						    cache: true,
+						    allowResume: true
+					 	 },function(ret, err){
+						    if(ret.state == 1){
+									var aliyunOSS = api.require('aliyunOSS');
+			            aliyunOSS.upload({
+			              file : 'fs://avater.jpg',
+			              bucketName : "cheke-oss",
+			              objectKey :filename
+									 }, function(ret, err) {
+										if(ret.oper=="complete"){
+											var row={};
+											row.ID=id;
+											row.Picture='user/'+id+'/avater.jpg';
+											api.ajax({
+														url: 'http://www.chekehome.com/public/index.php/UpdateUserInfo',
+														method: 'post',
+														data: {
+																	values: row
+															}
+												}, function(ret, err) {
+													  setUserinfo(ret);
+											});
+										}
+									});
+						    }else{
+
+						    }
+						});
+		      }
+		    });
+
+	}
+	apiready = function() {
+			$(".login_welcome").css("padding-top",0.3*api.frameWidth);
+			$(".backimg").width(api.frameWidth);
+			$(".backimg").height(api.frameHeight+10);
+			$(".login").height(api.frameHeight+10);
+			var animating = false,
+					submitPhase1 = 1100,
+					submitPhase2 = 400,
+					logoutPhase1 = 800,
+					$login = $(".login"),
+					$app = $(".app");
+			$(".login_clear").click(function(){
+					$(".login_input_name").val("");
+					$(".login_input_name").focus();
+					$(this).hide();
+			});
+			$(".login_input_name").on('keyup',function(){
+					if($(".login_input_name").val()){
+							$(".login_clear").show();
+					}
+					else{
+							$(".login_clear").hide();
+					}
+			});
+			$(document).on("click", ".login_submit", function(e) {
+					var phonenum=$(".login_input_name").val();
+					if(phonenum.length!=11){
+						api.toast({
+								msg: '请输入正确的手机号码',
+								duration: 2000,
+								location: 'bottom'
+						});
+						$(".login_input_name").focus();
+						return;
+					}
+					phone_login();
+			});
+	}
+</script>
+
+</html>

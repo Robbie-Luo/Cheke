@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+  	<script src="../../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        html,body { width: 100%; height: 100%; position: relative; } .fr{float: right;} .fl{float: left;}
+         #myheader{height:55px;overflow: hidden;text-align: center;background-color:#FDDC3C;}
+        .back {width:100px;height:40px;position: absolute;left:0px;padding-left: 0px;}
+        .backimg { float: left; height: 16px;padding-top: 18px;padding-bottom:17px;margin-top:10px; }
+        /*.finish-btn{position: absolute;right:10px;line-height: 50px;padding-right:5px;font-size: 16px;color:#515151;margin-top:10px;}*/
+        .mytitle{ display: inline-block; margin-top:10px; font-size: 16px; color: #515151; text-align: center; line-height: 50px; }
+        .explain-title{text-align: center;line-height:40px;font-size:20px;color:#F70;font-weight: bold;padding-top: 10px;}
+        .explain-text{text-indent:25px;line-height:30px;font-size:14px;color:#555;padding:0 10px}
+        .confirm-btn{ position: fixed; bottom:0px; line-height: 50px;height:50px; font-size: 16px; color:#515151; width: 100%; text-align: center; background-color: #FDDC3C;}
+    </style>
+</head>
+<body leftmargin="0" topmargin="0">
+  <div class="explain-title">仲裁注意事项</div>
+  <div class="explain-text">1.双方因车况、价格、手续等异议不能成交，请留存相关证据材料并联系客服人员进行沟通仲裁；</div>
+<div class="explain-text">2.仲裁结果1个工作日内通知双方，平台收取违约方500元/台手续费，剩余定金赔付给另一方；<div style="color:red">申请仲裁后不可再申请退款；</div></div>
+<div class="explain-text">3.仲裁原则按照市场通行的可过户车手续、二手车商同行公认的车况、手续等标准处理，最终解释权归客服仲裁委员会。</div>
+<div class="confirm-btn" onclick="call_number('17705656669')">联系客服仲裁</div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript">
+function arbitrate(){
+  api.ajax({
+  			url: 'http://www.chekehome.com/public/index.php/arbitration',
+  			method: 'post',
+  			data: {
+          values: {
+            Order_ID:api.pageParam.Order_ID
+          },
+
+  				}
+   }, function(ret, err) {
+  	 if(ret){
+       api.sendEvent({
+           name: 'Order_Updated',
+       });
+       api.sendEvent({
+           name: 'Order_Index',
+           extra: {
+               Index:0,
+           }
+       });
+       api.toast({
+           msg: '请耐心等待仲裁',
+           duration: 2000,
+           location: 'bottom'
+       });
+  	 }
+  });
+    // api.closeWin({
+    //     name: 'arbitrate_header',
+    // });
+}
+function call_number(phone) {
+  api.call({
+    type: 'tel_prompt',
+    number: phone
+  });
+  // arbitrate();
+}
+apiready=function(){
+
+}
+</script>
+</html>

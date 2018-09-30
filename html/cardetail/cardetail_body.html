@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no">
+	<title>车客二手车</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link type="text/css" rel="stylesheet" href="../../css/idangerous.swiper.css">
+	<link type="text/css" rel="stylesheet" href="../../css/gallery-app.css">
+	<link rel="stylesheet" href="../../css/idangerous.swiper.css">
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		html, body {width: 100%;min-height: 100%;background-color: #fff;}
+		.h20 {height: 10px;background-color: #f5f5f5;}
+		.h1 {height: 1px;margin-left: 15px;background-color: #fff;}
+		.fr {float: right;}.fl {float: left;}
+		.inwrap {padding-right: 15px;padding-left: 15px;}
+		.title{color: #444;font-size:16px;height:50px;line-height:50px;}
+		.maintitle {color: #444;padding-top: 15px;font-size:20px;font-weight:700;text-align: justify;word-wrap:break-word; text-overflow: ellipsis; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+		.price-area{height:50px;width:100%;line-height: 50px;font-size:22px;}
+		.priceout{display: inline-block;float: left;font-size: 24px;color: #F60;position: relative;right:2px;}
+		.priceout-symbol{font-size: 20px;color: #F60;position: relative;left:5px;}
+		/* .{float: left;color:#666;font-size: 16px;padding-left:5px;height:50px;line-height: 50px} */
+		.pricein{background-color:#eee;border-radius: 4px;height:30px;padding: 0 10px;line-height:30px;margin-top:10px;margin-left:5px;float:left;font-size:14px;text-align: center;color:#f60;font-weight: bold;	}
+		.isvip{display: none;}
+		.notvip{display: none;}
+		.view-info{width:100%;height:30px;text-align: left;display: inline-block;}
+		.view-img{float:left;height:20px;width: 20px;margin-top: 5px;padding-right:5px;padding-left: 10px;display: inline-block;}
+		.view-text{line-height:30px;color:#888;font-size:12px;float:left;}
+		.location-img{height:20px;width: 20px;margin-top: 5px;float:left;padding-right:3px;display: inline-block;}
+		.location-text{line-height:30px;font-size: 12px;color:#888;float:left;}
+		.carinfo .title{margin-bottom: 15px;}
+		.info-title{font-weight:bold;color:#444}
+		.info-date{float: right;color: #888;font-size:12px;}
+		.info-item{padding-top: 0px;padding-bottom:10px;}
+    .info-item ul {display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+    .info-item li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;text-align: center;}
+		.info-item li div:first-child{line-height:30px;font-size: 15px;color:#666}
+		.info-item li div:last-child{line-height:30px;font-size:13px;color:#888;}
+		.special{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding: 10px 0 10px 0}
+		.special-item{width:28.3%;margin:10px 2% 10px 2%;font-size:14px;text-align: center;padding: 10px 0 10px 0;border: 1px solid;border-radius:5px;overflow: hidden;line-height: 24px;white-space: nowrap;text-overflow: ellipsis;}
+		.describe{padding:10px 10px 10px 10px;margin-bottom: 10px;font-size:18px;line-height:26px;color:#555}
+		/*.describe-part{word-wrap: normal; text-overflow: ellipsis; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;overflow: hidden;}*/
+		.describe-part{height:94px;overflow: hidden;}
+		.describe-more{height:40px;padding-bottom: 10px;padding-top: 10px;}
+		.describe-more p{width:200px;color:#FFDC3C;text-align: center;font-size: 28px;line-height: 60px;border-radius: 30px;border: 1px #FFDC3C solid;margin: 0 auto;transform: scale(0.5);position: relative;bottom:15px;}
+		.seller{position: relative;width: 100%;height: 100px;}
+		.seller-arrow{position: absolute;right:15px;top:40px;width:20px;height: 20px;}
+		.seller-image{position: absolute;left:15px;top:20px;height:60px;width:60px;border-radius: 100%;}
+		.seller-info{position: absolute;left:90px;top:20px;height:60px;width: calc(100% - 140px)}
+		.seller-name{position: absolute;left:0;top:0;width:100%;height:30px;line-height:30px;font-size:18px;margin-bottom: 5px;color:#444;}
+		.seller-selling{position: absolute;left:0;bottom:0;color:#666;font-size:14px;line-height:26px;height:26px;background-color: #FFDC3C;border-radius:5px;padding-left: 10px;padding-right: 10px;}
+		.seller-active{background-color: #f5f5f5;}
+		.detail-img{width:100%;display:inline-block;margin: 0 auto;vertical-align:middle;}
+		.swiper-slide{overflow: hidden;display: none;}
+		.CarRelated { width:96vw; padding: 2vw;display: flex;flex-direction: row;flex-wrap: wrap;}
+		.CarRelated-item{width: 44vw;margin:2vw;padding-bottom: 10px; background-color:#fff;border-radius: 2vw;-webkit-box-shadow:5px 5px 10px #bbb;}
+		.no-car{height:100px;line-height: 100px;color:#aaa;text-align: center;}
+		.photo{display: block;width: 44vw;height:33vw;background-color:#FAFAFA;border-radius:2vw 2vw 0 0;}
+		.CarRelated-maintitle{font-size:3.5vw;line-height:6vw;padding:1vw 2vw;color: #444;text-align: justify;word-wrap:normal;word-break: break-all;text-overflow: clip; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+		.CarRelated-sale{color: #666;line-height: 6vw;padding: 0 2vw;}
+		.CarRelated-symbol { color: #f60;float:left;font-size:5vw;}
+		.CarRelated-price {color: #f60;font-size:5vw;}
+		.CarRelated-city{float: right;color: #666; height:16px;font-size:3vw;}
+		.footer {height:50px; width: 100%;background-color: #fff;text-align: center;overflow: hidden;position: fixed;bottom: 0;-webkit-box-shadow:0px -1px 5px #eee;display: none;}
+		.footer-common ul {text-align: center;float:left;width:100%;background-color: #fff;display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+		.footer-common li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;}
+		.footer-deal ul {text-align: center;float:left;width:100%;background-color: #fff;display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+		.footer-deal li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;}
+		.footer-self ul {text-align: center;float:left;width:100%;background-color: #fff;display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+		.footer-self li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;}
+		.footer-selforder ul {text-align: center;float:left;width:100%;background-color: #fff;display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+		.footer-selforder li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;}
+		.footer-sold ul {text-align: center;float:left;width:100%;background-color: #fff;display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+		.footer-sold li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;}
+		.callbtn{background: -webkit-linear-gradient(left,#FFDC3C,#ffdd00);}
+		.orderbtn{background: -webkit-linear-gradient(left,#FF9F25,#FF5715);}
+		.footerline{display: inline-block;line-height:50px;}
+		.footerimg{height:18px;padding:16px 3px 0px 0px;float:left;}
+		.favorimg{height:18px;padding:16px 3px 0px 0px;float:left;}
+		.footeritem{line-height:50px;font-size:16px;}
+		.white{color:#FAFAFA}
+		.footer-common{display:none}
+		.footer-self{display:none}
+		.bottom-area{height:80px;width: 100%}
+		.hide{display:none}
+	</style>
+</head>
+
+<body>
+	<div class="swiper-container">
+		<ul class="swiper-wrapper" id="swiper">
+			<li class="swiper-slide" v-for="pd in pdlist" v-cloak>
+				<img :src='pd' @load="imageLoaded" class="detail-img">
+			</li>
+		</ul>
+		<div class="pagination"></div>
+	</div>
+	<div id="datalist" v-cloak>
+		<div class="brief inwrap" v-cloak>
+			<div class="maintitle">{{Publish.Title}}</div>
+			<div class="price-area">
+				<div class="priceout">
+					<span class="priceout-symbol">¥</span>
+					{{Publish.Price_out}}万
+				</div>
+				<div class="pricein notvip" onclick="addvip()">
+				 查看底价
+				</div>
+				<div class="pricein isvip">
+					VIP价：¥{{Publish.Price_in}}万
+				</div>
+			</div>
+			<div class="view-info">
+				<img src="../../image/titlebar/location.png" class="location-img">
+				<div class="location-text">{{Publish.City}}</div>
+				<img src="../../image/titlebar/see.png" class="view-img">
+				<span class="pageview view-text">浏览量：{{Publish.PageView}}</span>
+			</div>
+		</div>
+		<div class="h20"></div>
+		<div class="carinfo inwrap">
+			<div class="title myborder-bottom">
+				<span class="info-title">车辆信息</span>
+				<span class="info-date">{{getupdate(Publish.Time_update)}}更新</span>
+			</div>
+			<div class="info-item">
+				<ul>
+					<li>
+						<div>上牌日期</div>
+						<div>{{Translate(Publish.Time_license)}}</div>
+					</li>
+					<li>
+						<div>排放标准</div>
+						<div>{{Publish.Discharge}}</div>
+					</li>
+					<li>
+						<div>行驶里程</div>
+						<div>{{parseFloat(Publish.Miles)}}万</div>
+					</li>
+				</ul>
+			</div>
+			<div class="info-item">
+				<ul>
+					<li>
+						<div>车辆类型</div>
+						<div>{{Publish.Car_type}}</div>
+					</li>
+					<li>
+						<div>车身颜色</div>
+						<div>{{Publish.Color}}</div>
+					</li>
+
+					<li>
+						<div>燃油类型</div>
+						<div>{{Publish.Car_gass}}</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="h20" v-if="GetSpecial(Publish.Special).length"></div>
+		<div class="carspecial inwrap" v-if="GetSpecial(Publish.Special).length">
+			<div class="title myborder-bottom">
+				<span class="info-title">亮点配置</span>
+			</div>
+			<div class="special">
+				<div class="special-item" v-for="Special in GetSpecial(Publish.Special)">
+					{{Special}}
+				</div>
+			</div>
+		</div>
+		<div class="h20"></div>
+		<div class="cardescribe inwrap">
+			<div class="title myborder-bottom">
+				<span class="info-title">车况描述</span>
+			</div>
+			<div class="describe" v-html="ShowText(Publish.Description)" :class="PartText(Publish.Description)"></div>
+			<div class="describe-more" onclick="showmore()" v-show="GetLineNumber(Publish.Description)>4">
+				<p class="describe-btn">查看更多</p>
+			</div>
+		</div>
+		<div class="h20"></div>
+		<div class="carseller hightitem">
+			<div class="seller myborder-bottom" tapmode="seller-active" v-on:click="openSellerDetail(Publish.User_ID)">
+				<img :src="geturl(Publish.User_Pic)" class="seller-image">
+				<img src="../../image/titlebar/right.png" class="seller-arrow">
+				<div class="seller-info">
+					<div class="seller-name overflow-text">{{Publish.User_name}}</div>
+					<div class="seller-selling">在售车源：{{Publish.User_Selling}}台</div>
+				</div>
+			</div>
+		</div>
+		<div class="h20"></div>
+	</div>
+	<div class="inwrap" v-cloak>
+		<div class="title myborder-bottom">
+			<span class="info-title">相关车源</span>
+		</div>
+	</div>
+	<div class="CarRelated" id="CarRelated" v-cloak>
+		<div class="no-car" v-show="carlist.length==0 " v-cloak>还没有相关车源</div>
+		<div class="CarRelated-item" v-for="(car,index) in carlist" v-if="index<6" v-on:click="openDetail(car)" v-cloak>
+			<img :src="CarImg(car)" class="photo">
+			<div class="CarRelated-maintitle">{{car.Title}}</div>
+			<div class="CarRelated-sale">
+				<span class="CarRelated-symbol">¥</span>
+				<span class="CarRelated-price">{{car.Price_out}}万</span>
+				<div class="CarRelated-city">{{car.City}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="bottom-area"></div>
+	<div class="footer">
+		<div class="footer-common">
+			<ul>
+				<li class="messagebtn" onclick="communicate()">
+					<div class="footerline">
+						<img src="../../image/titlebar/comment.png" class="footerimg">
+						<a class="footeritem">在线沟通</a>
+					</div>
+				</li>
+				<li class="callbtn" onclick="call_number()">
+					<div class="footerline">
+						<img src="../../image/titlebar/call.png" class="footerimg">
+						<a class="footeritem white">电话联系</a>
+					</div>
+				</li>
+				<li class="orderbtn" onclick="order()">
+					<div class="footerline">
+						<a class="footeritem white">我要定车</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="footer-deal">
+			<ul>
+				<li class="messagebtn" onclick="communicate()">
+					<div class="footerline">
+						<img src="../../image/titlebar/comment.png" class="footerimg">
+						<a class="footeritem">在线沟通</a>
+					</div>
+				</li>
+				<li class="callbtn" onclick="call_number()">
+					<div class="footerline">
+						<img src="../../image/titlebar/call.png" class="footerimg">
+						<a class="footeritem white">电话联系</a>
+					</div>
+				</li>
+				<li class="orderbtn" onclick="orderover()">
+					<div class="footerline">
+						<a class="footeritem white">已被预定</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="footer-self">
+			<ul>
+				<li onclick="deal_publish()" class="normalbtn">
+					<div class="footerline">
+						<img src="../../image/common/deal.png" class="footerimg">
+						<a class="footeritem">成交</a>
+					</div>
+				</li>
+				<li onclick="edit_publish()" class="normalbtn myborder-left">
+					<div class="footerline">
+						<img src="../../image/common/edit.png" class="footerimg">
+						<a class="footeritem">编辑</a>
+					</div>
+				</li>
+				<li onclick="del_publish()" class="normalbtn myborder-left">
+					<div class="footerline">
+						<img src="../../image/common/delete.png" class="footerimg">
+						<a class="footeritem">删除</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="footer-selforder">
+			<ul>
+				<li onclick="manager()" class="normalbtn">
+					<div class="footerline">
+						<a class="footeritem">正在交易，禁止管理</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="footer-sold">
+			<ul>
+				<li class="messagebtn" onclick="communicate()">
+					<div class="footerline">
+						<img src="../../image/titlebar/comment.png" class="footerimg">
+						<a class="footeritem">在线沟通</a>
+					</div>
+				</li>
+				<li class="callbtn" onclick="call_number()">
+					<div class="footerline">
+						<img src="../../image/titlebar/call.png" class="footerimg">
+						<a class="footeritem white">电话联系</a>
+					</div>
+				</li>
+				<li class="orderbtn" onclick="sold()">
+					<div class="footerline">
+						<a class="footeritem white">已经售出</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="describe" id="testline" style="display:none"></div>
+</body>
+<script type="text/javascript" src="../../script/idangerous.swiper.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	var address_array = [];
+	var address_array_origin = [];
+	var User_ID = $api.getStorage("User_ID");
+	var isVip=$api.getStorage("VIP");
+	var Publish_ID;
+	var detail;
+	$(window).scroll(function() {
+		setOpacity();
+	});
+
+	function deal_publish() {
+		var ID = api.pageParam.ID;
+		api.openFrame({
+			name: 'deal',
+			url: '../fourth_frame/manager/deal.html',
+			rect: {
+				x: 0,
+				y: 0,
+			},
+			pageParam: {
+				ID: ID
+			},
+			bounces: false,
+		});
+		api.addEventListener({
+			name: 'deal_success'
+		}, function(ret, err) {
+			api.sendEvent({
+				name: 'publish_updated',
+			});
+			api.closeWin({
+				name: ID
+			});
+
+		});
+	}
+
+	function edit_publish() {
+		api.openWin({
+			name: 'publish_frame_header',
+			url: '../publish_frame/publish_frame_header.html',
+			bounces: false,
+			pageParam: {
+				ID: api.pageParam.ID
+			},
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+		});
+		api.addEventListener({
+			name: 'publish_success'
+		}, function(ret, err) {
+			api.removeEventListener({
+				name: 'publish_success'
+			});
+			window.location.href = window.location.href;
+		});
+	}
+
+	function del_publish() {
+		var ID = api.pageParam.ID;
+		api.confirm({
+			title: '确认删除',
+			msg: '真的要删除吗？',
+			buttons: ['确定', '取消']
+		}, function(ret, err) {
+			if (ret) {
+				if (ret.buttonIndex == 1) {
+					api.ajax({
+						url: 'http://www.chekehome.com/public/index.php/delpublish',
+						method: 'post',
+						data: {
+							values: {
+								ID: ID
+							}
+						}
+					}, function(ret, err) {
+						setTimeout(function() {
+							api.sendEvent({
+								name: 'publish_updated',
+							});
+							api.closeWin({
+								name: ID
+							});
+						}, 200);
+					});
+
+				}
+			}
+		});
+	}
+
+	function initSwiper() {
+		$(".swiper-container").height(api.frameWidth * 3 / 4);
+		$(".detail-img").height(api.frameWidth * 3 / 4);
+		var StatusBarHeight = api.pageParam.titleheight;
+		var mySwiper = new Swiper('.swiper-container', {
+			mode: 'horizontal',
+			loop: true,
+			speed: 750,
+			pagination: '.pagination'
+		});
+		//	$(".swiper-container").height(api.frameHeight*0.3);
+		mySwiper.startAutoplay();
+		$(".swiper-wrapper li").click(function() {
+			BrowseImg($(this).index());
+		});
+	}
+
+	function showmore() {
+		if ($(".describe-btn").html() == "查看更多") {
+			$(".describe-btn").html("收起");
+			$(".describe").removeClass("describe-part");
+		} else {
+			$(".describe-btn").html("查看更多");
+			$(".describe").addClass("describe-part");
+		}
+	}
+
+	function setOpacity() {
+		var areaHeight = $(".maintitle").offset().top;
+		var offset = $("html body").scrollTop();
+		if (offset <= areaHeight) {
+			var value = offset / areaHeight * 100;
+		}
+		if (offset > areaHeight) {
+			var value = 100;
+		}
+		api.sendEvent({
+			name: 'Set_Opacity',
+			extra: {
+				value: value
+			}
+		});
+	}
+
+	function BrowseImg(curr_index) {
+		api.openWin({
+			name: 'browse_img',
+			url: './browse_img.html',
+			pageParam: {
+				data: address_array_origin,
+				index: curr_index,
+				StatusBarHeight: api.pageParam.titleheight
+			},
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+		});
+	}
+
+	function closeImg() {
+		var photoBrowser = api.require('photoBrowser');
+		photoBrowser.close();
+		isHeadOpen = false;
+		api.closeWin({
+			name: 'browse_img'
+		});
+	}
+
+	function openLogin() {
+		api.openWin({
+			name: 'login',
+			url: '../login/login.html',
+			allowEdit: true,
+		});
+	}
+
+	function isfavorite() {
+		api.ajax({
+			url: 'http://www.chekehome.com/public/index.php/isfavorite',
+			method: 'post',
+			data: {
+				values: {
+					Publish_ID: api.pageParam.ID,
+					User_ID: User_ID
+				},
+			}
+		}, function(ret, err) {
+			if (ret && ret.status) {
+				$(".favorimg")[0].src = "../../image/titlebar/favorite-active.png";
+				$("#favorite").html('已收藏');
+			} else {
+				$(".favorimg")[0].src = "../../image/titlebar/favorite.png";
+				$("#favorite").html('收藏');
+			}
+		});
+	}
+
+	function addfavorite() {
+		if ($api.getStorage("login_status") == 'true') {
+			var curr_time = new Date().Format("yyyy-MM-dd hh:mm:ss");
+			var row = {};
+			row.Time_update = curr_time;
+			row.Publish_ID = api.pageParam.ID;
+			row.User_ID = User_ID;
+			if ($("#favorite").html() == '收藏') {
+				api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/addfavorite',
+					method: 'post',
+					data: {
+						values: row
+					}
+				}, function(ret, err) {
+					if (ret) {
+						$(".favorimg")[0].src = "../../image/titlebar/favorite-active.png";
+						$("#favorite").html('已收藏');
+						api.toast({
+							msg: '已加入收藏',
+							duration: 2000,
+							location: 'bottom'
+						});
+					}
+				});
+			} else {
+				api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/delfavorite',
+					method: 'post',
+					data: {
+						values: row
+					}
+				}, function(ret, err) {
+					if (ret) {
+						$(".favorimg")[0].src = "../../image/titlebar/favorite.png";
+						$("#favorite").html('收藏');
+						api.toast({
+							msg: '已移除收藏',
+							duration: 2000,
+							location: 'bottom'
+						});
+					}
+				});
+			}
+			api.sendEvent({
+				name: 'Reload_Fourth',
+			});
+			api.sendEvent({
+				name: 'favorite_updated',
+			});
+		} else {
+			openLogin();
+		}
+	}
+
+	function communicate() {
+		if ($api.getStorage("login_status") == 'true') {
+			api.ajax({
+				url: 'http://www.chekehome.com/public/index.php/getConversation',
+				method: 'post',
+				data: {
+					values: {
+						Sender_ID: detail.User_ID,
+						Publish_ID: Publish_ID
+					},
+				}
+			}, function(ret, err) {
+				if (ret) {
+					api.openWin({
+						name: 'communicate_header',
+						url: '../communicate/communicate_header.html',
+						useWKWebView: true,
+						bgColor: '#FAFAFA',
+						pageParam: {
+							Conversation: ret,
+							Conversation_ID: 'NULL',
+							detail: detail
+						}
+					});
+				}
+			});
+		} else {
+			openLogin();
+		}
+	}
+
+	function call_number() {
+		api.call({
+			type: 'tel_prompt',
+			number: detail.User_Phone
+		});
+	}
+
+	function manager() {
+		alert("正在交易，禁止管理");
+	}
+
+	function order() {
+		if ($api.getStorage("login_status") == 'true') {
+			api.openWin({
+				name: 'payorder_header',
+				url: 'payorder_header.html',
+				pageParam: {
+					ID: api.pageParam.ID,
+					detail: detail
+				}
+			});
+		} else {
+			openLogin();
+		}
+	}
+
+	function orderover() {
+		alert("该车已被预订");
+	}
+
+	function sold() {
+		alert("该车已售");
+	}
+
+	function GetLineNumber(text) {
+		text = text.replace(/\n|\r\n/g, "<br/>");
+		$("#testline").html(text);
+		return $("#testline").height() / 25;
+	}
+
+	function hide() {
+
+		if ($api.getStorage("login_status") == 'true') {
+			if ($api.getStorage('VIP')) {
+				$(".hide-btn").hide();
+				$(".hide").show();
+			} else {
+				api.openWin({
+					name: 'VIP_header',
+					url: '../fourth_frame/VIP/VIP_header.html',
+				});
+			}
+		} else {
+			openLogin();
+		}
+
+	}
+	function addvip(){
+		api.openWin({
+			name: "vip_header",
+			url: '../fourth_frame/VIP/VIP_header.html',
+			useWKWebView: true,
+			bgColor: '#FAFAFA',
+		});
+	}
+	apiready = function() {
+		api.openFrame({
+			name: 'loading',
+			url: './loading_page.html',
+			rect: {
+				x: 0,
+				y: 0,
+				w: 'auto',
+				h: 'auto'
+			},
+			bounces: false,
+			bgColor: 'rgba(0,0,0,0)',
+			vScrollBarEnabled: false,
+			hScrollBarEnabled: false
+		});
+		api.ajax({
+	    url: 'http://www.chekehome.com/public/index.php/getUserInfo',
+	    method: 'post',
+	    data: {
+	      values: {
+	        ID: User_ID
+	      },
+	    }
+	  }, function(ret, err) {
+	    $api.setStorage('User_Info', ret);
+	    $api.setStorage('VIP', ret.VIP);
+			isVip=  ret.VIP;
+			if(isVip==1){
+				$(".isvip").show();
+				$(".notvip").hide();
+			}
+			else{
+				$(".isvip").hide();
+				$(".notvip").show();
+			}
+	  });
+
+		$(window).scroll(function() {
+			setOpacity();
+		});
+		if (isiPhoneX()) {
+			$(".footer").height(80);
+		}
+		User_ID = api.pageParam.User_ID;
+		Publish_ID = api.pageParam.ID;
+		var datalist;
+		api.ajax({
+			url: 'http://www.chekehome.com/public/index.php/getdetail',
+			method: 'post',
+			data: {
+				values: {
+					ID: api.pageParam.ID
+				}
+			}
+		}, function(ret, err) {
+			if (ret[0]) {
+				detail = ret[0];
+				if (detail.User_ID == User_ID || User_ID == "88888888") {
+					$(".hide").show();
+					$(".hide-btn").hide();
+				} else {
+					$(".hide").hide();
+					$(".hide-btn").show();
+				}
+				if ((detail.User_ID == User_ID || User_ID == "88888888") && detail.Selling == "在售") {
+					$(".footer-common").hide();
+					$(".footer-deal").hide();
+					$(".footer-sold").hide();
+					$(".footer-selforder").hide();
+					$(".footer-self").show();
+				} else if ((detail.User_ID == User_ID || User_ID == "88888888") && detail.Selling == "交易") {
+					$(".footer-common").hide();
+					$(".footer-deal").hide();
+					$(".footer-sold").hide();
+					$(".footer-selforder").show();
+					$(".footer-self").hide();
+				} else {
+					if (detail.Selling == "在售") {
+						$(".footer-self").hide();
+						$(".footer-deal").hide();
+						$(".footer-sold").hide();
+						$(".footer-selforder").hide();
+						$(".footer-common").show();
+					} else if (detail.Selling == "交易") {
+						$(".footer-self").hide();
+						$(".footer-deal").show();
+						$(".footer-sold").hide();
+						$(".footer-selforder").hide();
+						$(".footer-common").hide();
+					} else if (detail.Selling == "已售") {
+						$(".footer-self").hide();
+						$(".footer-deal").hide();
+						$(".footer-sold").show();
+						$(".footer-selforder").hide();
+						$(".footer-common").hide();
+					}
+				}
+				var pics = ret[0].Pic_array;
+				var pic_array = pics.split("-");
+				for (var i = 0; i < pic_array.length; i++) {
+					var imgW = ",w_480";
+					var imgH = ",h_360";
+					var url = "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + pic_array[i] + "?x-oss-process=image/resize,m_fill" + imgH + imgW;
+					address_array.push(url);
+					address_array_origin.push("http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + pic_array[i]);
+				}
+				var swipervue = new Vue({
+					el: '#swiper',
+					data: {
+						loadedImages: 0,
+						pdlist: address_array
+					},
+					methods: {
+						imageLoaded: function() {
+							this.loadedImages++;
+							if (this.loadedImages == 2) {
+								$(".swiper-slide").show();
+								initSwiper();
+								var vue = new Vue({
+									el: '#datalist',
+									data: {
+										Publish: detail
+									},
+									mounted: function() {
+										{
+											api.ajax({
+												url: 'http://www.chekehome.com/public/index.php/getrelated',
+												method: 'post',
+												data: {
+													values: {
+														ID: api.pageParam.ID
+													}
+												}
+											}, function(ret, err) {
+												var carlist = [];
+												if (ret) carlist = ret;
+												var relatedvue = new Vue({
+													el: '#CarRelated',
+													data: {
+														carlist: carlist
+													},
+													mounted: function() {
+														api.sendEvent({
+															name: 'cardetail_loaded',
+															extra: {
+																detail: detail
+															}
+														});
+														$(".footer").show();
+													},
+													methods: {
+														CarImg: function(car) {
+															var imgW = ",w_240";
+															var imgH = ",h_180";
+															var url = "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + car.Pic_add + "?x-oss-process=image/resize,m_fill" + imgH + imgW;
+															return url;
+														},
+														openDetail: function(car) {
+															var ID = car.Publish_ID;
+															api.openWin({
+																name: ID,
+																url: '../cardetail/cardetail_footer.html',
+																pageParam: {
+																	ID: ID
+																},
+																useWKWebView: true,
+																bgColor: '#FAFAFA',
+															});
+														}
+													},
+												});
+											});
+										}
+									},
+									methods: {
+										Translate: function(date) {
+											date = date.replace("-", "年");
+											date = date.replace("-", "月");
+											date = date.substring(0, date.length - 2);
+											return date;
+										},
+										getupdate: function(date) {
+											date = date.substring(0, 10);
+											date = date.replace("-", "年");
+											date = date.replace("-", "月");
+											date = date + "日";
+											return date;
+										},
+										geturl: function(User_Pic) {
+											var imgW = ",w_150";
+											var imgH = ",h_150";
+											var url = "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + User_Pic + "?x-oss-process=image/resize,m_fill" + imgH + imgW;
+											return url;
+										},
+										showdescribe: function(data) {
+											if (data.length > 70) {
+												$(".describe-more").show();
+												$(".describe").addClass("describe-part");
+											}
+											return data;
+										},
+										ShowText: function(text) {
+											return text.replace(/\n|\r\n/g, "<br/>");
+										},
+										PartText: function(text) {
+											if (GetLineNumber(text) > 4) {
+												$(".describe-more").show();
+												return "describe-part"
+											}
+										},
+										openSellerDetail: function(ID) {
+											api.openWin({
+												name: 'user_header',
+												url: '../user/user_header.html',
+												useWKWebView: true,
+												bgColor: '#FAFAFA',
+												pageParam: {
+													ID: ID
+												}
+											});
+										},
+										GetSpecial: function(Speical) {
+											return JSON.parse(Speical);
+										}
+									}
+								});
+							}
+						},
+					}
+				});
+			} else {
+				api.sendEvent({
+					name: 'cardetail_failed',
+				});
+			}
+		});
+	}
+</script>
+
+</html>

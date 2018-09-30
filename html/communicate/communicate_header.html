@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+  	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+          html,body { width: 100%;  position: relative;background-color: #FAFAFA}
+         .fr{float: right;}
+         .fl{float: left;}
+          #myheader{height:120px; overflow:hidden;text-align: center;background-color:#fafafa }
+         .header{height:40px;overflow: hidden;text-align: center;background-color:#fafafa}
+         .back {width:20%;height:40px;position: absolute;left:0;padding-left: 10px;}
+         .backimg { float: left; height: 16px;padding-top: 12px;padding-bottom:12px; }
+         .more {width:80px;height:40px;position: absolute;right:5px;}
+         .moreimg { float: right; height:20px;padding-top: 10px;padding-bottom:10px;padding-right: 10px;}
+         .mytitle{ display: inline-block; margin: 0 auto; font-size: 18px; color: #515151; text-align: center; line-height: 40px; }
+         .car{height:80px;background-color: #fff;}
+         .car-img{height:60px;position: absolute;top:10px;left: 10px;border-radius:4px;}
+         .car-info{position: absolute;left:100px;width: calc(100% - 120px);height:40px;}
+         .car-title{font-size: 16px;line-height:16px;height:16px;width: 100%;padding-top:12px;}
+         .no-car-title{font-size: 18px;line-height:80px;height:80px;width: 100%;text-align: center;color:#888}
+         .car-detail{color: #666;font-size: 12px;height:16px;line-height:16px;text-align:left;width:calc(100% - 80px);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
+         .car-sale {color: #666; font-size:18px;width: 100%;height:22px;line-height:22px;}
+         .car-symbol { color: #f60;float: left;}
+         .car-price {color: #f60;float: left;}
+         .order-btn { width: 80px;height:30px; position: absolute;bottom: 10px;right:10px; background-color: #eee; border-radius: 4px; color: #666; text-align:center; text-decoration: none; line-height: 30px; font-size: 14px; }
+         .order-btn-active{background-color:#FDDC3C;}
+    </style>
+</head>
+<body>
+    <div id="myheader">
+      <div class="header myborder-bottom">
+          <div onclick="goback()" class="back">
+            <img src="../../image/titlebar/back.png" class="backimg">
+          </div>
+          <div onclick="" class="more">
+            <!-- <img src="../../image/titlebar/more.png" class="moreimg" onclick="Option()"> -->
+            <img src="../../image/titlebar/phone.png" class="moreimg" onclick="Call()">
+          </div>
+          <div class="mytitle">消息</div>
+      </div>
+      <div id="car" >
+      <div class="car myborder-bottom"  v-if="car" @click="openDetail(car.Publish_ID)">
+          <img class="car-img" :src="geturl(car.Pic_add)">
+          <div class="car-info">
+            <div class="car-title overflow-text">{{car.Title}}</div>
+            <div class="car-detail">{{car.City}} | {{parseFloat(car.Miles)}}万公里 | {{Translate(car.Time_license)}}</div>
+            <div class="car-sale">
+                <span class="car-symbol">¥</span>
+                <span class="car-price">{{car.Price_out}}万</span>
+            </div>
+          </div>
+          <div class="order-btn order-btn-active" @click.stop="order()" v-if="car.Selling=='在售'">立即预定</div>
+          <div class="order-btn" v-if="car.Selling=='交易'">已被预定</div>
+          <div class="order-btn" v-if="car.Selling=='已售'">车辆已售</div>
+      </div>
+      <div class="car myborder-bottom"  v-else>
+            <div class="no-car-title overflow-text">该车源已售或已删除</div>
+      </div>
+    </div>
+    </div>
+</body>
+<script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+var HeaderHeight;
+var User_ID=$api.getStorage("User_ID");
+var Message_Sent=false;
+function goback(){
+    api.sendEvent({
+        name: 'ShowNotification',
+        extra: {
+            ShowNotification: true,
+        }
+    });
+    api.execScript({
+        name: 'communicate_header',
+        frameName: 'communicate',
+        script: 'RemoveEvents();'
+    });
+    api.closeWin({
+        name: 'communicate_header'
+    });
+}
+function Call(){
+    api.call({
+        type: 'tel_prompt',
+        number: api.pageParam.Conversation.User_Phone
+    });
+}
+function order(){
+  if($api.getStorage("login_status")=='true'){
+    api.openWin({
+        name: 'payorder_header',
+        url: '../cardetail/payorder_header.html',
+        useWKWebView:true,
+        pageParam: {
+            ID:api.pageParam.Conversation.Publish.Publish_ID,
+        }
+    });
+  }
+  else{
+    openLogin();
+  }
+}
+function orderover(){
+  alert("该车已被预定 ");
+}
+function openDetail(ID){
+  api.addEventListener({
+			name: 'cardetail_failed'
+	 }, function(ret, err){
+		setTimeout(function(){
+				api.closeWin({
+				    name: ID
+				});
+				api.toast({
+				    msg: '请检查网络设置',
+				    duration: 2000,
+				    location: 'bottom'
+				});
+		},500);
+	});
+	api.openWin({
+		name: ID,
+		url: '../cardetail/cardetail_footer.html',
+		pageParam:{ID:ID},
+    useWKWebView:true,
+    bgColor:'#FAFAFA',
+	});
+}
+apiready=function(){
+  var Conversation=api.pageParam.Conversation;
+  $(".mytitle").html(Conversation.User_name);
+  var myheader = $api.byId('myheader');
+  $api.fixStatusBar(myheader);
+  var myheader = $api.offset(myheader);
+  HeaderHeight=myheader.h;
+  var vm = new Vue({
+    el: "#car",
+    data: {
+      car:Conversation.Publish
+    },
+    methods:{
+      geturl:function(Pic){
+        var imgW=",w_200";
+        var imgH=",h_150";
+        var url="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+        return url;
+      },
+      Translate:function(date){
+					date=date.replace("-","年");
+					date=date.replace("-","月");
+					date=date.substring(0,date.length-2);
+					return date;
+			},
+    }
+  });
+  if(!Conversation.Publish || User_ID==Conversation.Publish.User_ID){
+    $(".order-btn").hide();
+  }
+  api.sendEvent({
+      name: 'ShowNotification',
+      extra: {
+          ShowNotification: false,
+      }
+  });
+  api.openFrame ({
+          name:"communicate",
+          url: './communicate.html',
+          rect:{
+              x:0,
+              y:HeaderHeight,
+              w:'auto',
+              h:api.frameHeight-HeaderHeight
+          },
+          pageParam:{
+            User_ID:User_ID,
+            Conversation:Conversation,
+            Conversation_ID:api.pageParam.Conversation_ID
+          },
+          allowEdit:true,
+          bounces:false,
+          delay:200,
+          vScrollBarEnabled: false,
+          hScrollBarEnabled: false
+      });
+}
+</script>
+</html>

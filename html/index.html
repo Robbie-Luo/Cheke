@@ -1,0 +1,1243 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+  <meta name="format-detection" content="telephone=no">
+  <title>车客</title>
+  <link rel="stylesheet" type="text/css" href="../css/api.css" />
+  <script src="../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <style>
+    html, body { height: 100%; width: 100%; }
+    #firstHeader  {background-color: #FDDC3C;height:0px;}
+    #secondHeader {background-color: #FAFAFA;height:50px;}
+    #thirdHeader  {background-color: #FAFAFA;height:50px;text-align: center;}
+    #fourthHeader {background-color: #FFFFFF;height:0px;overflow: hidden;}
+    .fr{float: right;}.fl{float: left;}
+    /* 头部切换样式 */
+    .titlebar {display: none;}
+    .activebar {display: block;}
+    /*第一头部*/
+    .topbar{height:50px;}
+    .citylist {height: 50px; line-height: 50px;padding-left: 10px; font-size: 15px; color: #515151;overflow: hidden;}
+    .citylistarrow{padding-top: 19px;vertical-align: top; width:15px;padding-left:4px;}
+    .cityname{ color:#515151; width: 35px; line-height:50px; max-width: 35px; text-overflow:ellipsis; margin-right:-5px; }
+    .search {height: 35px;line-height: 35px; border-radius: 30px;  margin-top: 8px; position: absolute;left:65px;right: 10px;background-color: #F0E68C;}
+    .cond-search{position: absolute;left:30px;color: #515151;line-height: 25px;font-size: 14px;outline: none;color:#515151;padding:5px;width:calc(100% - 70px);}
+    .cond-search::-webkit-input-placeholder { /* WebKit browsers */ color:#666; }
+    .search-img { width: 20px; padding-top: 7px;padding-right: 10px;float: left;margin-left:10px;}
+    .search-img-del{width: 20px; padding-top: 10px;padding-right: 10px;float: right;display: none}
+    .tool_icon {height:30px;padding: 10px 10px 10px 25px;}
+    .filter-bar {width:100%;height:40px; background-color:#FAFAFA;overflow: hidden;}
+    .filter-divider{width:1px;height:40px;background-color:#aaa;margin-top:0px;transform: scale(0.5,0.5);}
+    .filter-bar ul {display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+    .filter-bar li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;text-align: center;line-height:40px;font-size: 13px;}
+    .filter-active{color:#f70;font-weight: bold;}
+    .filter-png{vertical-align: top; width: 12px; padding-top: 13px;padding-left: 2px;}
+    .conditions{height:34px;background-color: #F5F5F5;}
+		.condition{height:24px;line-height:24px;font-size: 12px;float:left;padding:0 5px 0 5px;margin: 5px 0 0 10px;text-align:center; border-radius:5px;color: #333;border: 1px solid #FDDC3C}
+     /* 第二头部 */
+    .switch {height:50px;color: #fff;overflow: hidden;}
+    .switchbtn {font-size:17px;padding-left: 20px;margin-top: 10px;}
+    .update-a {position: absolute;left:20px;color: #666;line-height: 40px;}
+    .update-b {position: absolute;left:70px;color: #666;line-height: 40px;}
+    .update-c {position: absolute;left:120px;color: #666;line-height: 40px;}
+    .selectswitch {color: #515151;font-weight:bold;}
+     #navmark {position: absolute; left: 0px; bottom: 0px; width:34px;-webkit-transition: 150ms; text-align: center; height:3px;background-color: #FDDC3C;}
+    .takephoto{position: absolute;right:10px;bottom:8px;width:50px;}
+    .takephotoimg  {float: right;height: 30px;}
+    /* 第三头部 */
+    .thirdtitle{display: inline-block; margin: 0 auto; font-size: 16px;color: #515151; text-align: center; line-height: 50px; }
+    .message-setting{position: absolute;right:10px;bottom:12px;width:26px;}
+    /* 底部切换按钮样式 */
+    #footer {width: 100%;height:47px;text-align: center; background-color: #FAFAFA;overflow: hidden;position: absolute;bottom:0px;line-height: 26px;}
+    #footer ul {display: -webkit-box; display: -webkit-flex; display: flex;  overflow: hidden;}
+    #footer li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;position: relative;}
+    /********************/
+    /* 底部按钮原始样式 */
+    /********************/
+    .bbtn01 {background: url(../image/toolbar/1.png) no-repeat center 4px; }
+    .bbtn02 {background: url(../image/toolbar/2.png) no-repeat center 4px; }
+    .bbtn03 {background: url(../image/toolbar/3.png) no-repeat center 4px; }
+    .bbtn04 {background: url(../image/toolbar/4.png) no-repeat center 4px; }
+    .bottom_btn {width: 99%;padding-top: 25px;background-position-y: 4px; background-size: 28px;font-size: 10px; color: #515151;}
+    .red_btn{background-color:#ff3b30;width:10px;height: 10px;border-radius: 100%;position: absolute;top:4px;right:calc(50% - 18px);}
+    .red_num{background-color:#ff3b30;color: #FFF;font-size:12px;line-height: 16px;width:16px;height: 16px;border-radius: 100%;position: absolute;top:2px;right:calc(50% - 24px);}
+    .li_publish{text-align: center;}
+    .bottom_btn_publish{ width:80%;height:50px; background-color: #FDDC3C; color: #515151; text-align: center; }
+    .img_publish{ display: inline-block; padding-top: 7px; height:20px; }
+    .txt_publish{ position:relative; bottom:8px; line-height: 20px; font-size: 10px; }
+    /* 底部按钮激活样式 */
+    .activebtn0 {background: url(../image/toolbar/1p.png) no-repeat center 4px; }
+    .activebtn1 {background: url(../image/toolbar/2p.png) no-repeat center 4px; }
+    .activebtn2 {background: url(../image/toolbar/3p.png) no-repeat center 4px; }
+    .activebtn3 {background: url(../image/toolbar/4p.png) no-repeat center 4px; }
+    .activebtn  {background-size:28px;font-weight: bold;}
+    </style>
+</head>
+
+<body>
+  <div id="wrap">
+    <!-- 第一头部 -->
+    <div id="firstHeader" class="titlebar activebar">
+    </div>
+    <!-- 第二头部 -->
+    <div id="secondHeader" class="titlebar myborder-bottom">
+      <div class="switch">
+        <div class="switchbtn">
+          <div class="update-a" onclick="setSecondFramegroupIndex(0)">推荐</div>
+          <div class="update-b" onclick="setSecondFramegroupIndex(1)">此刻</div>
+          <div class="update-c" onclick="setSecondFramegroupIndex(2)">我的</div>
+          <mark id="navmark"></mark>
+        </div>
+        <div onclick="openMoment()" class="takephoto">
+          <img src="../image/titlebar/takephoto.png" class="takephotoimg">
+        </div>
+      </div>
+    </div>
+    <!-- 第三头部 -->
+    <div id="thirdHeader" class="titlebar myborder-bottom">
+      <div class="thirdtitle">
+        消息
+      </div>
+      <!-- <img src="../image/usertool/setting.png" class="message-setting" onclick="ClearMessage()"> -->
+    </div>
+    <!-- 第四头部 -->
+    <div id="fourthHeader" class="titlebar">
+    </div>
+    <div id="footer" class="myborder-top">
+      <ul>
+        <li onclick="switchframe('first_frame', 0)">
+          <a class="bottom_btn bbtn01 activebtn activebtn0">车源</a>
+        </li>
+        <li onclick="switchframe('second_frame', 1)">
+          <a class="bottom_btn bbtn02 activebtn activebtn1">发现</a>
+          <div class="red_btn" style="display:none"></div>
+        </li>
+        <li onclick="openPublish()">
+          <a class="bottom_btn_publish">
+            <img src="../image/titlebar/add.png" class="img_publish" />
+            <div class="txt_publish">发车</div>
+          </a>
+        </li>
+        <li tapmode="activebtn2 activebtn" onclick="switchframe('third_frame', 2)">
+          <a class="bottom_btn bbtn03 activebtn activebtn2">消息</a>
+          <div class="red_num" style="display:none">0</div>
+        </li>
+        <li onclick="switchframe('fourth_frame', 3)">
+          <a class="bottom_btn bbtn04 activebtn activebtn3">我的</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/sha1.js"></script>
+<script type="text/javascript">
+  var firstHeader = $api.byId('firstHeader');
+  var secondHeader = $api.byId('secondHeader');
+  var thirdHeader = $api.byId('thridHeader');
+  var fourthHeader = $api.byId('fourthHeader');
+  var firstHeaderOffset;
+  var footer = $api.byId('footer');
+  var footerPos = $api.offset(footer);
+  var footerheight;
+  var isFirstOpen = false;
+  var isSecondOpen = false;
+  var isThirdOpen = false;
+  var isFourthOpen = false;
+  var isFilterShow = false;
+  var curr_frame_index = 0;
+  var curr_filter_index = -1;
+  var secFrameIndex;
+  var login_status = $api.getStorage("login_status");
+  var User_Info = $api.getStorage("User_Info");
+  var ConversationList;
+  var ShowNotification = true;
+  var winHeight;
+
+  function getCity() {
+    var row = {};
+    row.city = "全国";
+    var bMap = api.require('bMap');
+    bMap.getLocation({
+      accuracy: '100m',
+      autoStop: true,
+      filter: 1
+    }, function(ret, err) {
+      if (ret.status) {
+        var location = ret.lat + "," + ret.lon;
+        api.ajax({
+          url: "http://api.map.baidu.com/geocoder/v2/?location=" + location + "&output=json&pois=1&ak=TbjGMq91oGfSdadoFlRO61P4xcC8NBeh",
+          method: 'get',
+        }, function(ret, err) {
+          if (ret) {
+            var cityname = ret.result.addressComponent.city;
+            var district = ret.result.addressComponent.district;
+            $api.setStorage('Location', ret.result.addressComponent);
+          } else {
+            var row = {};
+            row.city = "全国";
+            $api.setStorage('Location', row);
+          }
+        });
+      } else {
+        var row = {};
+        row.city = "全国";
+        $api.setStorage('Location', row);
+      }
+    });
+  }
+
+  function openMoment() {
+    if (login_status) {
+      api.openWin({
+        name: 'moment_header',
+        url: 'second_frame/moment_header.html',
+        useWKWebView: true,
+        bgColor: '#FAFAFA',
+      });
+    } else {
+      api.confirm({
+        title: '提示',
+        msg: '登陆后才能发布动态哦！',
+        buttons: ['确定', '取消']
+      }, function(ret, err) {
+        if (ret.buttonIndex == 1) {
+          api.openWin({
+            name: 'login',
+            url: 'login/login.html',
+          });
+          api.addEventListener({
+            name: 'login'
+          }, function(ret, err) {
+            api.removeEventListener({
+              name: 'login'
+            });
+            setTimeout(function() {
+              api.openWin({
+                name: 'moment_header',
+                url: 'second_frame/moment_header.html',
+                useWKWebView: true,
+                bgColor: '#FAFAFA',
+              });
+            }, 300);
+          });
+        }
+      });
+    }
+  }
+
+  function openPublish() {
+    if (login_status) {
+      //监听发布成功
+      api.addEventListener({
+        name: 'publish_success'
+      }, function(ret, err) {
+        api.removeEventListener({
+          name: 'publish_success'
+        });
+        api.closeWin({
+          name: 'publish_frame_header'
+        });
+      });
+      api.openWin({
+        name: 'publish_frame_header',
+        url: 'publish_frame/publish_frame_header.html',
+        useWKWebView: true,
+        bgColor: '#FAFAFA',
+      });
+    } else {
+      api.confirm({
+        title: '提示',
+        msg: '登陆后才能发布车辆哦！',
+        buttons: ['确定', '取消']
+      }, function(ret, err) {
+        if (ret.buttonIndex == 1) {
+          api.openWin({
+            name: 'login',
+            url: 'login/login.html',
+          });
+          api.addEventListener({
+            name: 'login'
+          }, function(ret, err) {
+            api.removeEventListener({
+              name: 'login'
+            });
+            setTimeout(function() {
+              api.openWin({
+                name: 'publish_frame_header',
+                url: 'publish_frame/publish_frame_header.html',
+                useWKWebView: true,
+                bgColor: '#FAFAFA',
+              });
+            }, 300);
+          });
+
+        }
+      });
+    }
+  }
+
+  function setSecondFramegroupStatus(frameIndex) {
+    if (frameIndex === 0) {
+      $(".update-a").addClass("selectswitch");
+      $(".update-b").removeClass("selectswitch");
+      $(".update-c").removeClass("selectswitch");
+      $api.css($api.byId('navmark'), "-webkit-transform:translate(" + 20 + "px,0)");
+    }
+    if (frameIndex === 1) {
+      $(".update-a").removeClass("selectswitch");
+      $(".update-b").addClass("selectswitch");
+      $(".update-c").removeClass("selectswitch");
+      $api.css($api.byId('navmark'), "-webkit-transform:translate(" + 70 + "px,0)");
+    }
+    if (frameIndex === 2) {
+      $(".update-a").removeClass("selectswitch");
+      $(".update-b").removeClass("selectswitch");
+      $(".update-c").addClass("selectswitch");
+      $api.css($api.byId('navmark'), "-webkit-transform:translate(" + 120 + "px,0)");
+    }
+  }
+
+  function setSecondFramegroupIndex(frameIndex) {
+    setSecondFramegroupStatus(frameIndex);
+    api.setFrameGroupIndex({
+      name: 'second_frame_group',
+      index: frameIndex,
+      scroll: true,
+      delay: 100
+    });
+  }
+
+  function openSecondFramegroup(index) {
+    api.openFrameGroup({
+      name: 'second_frame_group',
+      background: '#FFF',
+      scrollEnabled: true,
+      allowEdit: true,
+      rect: {
+        x: 0,
+        y: $api.offset($api.byId('secondHeader')).h,
+        w: api.frameWidth,
+        h: api.frameHeight - $api.offset($api.byId('secondHeader')).h - footerheight
+      },
+      index: index,
+      frames: [{
+          name: 'second_frame_a',
+          url: 'second_frame/second_frame_a.html',
+          bounces: false,
+        }, {
+          name: 'second_frame_b',
+          url: 'second_frame/second_frame_b.html',
+          bounces: false,
+        }, {
+          name: 'second_frame_c',
+          url: 'second_frame/second_frame_c.html',
+          bounces: false,
+        }
+
+      ]
+    }, function(ret) {
+      setSecondFramegroupStatus(ret.index);
+    });
+  }
+
+  function randomSwitchBtn(name, index) {
+    var lis = $api.domAll('.bottom_btn');
+    var i = 0,
+      len = lis.length;
+    var curLi = lis[index];
+    for (i; i < len; i++) {
+      var thisLi = lis[i];
+      if (thisLi === curLi) {
+        $api.addCls(thisLi, 'activebtn');
+        $api.addCls(thisLi, 'activebtn' + index);
+        continue;
+      } else {
+        if ($api.hasCls(thisLi, 'activebtn')) {
+          $api.removeCls(thisLi, 'activebtn');
+          $api.removeCls(thisLi, 'activebtn' + i);
+        }
+      }
+    }
+    var lis = $api.domAll('.titlebar');
+    var i = 0,
+      len = lis.length;
+    var curLi = lis[index];
+    for (i; i < len; i++) {
+      var thisLi = lis[i];
+      if (thisLi === curLi) {
+        $api.addCls(thisLi, 'activebar');
+        $api.addCls(thisLi, 'activebar' + index);
+        continue;
+      } else {
+        if ($api.hasCls(thisLi, 'activebar')) {
+          $api.removeCls(thisLi, 'activebar');
+          $api.removeCls(thisLi, 'activebar' + i);
+        }
+      }
+    }
+
+  }
+
+  function hideAllFrame() {
+    api.setFrameAttr({
+      name: 'first_frame_body',
+      hidden: true
+    });
+    api.setFrameAttr({
+      name: 'first_frame',
+      hidden: true
+    });
+    api.setFrameGroupAttr({
+      name: 'second_frame_group',
+      hidden: true
+    });
+    api.setFrameAttr({
+      name: 'third_frame',
+      hidden: true
+    });
+    api.setFrameAttr({
+      name: 'fourth_frame',
+      hidden: true
+    });
+  }
+
+  function showgroup(type) {
+    api.setFrameGroupAttr({
+      name: type,
+      hidden: false
+    });
+  }
+
+  function showframe(type) {
+    api.setFrameAttr({
+      name: type,
+      hidden: false
+    });
+  }
+
+  function openframeinstance(frame, marginTop, isBounce) {
+    api.openFrame({
+      name: frame,
+      url: frame + '/' + frame + '_body.html',
+      rect: {
+        x: 0,
+        y: marginTop,
+        w: 'auto',
+        h: api.frameHeight - marginTop - footerheight
+      },
+    });
+  }
+
+  function switchframe(type, _index) {
+    if (_index === curr_frame_index) {
+      return 0;
+    }
+    switch (type) {
+      case 'first_frame':
+        randomSwitchBtn('first_frame', 0);
+        hideAllFrame();
+        if (isFirstOpen) {
+          showframe('first_frame_body');
+          showframe('first_frame');
+        } else {
+          // openframeinstance('first_frame', $api.offset($api.byId('firstHeader')).h, true);
+          api.closeFrame({
+            name: 'first_frame_body'
+          });
+          OpenFirstFrame();
+          isFirstOpen = true;
+        }
+        curr_frame_index = 0;
+        break;
+      case 'second_frame':
+        randomSwitchBtn('second_frame', 1);
+        hideAllFrame();
+        if (isSecondOpen) {
+          showgroup('second_frame_group');
+        } else {
+          openSecondFramegroup(0);
+          isSecondOpen = true;
+        }
+        curr_frame_index = 1;
+        break;
+      case 'third_frame':
+        if (login_status) {
+          randomSwitchBtn('third_frame', 2);
+          curr_frame_index = 2;
+          hideAllFrame();
+          if (isThirdOpen) {
+            showframe('third_frame');
+          } else {
+            openframeinstance('third_frame', $api.offset($api.byId('thirdHeader')).h, false);
+            isThirdOpen = true;
+            curr_frame_index = 2;
+          }
+        } else {
+          api.openWin({
+            name: 'login',
+            url: 'login/login.html',
+          });
+        }
+        break;
+      case 'fourth_frame':
+        randomSwitchBtn('fourth_frame', 3);
+        hideAllFrame();
+        if (isFourthOpen) {
+          showframe('fourth_frame');
+        } else {
+          openframeinstance('fourth_frame', $api.offset($api.byId('fourthHeader')).h, false);
+          isFourthOpen = true;
+        }
+        curr_frame_index = 3;
+        break;
+      default:
+        break;
+    }
+  }
+
+  function Push(title, text, id, Publish_ID, Sender_ID) {
+    if (ShowNotification) {
+      api.notification({
+        vibrate: [300, 500], //震动时间节奏
+        sound: 'default', //系统默认提示音
+        light: false, //是否亮灯，需设备支持
+        notify: { //状态栏通知
+          title: title, //标题，默认值为应用名称，只Android有效
+          content: text, //内容，默认值为'有新消息'
+          extra: id + "%" + Publish_ID + "%" + Sender_ID,
+          updateCurrent: true //是否覆盖更新已有的通知，取值范围true|false。只Android有效
+        }
+      }, function(ret, err) {});
+    } else {
+      api.notification({
+        vibrate: [300, 500], //震动时间节奏
+        sound: 'default', //系统默认提示音
+        light: false, //是否亮灯，需设备支持
+      }, function(ret, err) {});
+    }
+  }
+
+  function getTotalUnreadCount() {
+    var rong = api.require('rongCloud2');
+    rong.getTotalUnreadCount(function(ret, err) {
+      var num = ret.result;
+      if (num) {
+        $(".red_num").html(ret.result);
+        $(".red_num").show();
+      } else {
+        $(".red_num").hide();
+      }
+    });
+  }
+
+  function ConnectToRong() {
+    var rong = api.require('rongCloud2');
+    rong.init(function(ret, err) {
+      if (ret.status != 'error') {
+        if (login_status) {
+          var row = User_Info;
+          api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/gettoken',
+            method: 'post',
+            data: {
+              values: {
+                User_ID: row.ID,
+                User_Name: row.Name,
+                User_Url: row.Picture
+              },
+            }
+          }, function(ret, err) {
+            if (ret) {
+              rong.connect({
+                token: ret.token
+              }, function(ret, err) {
+
+                if (ret.status == 'success') {
+                  InitCommunication();
+                  api.sendEvent({
+                    name: 'Rong_Connected',
+                  });
+                }
+              });
+            }
+          });
+        }
+      } else {
+
+      }
+    });
+  }
+
+  function InitCommunication() {
+    var rong = api.require('rongCloud2');
+    rong.getConversationList(function(ret, err) {
+      if (ret) {
+        ConversationList = ret.result;
+        // console.log(JSON.stringify(ConversationList));
+      }
+    });
+    api.addEventListener({
+      name: 'SendMessage'
+    }, function(ret, err) {
+      if (ret) {
+        var targetId = ret.value.Conversation_ID;
+        var text = ret.value.Message;
+        var Publish_ID = ret.value.Publish_ID;
+        var Client_ID = ret.value.Client_ID;
+        var Host_ID = ret.value.Host_ID;
+        if (targetId == "NULL") {
+          conversationTitle = Publish_ID + '%' + Host_ID + '%' + Client_ID;
+          var rong = api.require('rongCloud2');
+          rong.createDiscussion({
+            name: conversationTitle,
+            userIdList: [Host_ID, Client_ID]
+          }, function(ret, err) {
+            if (ret.status == 'success') {
+              targetId = ret.result.discussionId;
+              rong.sendTextMessage({
+                conversationType: 'DISCUSSION',
+                targetId: targetId,
+                text: text,
+                extra: Publish_ID
+              }, function(ret, err) {
+                if (ret && ret.status == "success") {
+                  api.sendEvent({
+                    name: 'SendMessage_Success',
+                    extra: {
+                      targetId: targetId
+                    }
+                  });
+                }
+              });
+            } else {
+              api.toast({
+                msg: '消息服务器连接失败',
+                duration: 2000,
+                location: 'bottom'
+              });
+            }
+          });
+        } else {
+          var rong = api.require('rongCloud2');
+          rong.sendTextMessage({
+            conversationType: 'DISCUSSION',
+            targetId: targetId,
+            text: text,
+            extra: Publish_ID
+          }, function(ret, err) {
+            if (ret && ret.status == "success") {
+              api.sendEvent({
+                name: 'SendMessage_Success',
+              });
+            }
+          });
+        }
+      }
+    });
+    api.addEventListener({
+      name: 'SendImage'
+    }, function(ret, err) {
+      if (ret) {
+        var targetId = ret.value.Conversation_ID;
+        var imgArr = ret.value.Message;
+        var Publish_ID = ret.value.Publish_ID;
+        var Client_ID = ret.value.Client_ID;
+        var Host_ID = ret.value.Host_ID;
+        if (targetId == "NULL") {
+          conversationTitle = Publish_ID + '%' + Host_ID + '%' + Client_ID;
+          var rong = api.require('rongCloud2');
+          rong.createDiscussion({
+            name: conversationTitle,
+            userIdList: [Host_ID, Client_ID]
+          }, function(ret, err) {
+            if (ret.status == 'success') {
+              targetId = ret.result.discussionId;
+              var rong = api.require('rongCloud2');
+              for (var i = 0; i < imgArr.length; i++) {
+                var rong = api.require('rongCloud2');
+                rong.sendImageMessage({
+                  conversationType: 'DISCUSSION',
+                  targetId: targetId,
+                  imagePath: imgArr[i],
+                  extra: Publish_ID
+                }, function(ret, err) {
+                  if (ret && ret.status == "success") {
+                    api.sendEvent({
+                      name: 'SendImage_Success',
+                      extra: {
+                        targetId: targetId,
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          });
+        } else {
+          var rong = api.require('rongCloud2');
+          for (var i = 0; i < imgArr.length; i++) {
+            var rong = api.require('rongCloud2');
+            rong.sendImageMessage({
+              conversationType: 'DISCUSSION',
+              targetId: targetId,
+              imagePath: imgArr[i],
+              extra: Publish_ID
+            }, function(ret, err) {
+              if (ret && ret.status == "success") {
+                api.sendEvent({
+                  name: 'SendImage_Success',
+                });
+              }
+            });
+          }
+        }
+      }
+    });
+    ReceiveMessage();
+  }
+
+  function ReceiveMessage() {
+    var rong = api.require('rongCloud2');
+    rong.getConnectionStatus(function(ret, err) {
+      // console.log(ret.result.connectionStatus);
+    });
+    getTotalUnreadCount();
+    rong.setOnReceiveMessageListener(function(ret, err) {
+      if (ret) {
+        var message = ret.result.message;
+        if (message.objectName == 'RC:TxtMsg') {
+          api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getUserInfo',
+            method: 'post',
+            data: {
+              values: {
+                ID: message.senderUserId
+              },
+            }
+          }, function(ret, err) {
+            Push(ret.Name, message.content.text, message.targetId, message.content.extra, message.senderUserId);
+            api.sendEvent({
+              name: 'New_Message',
+              extra: {
+                message: message
+              }
+            });
+          });
+          getTotalUnreadCount();
+
+        } else if (message.objectName == 'RC:ImgMsg') {
+          api.ajax({
+            url: 'http://www.chekehome.com/public/index.php/getUserInfo',
+            method: 'post',
+            data: {
+              values: {
+                ID: message.senderUserId
+              },
+            }
+          }, function(ret, err) {
+            Push(ret.Name, "[图片]", message.targetId, message.content.extra, message.senderUserId);
+            api.sendEvent({
+              name: 'New_Message',
+              extra: {
+                message: message
+              }
+            });
+          });
+          getTotalUnreadCount();
+        }
+      }
+    });
+    api.addEventListener({
+      name: 'Message_Read'
+    }, function(ret, err) {
+      if (ret) {
+        getTotalUnreadCount();
+      }
+    });
+  }
+
+  function SendMessage() {}
+
+  function OpenGuide() {
+    if (isAndroid()) {
+      // var WelcomePage = api.require('welcomePage');
+      // WelcomePage.setWelcome({
+      //   setWelcome: false
+      // }, function(ret, err) {
+      // });
+      var WelcomePage = api.require('welcomePage');
+      WelcomePage.openWelcomePage({
+        isFullscreen: true, //是否全屏(全屏不显示状态栏)  默认false
+        AnimationType: 'Default', //动画类型   'Default默认', 'DepthPage深入浅出', 'Cube立方体', 'Rotate旋转','Accordion左右折叠'                                  //'InRightUp右上角进入' , 'InRightDown右下角进入', 'ZoomOutPage淡入淡出'
+        imgs: ['widget://launch/guide-1.png', 'widget://launch/guide-2.png', 'widget://launch/guide-3.png'],
+        setting: {
+          isShow: false, // 是否显示页面点 默认不显示
+          ImgSize: 30, // 图片size
+          ImgSpacing: 30 // 图片之间的间隔
+        }
+      }, function(ret, err) {});
+    } else {
+      var guide = api.require('guide');
+      guide.openGuidePage({
+        imgs: ['widget://launch/guide-1.png', 'widget://launch/guide-2.png', 'widget://launch/guide-4.png'],
+        point_normal: 'widget://image/guide/point_normal@2x.png',
+        point_select: 'widget://image/guide/point_select@2x.png',
+        btnColor: 'FFDC3C',
+        btnLabel: '立即体验',
+        btnW: 200,
+        btnH: 50,
+        time: '2',
+        hideStatusBar: false
+      });
+    }
+  }
+
+  function OpenFirstFrame() {
+    api.openFrame({
+      name: 'first_frame',
+      url: 'first_frame/first_frame_header.html',
+      rect: {
+        x: 0,
+        y: firstHeaderOffset.h,
+        w: 'auto',
+        h: 90
+      },
+      useWKWebView: true,
+      pageParam: {
+        h: firstHeaderOffset.h
+      },
+      bounces: false,
+      opaque: false
+    });
+    api.openFrame({
+      name: 'first_frame_body',
+      url: 'first_frame/first_frame_body.html',
+      rect: {
+        x: 0,
+        y: firstHeaderOffset.h + 90,
+        w: 'auto',
+        h: winHeight - firstHeaderOffset.h - 90 - footerheight
+      }
+    });
+  }
+
+  function AddEvents() {
+    //页面重刷事件
+    api.addEventListener({
+      name: 'Reload_First'
+    }, function(ret, err) {
+      if (curr_frame_index == 0) {
+        api.sendEvent({
+          name: 'RefreshFirst',
+        });
+      } else {
+        api.closeFrame({
+          name: 'first_frame'
+        });
+        api.closeFrame({
+          name: 'first_frame_body'
+        });
+        isFirstOpen = false;
+      }
+    });
+    api.addEventListener({
+      name: 'Reload_Second'
+    }, function(ret, err) {
+      api.closeFrameGroup({
+        name: 'second_frame_group'
+      });
+      if (curr_frame_index == 1) {
+        openSecondFramegroup(0);
+      } else {
+        isSecondOpen = false;
+      }
+    });
+    api.addEventListener({
+      name: 'Reload_Third'
+    }, function(ret, err) {
+      if (curr_frame_index == 2) {
+        api.sendEvent({
+          name: 'Message_Clear',
+        });
+      } else {
+        api.closeFrame({
+          name: 'third_frame'
+        });
+        isThirdOpen = false;
+      }
+    });
+    api.addEventListener({
+      name: 'Reload_Fourth'
+    }, function(ret, err) {
+      if (curr_frame_index == 3) {
+        api.closeFrame({
+          name: 'fourth_frame'
+        });
+        openframeinstance('fourth_frame', $api.offset($api.byId('fourthHeader')).h, false);
+        isFourthOpen = true;
+      } else {
+        api.closeFrame({
+          name: 'fourth_frame'
+        });
+        isFourthOpen = false;
+      }
+    });
+    //登录成功事件
+    api.addEventListener({
+      name: 'loginSuccess'
+    }, function(ret, err) {
+      login_status = true;
+      $api.setStorage('User_ID', ret.value.User_ID);
+      $api.setStorage('User_Info', ret.value.User_Info);
+      $api.setStorage('login_status', true);
+      User_Info = ret.value.User_Info;
+      ConnectToRong();
+      api.sendEvent({
+        name: 'Reload_First'
+      });
+      api.sendEvent({
+        name: 'Reload_Second'
+      });
+      api.sendEvent({
+        name: 'Reload_Third'
+      });
+      api.sendEvent({
+        name: 'Reload_Fourth'
+      });
+      api.sendEvent({
+        name: 'login'
+      });
+      //登录完成
+    });
+    //退出登录事件
+    api.addEventListener({
+      name: 'logout'
+    }, function(ret, err) {
+      login_status = false;
+      $api.setStorage('login_status', 'false');
+      api.sendEvent({
+        name: 'Reload_First'
+      });
+      api.sendEvent({
+        name: 'Reload_Second'
+      });
+      api.sendEvent({
+        name: 'Reload_Third'
+      });
+      api.sendEvent({
+        name: 'Reload_Fourth'
+      });
+    });
+    //监听筛选条件
+    api.addEventListener({
+      name: 'SendConditions'
+    }, function(ret, err) {
+      api.closeFrameGroup({
+        name: 'filter_frame_group'
+      });
+      curr_filter_index = -1;
+      api.closeFrame({
+        name: 'first_frame_body'
+      });
+      api.openFrame({
+        name: 'first_frame_body',
+        url: 'first_frame/first_frame_body.html',
+        rect: {
+          x: 0,
+          y: firstHeaderOffset.h + 90,
+          w: 'auto',
+          h: winHeight - firstHeaderOffset.h - 90 - footerheight
+        },
+        pageParam: {
+          Conditions: ret.value.Conditions,
+          Locations: ret.value.Locations
+        }
+      });
+    });
+    //设置筛选栏
+    api.addEventListener({
+      name: 'SetFilterIndex'
+    }, function(ret, err) {
+      if (ret) {
+        var index = ret.value.index;
+        if (curr_filter_index == index) {
+          api.closeFrameGroup({
+            name: 'filter_frame_group'
+          });
+          curr_filter_index = -1;
+        } else {
+          api.openFrameGroup({
+            name: 'filter_frame_group',
+            scrollEnabled: false,
+            rect: {
+              x: 0,
+              y: firstHeaderOffset.h + 90,
+              w: 'auto',
+              h: winHeight - firstHeaderOffset.h - 90
+            },
+            index: index,
+            frames: [{
+              name: 'filter_sort',
+              url: 'first_frame/filter_sort.html',
+              bounces: false,
+            }, {
+              name: 'filter_brand',
+              url: 'first_frame/filter_brand.html',
+              bounces: false,
+            }, {
+              name: 'filter_price',
+              url: 'first_frame/filter_price.html',
+              bounces: false,
+            }, {
+              name: 'filter_age',
+              url: 'first_frame/filter_age.html',
+              bounces: false,
+            }, {
+              name: 'filter_type',
+              url: 'first_frame/filter_type.html',
+              bounces: false,
+            }]
+          }, function(ret) {
+
+          });
+          api.setFrameGroupIndex({
+            name: 'filter_frame_group',
+            index: index,
+            scroll: false,
+            reload: true
+          });
+          curr_filter_index = index;
+        }
+      }
+    });
+    api.addEventListener({
+      name: 'CloseFilterBrand'
+    }, function(ret, err) {
+      if (ret) {
+        api.closeFrameGroup({
+          name: 'filter_frame_group'
+        });
+        curr_filter_index = -1;
+      }
+    });
+    // 监听发布信息更新
+    api.addEventListener({
+      name: 'publish_updated'
+    }, function(ret, err) {
+      api.closeFrame({
+        name: 'first_frame'
+      });
+      api.closeFrame({
+        name: 'first_frame_body'
+      });
+      OpenFirstFrame();
+      api.sendEvent({
+        name: 'Reload_Fourth',
+      });
+    });
+    //用户信息更新事件
+    api.addEventListener({
+      name: 'UserInfo_updated'
+    }, function(ret, err) {
+      api.sendEvent({
+        name: 'Reload_First',
+      });
+      api.sendEvent({
+        name: 'Reload_Second',
+      });
+      api.sendEvent({
+        name: 'Reload_Third',
+      });
+      api.sendEvent({
+        name: 'Reload_Fourth',
+      });
+    });
+    api.addEventListener({
+      name: 'Index_UserInfo_updated'
+    }, function(ret, err) {
+      switchframe('first_frame', 0);
+      api.sendEvent({
+        name: 'Reload_First',
+      });
+      api.sendEvent({
+        name: 'Reload_Fourth',
+      });
+    });
+    //动态发布成功
+    api.addEventListener({
+      name: 'update_success'
+    }, function(ret, err) {
+      api.closeFrameGroup({
+        name: 'second_frame_group'
+      });
+      openSecondFramegroup(2);
+      setSecondFramegroupIndex(2);
+      setSecondFramegroupIndex(1);
+    });
+    //消息删除事件
+    api.addEventListener({
+      name: 'Conversation_Deleted'
+    }, function(ret, err) {
+      getTotalUnreadCount();
+    });
+    //监听通知点击
+    api.addEventListener({
+      name: 'noticeclicked'
+    }, function(ret, err) {
+      if (ret && ret.value) {
+        var res = ret.value.split("%");
+        var ID = res[0];
+        var Conversations = [{
+          "Sender_ID": "" + res[2],
+          "Publish_ID": "" + res[1]
+        }];
+        api.ajax({
+          url: 'http://www.chekehome.com/public/index.php/getConversations',
+          method: 'post',
+          data: {
+            values: {
+              Conversations: Conversations
+            },
+          }
+        }, function(ret, err) {
+          if (ret) {
+            api.openWin({
+              name: 'communicate_header',
+              url: 'communicate/communicate_header.html',
+              pageParam: {
+                Conversation: ret[0],
+                Conversation_ID: ID
+              },
+              useWKWebView: true,
+              bgColor: '#FAFAFA',
+            });
+          } else {
+            api.toast({
+              msg: '加载失败'
+            });
+          }
+        });
+      }
+    });
+    //监听重新连接事件
+    api.addEventListener({
+      name: 'Reconnect_Rong'
+    }, function(ret, err) {
+      ConnectToRong();
+    });
+    // 监听支付订单事件
+    api.addEventListener({
+      name: 'payorder_finished'
+    }, function(ret, err) {
+      api.openWin({
+        name: 'order_header',
+        url: 'fourth_frame/order/order_header.html',
+        useWKWebView: true,
+        bgColor: '#FAFAFA',
+        pageParam: {
+          ID: $api.getStorage("User_ID")
+        }
+      });
+    });
+    //打开订单界面
+    api.addEventListener({
+      name: 'OpenOrder'
+    }, function(ret, err) {
+      if (ret) {
+        api.openWin({
+          name: 'order_header',
+          url: 'fourth_frame/order/order_header.html',
+          useWKWebView: true,
+          bgColor: '#FAFAFA',
+          pageParam: {
+            ID: $api.getStorage("User_ID")
+          }
+        });
+      }
+    });
+    //通知显示开关
+    api.addEventListener({
+      name: 'ShowNotification'
+    }, function(ret, err) {
+      if (ret) {
+        ShowNotification = ret.value.ShowNotification;
+      }
+    });
+  }
+  apiready = function() {
+    OpenGuide();
+    OSS_init();
+    ConnectToRong();
+    firstHeader = $api.byId('firstHeader');
+    secondHeader = $api.byId('secondHeader');
+    thirdHeader = $api.byId('thirdHeader');
+    fourthHeader = $api.byId('fourthHeader');
+    winHeight = api.winHeight;
+    $api.fixStatusBar(firstHeader);
+    $api.fixStatusBar(secondHeader);
+    $api.fixStatusBar(thirdHeader);
+    $api.fixStatusBar(fourthHeader);
+    api.setStatusBarStyle({
+      style: 'dark'
+    });
+    $(".activebtn").each(function() {
+      $(this).removeClass("activebtn");
+      $(this).removeClass("activebtn0");
+      $(this).removeClass("activebtn1");
+      $(this).removeClass("activebtn2");
+      $(this).removeClass("activebtn3");
+    })
+    firstHeaderOffset = $api.offset(firstHeader);
+    var footer = $api.byId('footer');
+    var footerPos = $api.offset(footer);
+    secFrameIndex = 1;
+    api.openFrame({
+      name: 'first_frame',
+      url: 'first_frame/first_frame_header.html',
+      rect: {
+        x: 0,
+        y: firstHeaderOffset.h,
+        w: 'auto',
+        h: 90
+      },
+      useWKWebView: true,
+      bgColor: '#FAFAFA',
+      pageParam: {
+        h: firstHeaderOffset.h
+      },
+    });
+    setTimeout(function() {
+      api.openFrame({
+        name: 'first_frame_body',
+        url: 'first_frame/first_frame_body.html',
+        rect: {
+          x: 0,
+          y: firstHeaderOffset.h + 90,
+          w: 'auto',
+          h: winHeight - firstHeaderOffset.h - 90 - footerheight
+        }
+      });
+    }, 300);
+    if (isAndroid()) {
+      footerheight = $api.offset($api.byId('footer')).h;
+    } else if (isiPhoneX()) {
+      $("#footer").height(80);
+      footerheight = 80;
+    } else {
+      footerheight = 47;
+    }
+    api.setPrefs({
+      key: 'filter',
+      value: 0
+    });
+    $(".bbtn01").addClass("activebtn activebtn0");
+    AddEvents();
+    getCity();
+  }
+</script>
+
+</html>

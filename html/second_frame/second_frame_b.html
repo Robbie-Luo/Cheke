@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name = "format-detection" content = "telephone=no">
+	<title>update</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" href="../../css/mescroll.min.css">
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		 html,body {width: 100%;background: #F5F5F5;}
+		 .fl{float:left}.fr{float:right}
+		 [v-cloak] {
+		  display: none;
+		 }
+		.news{width:100%;overflow: hidden;}
+		.news-delete{position: absolute;right:0px;height:20px;padding: 10px;z-index:1}
+		.news-item {padding:15px 15px 15px 15px;background-color: #FFFFFF;}
+		.news-title{height:40px;width: 100%;position: relative;z-index:0}
+		.news-head-image{height:40px;width:40px;position: absolute;left:0px;z-index:1;margin-right:0px;border-radius: 100%;background-color: #F8F8F8;}
+		.news-head{height:40px;width:100%;position: relative;}
+	  .news-username{position: absolute;left:50px;top:0;font-size:16px;line-height:25px;color:#555;width: calc(100% - 100px);height: 25px;}
+	  .news-time{position: absolute;left:50px;top:25px;width: calc(100% - 60px);height: 15px;line-height:15px;color:#888;font-size:12px;}
+		.news-text{line-height:25px;font-size: 16px;padding-top: 10px;padding-left:2px;padding-right: 2px;word-wrap:break-word; }
+		.news-text-more{color: #8593B0;line-height:25px;font-size: 16px;padding-top: 10px;padding-left: 2px;}
+		/*.news-text-part{ display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;overflow: hidden;}*/
+		.news-text-part{height:100px;overflow: hidden;}
+		.news-photos{width: 100%;height:50%;overflow: hidden;position: relative;margin-top:10px;}
+		.news-photo{overflow: hidden;background-position: center;background-repeat: no-repeat;background-size: cover;}
+		.news-cover1{width:66%;height:100%;float:left;border-radius:6px 0 0 6px;background-color: #F8F8F8}
+		.news-cover23{width:33%;height:100%;float:right;position: relative;background-color: #F8F8F8}
+		.news-cover2{width:100%;height:49%;border-radius:0 6px 0 0;background-color: #F8F8F8}
+		.news-cover3{width:100%;height:49%;position: absolute;bottom: 0;border-radius:0 0 6px 0;background-color: #F8F8F8}
+		.news-cover-left{width:49.5%;height:100%;position: absolute;left: 0;border-radius:6px 0 0 6px;background-color: #F8F8F8}
+		.news-cover-right{width:49.5%;height:100%;position: absolute;right: 0;border-radius:0 6px 6px 0;background-color: #F8F8F8}
+		.news-cover-center{width:100%;height:100%;border-radius: 6px;background-color: #F8F8F8}
+		.news-cover-more{position: absolute;right:5px;bottom:5px;height: 20px;width:20px;border-radius: 100%;background-color: rgba(0,0,0,0.5);}
+		.news-photo-num{font-size:14px;color:#eee;text-align: center;line-height: 22px;width: 100%}
+		.news-info{height:25px;line-height: 25px;position: relative;margin-top:10px;}
+		.news-location-img{ height:16px;float: left;padding-right:5px;padding-top:7px;padding-bottom:7px;}
+		.news-location{ font-size: 14px;line-height:30px;height:30px;color: #8593B0;float: left;width:calc(100% - 150px);}
+		.news-view{height:25px;line-height:25px;position: absolute;right:0;}
+		.view-image{line-height:22px;height:22px;padding:4px 5px 4px 10px;float: left;}
+		.love-image{line-height:22px;height:22px;padding:2px 5px 6px 10px;float: left;}
+		.trans-image{line-height:22px;height:22px;padding:2px 5px 6px 10px;float: left;}
+		.view-text-active{line-height:30px;font-size:14px;}
+		.view-text{line-height:30px;font-size:14px;color:#515151}
+		.divider{height:10px;width:100%;background-color: #F5F5F5;}
+		.error{width: 100%;height: 100%;position:absolute; top:0;display: none;}
+		.error-page{position: absolute;top:10px;width: 100%;text-align: center;}
+		.error-img{display: inline-block;width: 40%;}
+		.error-text1{font-size:20px;color:#333;line-height: 60px;}
+		.error-text2{text-align: center;font-size:14px;color:#888;line-height: 20px;}
+		.error-text3{text-align: center;font-size:18px;color:#FDDC3C;line-height: 30px;padding-top: 30px}
+		</style>
+</head>
+<body>
+	<div id="mescroll" class="mescroll">
+		<div class="news" id="UpdateList">
+			<div v-for="(pd,index) in pdlist" v-cloak>
+				<div class="news-item">
+					<div class="news-title" v-on:click="opencomment(pd)">
+						<img :src="HeadImgSrc(pd)" class="news-head-image" v-on:click.stop="openuser(pd)" alt="">
+						<img src="../../image/titlebar/delete.png" class="news-delete" v-if="isself(pd)" v-on:click.stop="delete_update(pd)">
+							<div class="news-head">
+								<div class="news-username overflow-text">
+										{{pd.User_name}}
+								</div>
+								<div class="news-time">{{Time_Format(pd.Time)}}</div>
+							</div>
+					</div>
+					<div class="news-text" v-on:click="opencomment(pd)" v-html="ShowText(pd.Text)" :class="PartText(pd.Text)"></div>
+					<div class="news-text-more" v-show="MoreText(pd.Text,index)" v-on:click="ShowAllText(pd.Text,index)">查看全文</div>
+					<div class="news-photos" v-if="getimgnum(pd)>3">
+							<div class="news-photo news-cover1" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+							<div class="news-cover23">
+								<div class="news-photo news-cover2" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+							  <div class="news-photo news-cover3" :style="{backgroundImage: 'url(' + geturl(pd,2) + ')'}" v-on:click="browseimg(pd,3)">
+							  	<div class="news-cover-more"><div class="news-photo-num">{{getimgnum(pd)}}</div></div>
+							  </div>
+							</div>
+					</div>
+					<div class="news-photos" v-if="getimgnum(pd)==3">
+							<div class="news-photo news-cover1" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+							<div class="news-cover23">
+								<div class="news-photo news-cover2" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+							  <div class="news-photo news-cover3" :style="{backgroundImage: 'url(' + geturl(pd,2) + ')'}" v-on:click="browseimg(pd,3)"></div>
+							</div>
+					</div>
+					<div class="news-photos" v-if="getimgnum(pd)==2">
+							<div class="news-photo news-cover-left" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+							<div class="news-photo news-cover-right" :style="{backgroundImage: 'url(' + geturl(pd,1) + ')'}" v-on:click="browseimg(pd,2)"></div>
+					</div>
+					<div class="news-photos" v-if="getimgnum(pd)==1">
+							<div class="news-photo news-cover-center" :style="{backgroundImage: 'url(' + geturl(pd,0) + ')'}" v-on:click="browseimg(pd,1)"></div>
+					</div>
+					<div class="news-info" v-cloak>
+								<img src="../../image/titlebar/address.png" class="news-location-img" v-show="pd.Location!='undefine'">
+								<div class="news-location overflow-text" v-show="pd.Location!='undefine'">{{pd.Location}}</div>
+								<div class="news-view">
+								<div class="comments fl"  v-on:click="opencomment(pd)">
+										<img src="../../image/titlebar/talk.png" class="view-image">
+										<span class="view-text">{{pd.Comments}}</span>
+								</div>
+								<div class="favorites fl" v-on:click="dolove(pd,index)">
+										<div v-if="pd.isLoved">
+											<img src="../../image/titlebar/loved.png" class="love-image active" >
+											<span class="view-text-active love-num">{{pd.Loves}}</span>
+										</div>
+										<div v-else>
+											<img src="../../image/titlebar/love.png" class="love-image">
+											<span class="view-text love-num">{{pd.Loves}}</span>
+										</div>
+								</div>
+								<div class="trans fl" v-on:click="share(pd)">
+										<img src="../../image/titlebar/share2.png" class="trans-image" >
+								</div>
+							</div>
+				 	</div>
+			  </div>
+				<div class="divider"></div>
+			</div>
+		</div>
+	</div>
+	<div class="news-text" id="testline" style="display:none"></div>
+	<div class="error" onclick="window.location.href=window.location.href">
+		<div class="error-page">
+			<img src="../../image/network_error.png" class="error-img">
+			<div class="error-text1">网络不给力</div>
+			<div class="error-text2">请检查网络设置或点击刷新重试</div>
+			<div class="error-text3">刷新</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/mescroll.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+ var User_ID=$api.getStorage("User_ID");
+ var curr_page,vm;
+ Date.prototype.Format = function (fmt) {
+	 var o = {
+			 "M+": this.getMonth() + 1, //月份
+			 "d+": this.getDate(), //日
+			 "h+": this.getHours(), //小时
+			 "m+": this.getMinutes(), //分
+			 "s+": this.getSeconds(), //秒
+			 "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+			 "S": this.getMilliseconds() //毫秒
+	 };
+	 if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	 for (var k in o)
+	 if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+	 return fmt;
+ }
+ function share(pd){
+	api.openFrame({
+			name: 'sharerpl',
+			url: './share.html',
+			rect: {
+					x: 0,
+					y: 0,
+					w: 'auto',
+					h: 'auto'
+			},
+			pageParam: {
+					ID:pd.Update_ID,
+					Update_Text:pd.Text
+			},
+			bounces: false,
+			bgColor: 'rgba(0,0,0,0)',
+			vScrollBarEnabled: false,
+			hScrollBarEnabled: false
+	});
+ }
+ function GetLineNumber(text){
+	  text=text.replace(/\n|\r\n/g,"<br/>");
+	 	$("#testline").html(text);
+		return $("#testline").height()/25;
+ }
+ apiready=function(){
+	 $(".news-photos").height(api.frameWidth/2);	 
+	 api.addEventListener({
+			name: 'update_refresh'
+  	}, function(ret, err){
+		 reload();
+	});
+	api.addEventListener({
+	    name: 'dolove'
+	}, function(ret, err){
+				reload();
+	});
+	vm = new Vue({
+ 					el: "#UpdateList",
+ 					data: {
+ 						mescroll: null,
+ 						pdlist: [],
+ 					},
+ 					mounted: function() {
+ 						var self = this;
+	 					self.mescroll = new MeScroll("mescroll", {
+		 							up: {
+			 									callback: self.upCallback,
+			 									isBounce: false,
+												// 	page:{size:10),
+			 									toTop:{
+			 										src : "../../image/titlebar/backtotop.png",
+			 									},
+			 									empty:{
+													tip:'暂无新动态',
+			 										warpId:"UpdateList",
+			 									},
+		 							}
+	 							});
+ 					},
+ 			   	methods: {
+							getimgnum:function(pd){
+									if(pd.Pic_array=="null") return 0;
+									else return pd.Pic_array.split("-").length;
+							},
+							isself:function(pd){
+								return pd.User_ID==User_ID;
+							},
+							delete_update:function(pd){
+									api.confirm({
+											title: '提示',
+											msg: '真的要删除此条动态吗？',
+											buttons: ['确定', '取消']
+									}, function(ret, err){
+										if( ret.buttonIndex==1 ){
+													api.ajax({
+														    url: 'http://www.chekehome.com/public/index.php/delupdate',
+														    method: 'post',
+														    data: {
+														        values: {
+																				Update_ID:pd.Update_ID
+														        },
+														    }
+														},function(ret, err){
+															api.sendEvent({
+																	name: 'update_refresh',
+															});
+													});
+										}});
+							},
+							Time_Format:function(t){
+									var curr_time=new Date().Format("yyyy-MM-dd");
+									var date=t.substring(0,10);
+									var time=t.slice(11,16);
+									if(curr_time==date) {
+										return "今天 "+time;
+									}
+									else {
+										return date.substring(5,10).replace("-","月")+"日";
+									}
+							},
+ 							geturl: function(pd,index){
+								var path= pd.Pic_array.split("-")[index];
+								var imgW=",w_600";
+								var imgH=",h_450";
+								var url="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+path+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+								return url;
+							},
+							HeadImgSrc:function(pd){
+									var imgW=",w_150";
+						      var imgH=",h_150";
+						      return "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+pd.User_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+							},
+							ShowText:function(text){
+									return text.replace(/\n|\r\n/g,"<br/>");
+							},
+							PartText:function(text){
+								if(GetLineNumber(text)>4){
+									return "news-text-part"
+								}
+							},
+							MoreText:function(text,index){
+								if(GetLineNumber(text)>4){
+									return true;
+								}
+								else{
+									return false;
+								}
+							},
+							ShowAllText:function(text,index){
+								var target=document.getElementsByClassName("news-text-more")[index];
+								var news_text=document.getElementsByClassName("news-text")[index];
+								if(target.innerHTML=="查看全文"){
+									news_text.classList.remove("news-text-part");
+									target.innerHTML="收起";
+								}
+								else{
+									news_text.classList.add("news-text-part");
+									target.innerHTML="查看全文";
+								}
+							},
+							browseimg: function (pd,index){
+									var imgstr=pd.Pic_array;
+									var imgarr=imgstr.split("-");
+									var data=[];
+									for(var i=0;i<imgarr.length;i++){
+											data.push("http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+imgarr[i]);
+									}
+									api.openWin({
+									    name: 'browse_img',
+									    url: './browse_img.html',
+											useWKWebView:true,
+						          bgColor:'#FAFAFA',
+											pageParam:{
+												data:data,
+												index:index
+											}
+									});
+							},
+							opencomment:function(pd){
+									api.openWin({
+									    name: 'comment_header',
+									    url: './comment/comment_header.html',
+											useWKWebView:true,
+						          bgColor:'#FAFAFA',
+									    pageParam: {
+									        Update_ID: pd.Update_ID,
+													User_ID:User_ID,
+													Update_Text:pd.Text
+									    }
+									});
+							},
+							openuser:function(pd){
+									api.openWin({
+									    name: 'user_header',
+									    url: '../user/user_header.html',
+											useWKWebView:true,
+						          bgColor:'#FAFAFA',
+									    pageParam: {
+									        ID: pd.User_ID
+									    }
+									});
+
+							},
+							dolove:function(pd,index){
+									if($api.getStorage("login_status")=='true'){
+										var target=document.getElementsByClassName("love-image")[index];
+										var num=document.getElementsByClassName("love-num")[index];
+										if(pd.isLoved){
+											api.ajax({
+											    url: 'http://www.chekehome.com/public/index.php/dellove',
+											    method: 'post',
+											    data: {
+											        values: {
+											            Parent_ID:pd.Update_ID,
+																	User_ID:User_ID,
+											        },
+											    }
+											},function(ret, err){
+												if(ret){
+													// target.src="../../image/titlebar/love.png";
+													// target.classList.remove("active");
+													// num.classList.remove("active");
+													// num.innerHTML=parseInt(num.innerHTML)-1;
+													pd.isLoved=false;
+													pd.Loves=pd.Loves-1;
+													Vue.set(vm.pdlist, index, pd);
+													api.sendEvent({
+													    name: 'dolove',
+													});
+												}
+											});
+										}
+										else{
+											var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+											if(pd.Update_ID&&User_ID){
+												api.ajax({
+														url: 'http://www.chekehome.com/public/index.php/addlove',
+														method: 'post',
+														data: {
+																values: {
+																		Parent_ID:pd.Update_ID,
+																		User_ID:User_ID,
+																		Time:curr_time
+																},
+														}
+												},function(ret, err){
+													if(ret){
+														//  target.src="../../image/titlebar/loved.png";
+														//  target.classList.add("active");
+														//  num.innerHTML=parseInt(num.innerHTML)+1;
+														 pd.isLoved=true;
+														 pd.Loves=pd.Loves+1;
+		 											   Vue.set(vm.pdlist, index, pd);
+														 api.sendEvent({
+		 												    name: 'dolove',
+		 												});
+													}
+												});
+											}
+										}
+									}
+							},
+ 							upCallback: function(page) {
+								curr_page=page;
+ 								//联网加载数据
+ 								var self = this;
+ 								getListDataFromNet(page.num, page.size, function(curPageData) {
+ 								if(page.num == 1) self.pdlist = [];
+ 								self.pdlist = self.pdlist.concat(curPageData);
+ 								self.mescroll.endSuccess(curPageData.length);
+ 								}, function() {
+ 									self.mescroll.endErr();
+									$(".mescroll").hide();
+									$(".error").show();
+ 								});
+ 							},
+ 						},
+ 	});
+ }
+ function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+		var data;
+		var url='http://www.chekehome.com/public/index.php/getallupdates/Num/'+pageNum+"/Size/"+pageSize;
+		api.ajax({
+					url: url,
+					method: 'post',
+					data:{
+						values:{
+							ID:User_ID
+						}
+					}
+			}, function(ret, err) {
+					if (ret) {
+						setTimeout(function(){
+							 successCallback&&successCallback(ret.data,ret.count);//成功回调
+						},300);
+					}
+					else{
+						errorCallback&&errorCallback();
+					}
+				}); // 模拟数据: ../res/pdlist1.js
+ }
+ function reload(){
+	 var url='http://www.chekehome.com/public/index.php/getallupdates/Num/'+curr_page.num+"/Size/"+curr_page.size;
+	 api.ajax({
+				 url: url,
+				 method: 'post',
+				 data:{
+					 values:{
+						 ID:User_ID
+					 }
+				 }
+		 }, function(ret, err) {
+				 if (ret) {
+					 vm.pdlist =ret.data;
+				 }
+	}); // 模拟数据: ../res/pdlist1.js
+}
+</script>
+
+</html>

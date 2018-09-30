@@ -1,0 +1,421 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="copyright" content="www.apicloud.com" />
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>登陆</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/login.css" />
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		 html { position: absolute;top:0;left: 0; height:100%; overflow: hidden; } body{ overflow: hidden; }
+		.backimg { width:100%; background: no-repeat top; background-image: url("../../image/login/login_bg.jpg"); background-color: #FFFFFF; background-size:cover; background-attachment: fixed; }
+		.fl{float: left;} .fr{float: right;}
+		.left_back { position: absolute; left: 20px; top: 30px; height: 30px; } .login{ width:100%; position:absolute; top:0; }
+		.login_welcome{ position: absolute;font-size: 45px; padding-left: 15%; width:100%; color:#f5f5f5;}
+		.login_form { position: absolute; margin-left: 15%; margin-right: 15%; width: 70%; text-align: center;}
+		.login_clear{ position: absolute; height:15px; width: 15px; right: 5px; bottom: 12px; background-image: url(../../image/login/goback.png); background-size: cover; background-repeat: no-repeat; display: none; }
+		.login_code { position: absolute;right:0;width:80px; height: 30px; line-height: 30px; background: #FDDC3C; color: #555; font-size: 12px; text-align: center; border-radius:15px; }
+		.login_submit { position: relative; width: 100%; height: 40px; color: #e0e0e0; margin-top: 40px; background: #FDDC3C; font-size: 18px; border-radius: 20px; cursor: pointer; overflow: hidden; -webkit-transition: width 0.3s 0.15s, font-size 0.1s 0.15s;
+		transition: width 0.3s 0.15s, font-size 0.1s 0.15s; }
+		.login_more{ width:100%; text-align: center; font-size: 20px; color: #fff;position: fixed;bottom: 0}
+		.login_more_btn{ width:80%; margin-left:10%; margin-right: 10%; }
+		.divider{ color:#F5F5F5; margin: 0 auto; font-size: 20px; line-height: 60px; width:40%; }
+		.divider-line{ width:30%; height:1px; margin-top: 30px; background-color: #F5F5F5; }
+		ul {display: -webkit-box; display: -webkit-flex; display: flex; }
+		li{-webkit-box-flex: 1; -webkit-flex: 1; flex:1; }
+		.login_weixin {background: url(../../image/login/login_wechat.png) no-repeat center 4px; }
+		.login_qq {background: url(../../image/login/login_qq.png) no-repeat center 4px; }
+		.login_btn {width: 99%; height: 90px;background-position-y: 4px; background-size:60px;
+		font-size: 12px; color: #515151;}
+		#login_txt{color:#515151;}
+	</style>
+</head>
+<body>
+		<div class="backimg"></div>
+		<div class="login">
+			<img src="../../image/login/login_back.png" class="left_back" onclick="goback()" id="backimg">
+			<div class="login_welcome">欢迎来到<br>车客！</div>
+      <div class="login_form">
+        <div class="login_row">
+          <svg class="login_icon name svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8" />
+          </svg>
+          <input type="tel" class="login_input_name myinput" placeholder="请输入手机号" onKeyUp="value=value.replace(/[^\d]/g,'');value =value.slice(0,11);"/>
+					<button type="button" class="login_clear"></button>
+        </div>
+        <div class="login_row">
+          <svg class="login_icon pass svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 20,20 20,8 0,8z M10,13 10,16z M4,8 a6,8 0 0,1 12,0" />
+          </svg>
+          <input type="number" class="login_input_pass myinput" placeholder="请输入验证码" onKeyUp="value=value.replace(/[^\d]/g,'');value =value.slice(0,6);"/>
+					<button type="button" class="login_code" onclick="SendMessage()">发送验证码</button>
+        </div>
+        <button type="button" class="login_submit"><span id="login_txt">注册/登陆</span></button>
+      </div>
+			<div class="login_more" style="display:none">
+				<div class="divider-line fl"></div>
+				<div class="divider-line fr"></div>
+				<div class="divider">第三方登陆</div>
+				<ul class="login_more_btn">
+							<li onclick="wx_login()" class="wxlogin" style="display:none">
+		            <a class="login_btn login_weixin"></a>
+		          </li>
+							<li onclick="qq_login()" class="qqlogin" style="display:none">
+		            <a class="login_btn login_qq"></a>
+		          </li>
+		        </ul>
+			</div>
+    </div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+	var Time_Count=60;
+	var Code="";
+	function goback() {
+		api.closeToWin({
+			name: 'root'
+		});
+	};
+	//设置登录信息
+	function setUserinfo(ret){
+		$api.setStorage('User_ID', ret.ID);
+		$api.setStorage('User_Info',ret);
+		$api.setStorage('login_status',true);
+		$api.setStorage('VIP',ret.VIP);
+		api.sendEvent({
+		    name: 'loginSuccess',
+		    extra: {
+		        User_ID: ret.ID,
+		        User_Info: ret,
+						login_status:true
+		    }
+		});
+		api.closeToWin({
+		    name: 'root',
+				animation:{
+					type:"push",                //动画类型（详见动画类型常量）
+				}
+		});
+	}
+	//发送验证码
+	function SendMessage(){
+		var phonenum=$(".login_input_name").val();
+		if(phonenum.length!=11){
+			api.toast({
+			    msg: '请输入正确的手机号码',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			$(".login_input_name").focus();
+			return;
+		}
+		Tick();
+		Code="";
+		for(var i=0;i<6;i++){
+			Code+=Math.floor(Math.random()*10);
+		}
+		var row={};
+		row.phone=phonenum;
+		row.code=Code;
+		api.ajax({
+					url: 'http://www.chekehome.com/SmsDemo/SmsDemo.php/?phone='+phonenum+'&code='+Code,
+			}, function(ret, err) {
+						api.toast({
+						    msg: '验证码已发送',
+						    duration: 2000,
+						    location: 'bottom'
+						});
+		});
+	}
+	//一分钟倒计时
+	function Tick(){
+		$(".login_code").html(Time_Count+"s");
+		$(".login_code").attr("disabled","true");
+			var int=setInterval(function(){
+					if(Time_Count==1) {
+						window.clearInterval(int);
+						$(".login_code").html("发送验证码");
+						Time_Count=60;
+						$(".login_code").removeAttr("disabled");
+						return;
+					}
+					Time_Count--;
+					$(".login_code").html(Time_Count+"s");
+
+			},1000);
+	}
+	//手机号码登陆
+	function phone_login(){
+			var value=$(".login_input_name").val();
+			var pass=$(".login_input_pass").val();
+			if(value!="88888888888"||pass!="888888"){
+				if(!pass){
+					api.toast({
+					    msg: '请输入验证码',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+					$(".login_input_pass").focus();
+					return false;
+				}
+				if(pass!=Code){
+					api.toast({
+					    msg: '验证码错误！',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+					$(".login_input_pass").focus();
+					return false;
+				}
+			};
+			//判断是否是新用户
+			api.showProgress({
+			    style: 'default',
+			    animationType: 'fade',
+			    title: '正在登录...',
+			    text: '',
+			    modal: true
+			});
+			api.ajax({
+			    url: 'http://www.chekehome.com/public/index.php/PhoneLogin',
+			    method: 'post',
+			    data: {
+			        values: {
+			            Phone: value
+			        },
+			    }
+			},function(ret, err){
+				if(ret){
+			    if (ret.status) {
+						api.hideProgress();
+						setUserinfo(ret);
+					}
+					else{
+						api.hideProgress();
+						api.openWin({
+								name: 'login_newuser',
+								url: './login_newuser.html',
+								pageParam:{
+									Phone:$(".login_input_name").val()
+								}
+						});
+					}
+					return true;
+				}
+			});
+	}
+	function qq_login(){
+		api.showProgress({
+		    style: 'default',
+		    animationType: 'fade',
+		    title: '',
+		    text: '正在打开QQ',
+		    modal: true
+		});
+		var qq = api.require('qq');
+		var QQ_ID;
+		qq.login(function(ret, err) {
+				if(ret.status){
+					QQ_ID=ret.openId;
+					//判断是否是新用户
+					api.ajax({
+					    url: 'http://www.chekehome.com/public/index.php/QQLogin',
+					    method: 'post',
+					    data: {
+					        values: {
+					            QQ_ID: QQ_ID
+					        },
+					    }
+				  	},function(ret, err){
+							if (ret.status) {
+								setTimeout(function(){
+								  api.hideProgress();
+									setUserinfo(ret);
+								},100);
+							}
+							else{
+								qq.getUserInfo(function(ret, err) {
+									if (ret.status&&ret.info.ret==0) {
+										api.hideProgress();
+										api.openWin({
+										    name: 'login_qq',
+										    url: './login_qq.html',
+										    pageParam: {
+										        QQ_ID: QQ_ID,
+														info:ret.info
+										    }
+										});
+									}
+									else{
+										api.toast({
+										    msg: JSON.stringify(err.msg),
+										    duration: 2000,
+										    location: 'bottom'
+										});
+									}
+								});
+
+							}
+					});
+				}
+				else{
+					api.hideProgress();
+					api.toast({
+							msg: '登录失败',
+							duration: 2000,
+							location: 'bottom'
+					});
+				}
+		});
+	}
+	function wx_login(){
+		api.showProgress({
+		    style: 'default',
+		    animationType: 'fade',
+		    title: '',
+		    text: '正在打开微信',
+		    modal: true
+		});
+		var wx = api.require('wx');
+		var WX_ID;
+		var Token;
+		var info;
+		wx.auth({apiKey: ''}, function(ret, err) {
+			if (ret.status) {
+				var wx = api.require('wx');
+				var code=ret.code;
+				wx.getToken({
+				    apiKey: '',
+				    apiSecret: '',
+				    code: code
+				 }, function(ret, err) {
+				    if (ret.status) {
+				        WX_ID=ret.openId;
+								Token=ret.accessToken;
+								// 获取用户信息
+								wx.getUserInfo({
+										accessToken: Token,
+										openId:WX_ID
+							 	}, function(ret, err) {
+										if(ret.status){
+											info=ret;
+											//判断是否是新用户
+											api.ajax({
+											    url: 'http://www.chekehome.com/public/index.php/WXLogin',
+											    method: 'post',
+											    data: {
+											        values: {
+											            WX_ID:WX_ID,
+																	WX_UID:info.unionid
+											        },
+											    }
+											},function(ret, err){
+													if (ret.status) {
+													// 老用户
+														api.hideProgress();
+														setUserinfo(ret);
+													}
+													else{
+														api.openWin({
+														    name: 'login_wx',
+														    url: './login_wx.html',
+														    pageParam: {
+																		ret:info,
+														        WX_ID: WX_ID,
+																		Token: Token
+														    }
+														});
+													}
+											});
+										}
+
+								});
+				    } else {
+								api.hideProgress();
+				      	api.toast({
+				      	    msg: '登录失败',
+				      	    duration: 2000,
+				      	    location: 'bottom'
+				      	});
+				    }
+				});
+			}
+			else {
+					api.hideProgress();
+					api.toast({
+							msg: '登录失败',
+							duration: 2000,
+							location: 'bottom'
+					});
+			}
+			});
+	}
+	apiready = function() {
+			var wel_top=(api.frameHeight-250)/2+20;
+			var wel_fontsize=0.12*api.frameWidth;
+			$(".login_form").css("top",wel_top);
+			$(".login_welcome").css("top",(wel_top-wel_fontsize)/2);
+			$(".login_welcome").css("font-size",wel_fontsize);
+			$(".backimg").width(api.frameWidth);
+			$(".backimg").height(api.frameHeight+10);
+			$(".login").height(api.frameHeight+10);
+			if(isiPhoneX()) {
+				$(".left_back").css("top",50);
+				$(".login_more").css("bottom",20);
+			}
+			var wx = api.require('wx');
+			wx.isInstalled(function(ret, err) {
+			    if (ret.installed) {
+							$(".login_more").show();
+			        $(".wxlogin").show();
+			    }
+			});
+			var qq = api.require('qq');
+			qq.installed(function(ret, err) {
+			    if (ret.status) {
+						  $(".login_more").show();
+			        $(".qqlogin").show();
+			    }
+			});
+			var animating = false,
+					submitPhase1 = 1100,
+					submitPhase2 = 400,
+					logoutPhase1 = 800,
+					$login = $(".login"),
+					$app = $(".app");
+			$(".login_clear").click(function(){
+					$(".login_input_name").val("");
+					$(".login_input_name").focus();
+					$(this).hide();
+			});
+			$(".login_input_name").on('keyup',function(){
+					if($(".login_input_name").val()){
+							$(".login_clear").show();
+					}
+					else{
+							$(".login_clear").hide();
+					}
+			});
+			$(document).on("click", ".login_submit", function(e) {
+					var phonenum=$(".login_input_name").val();
+					if(phonenum.length!=11){
+						api.toast({
+								msg: '请输入正确的手机号码',
+								duration: 2000,
+								location: 'bottom'
+						});
+						$(".login_input_name").focus();
+						return;
+					}
+					if (phone_login() == true){
+
+					} else {
+
+					}
+			});
+	}
+</script>
+</html>

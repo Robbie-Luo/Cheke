@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+
+    <script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+      html {width: 100%;height: 100%;background:transparent;}
+      body {background: rgba(0,0,0,0);width: 100%;height: 100%;}
+     .fr{float: right;}
+     .fl{float: left;}
+      #imgheader{position:absolute;top:5px;overflow: hidden;text-align: center;width: 100%;height:50px; }
+     .trans{position: relative;height:50px;}
+     .trans-back{width:40px;height:40px;position: absolute;left:10px;top:5px;;background-color: rgba(0,0,0,0);border-radius: 100%}
+     .trans-backimg{height:20px;width:20px;position: absolute;left:10px;top:5px;;}
+     .trans-save{width:40px;height:40px;position: absolute;right:10px;top:5px;;background-color: rgba(0,0,0,0);border-radius: 100%}
+     .trans-saveimg{height:20px;width:20px;position: absolute;left:10px;top:5px;;}
+     .trans-img{ border-top:50px solid transparent; -webkit-filter:drop-shadow(0 -50px 0px #ffffff); filter:drop-shadow( 0 -50px 0px #ffffff); }
+     .title{ display: inline-block; margin: 0 auto; font-size: 20px;color: #ffffff; text-align: center; line-height:30px; }
+     .imgindex,.imgnumber{color: #ffffff;}
+    </style>
+  </head>
+  <body>
+      <div id="imgheader">
+        <div class="trans">
+          <div onclick="goback()" class="trans-back">
+            <img src="../../image/titlebar/back.png" class="trans-backimg trans-img">
+          </div>
+          <div class="title"><span class="imgindex">1</span>/<span class="imgnumber">1</span></div>
+          <div onclick="saveimg()" class="trans-save">
+            <img src="../../image/titlebar/save.png" class="trans-saveimg trans-img">
+          </div>
+        </div>
+      </div>
+      <div id="main"></div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript">
+    function goback () {
+      $("html").hide();
+      api.closeWin({
+          name: 'browse_img'
+      });
+    }
+    function setIndex(index){
+        $(".imgindex").html(index);
+    }
+    function setNumber(number)
+    {
+        $(".imgnumber").html(number);
+    }
+    function saveimg()
+    {
+        var address_array=api.pageParam.address;
+        var url=address_array[$(".imgindex").html()-1];
+        var timestamp = Date.parse(new Date())/1000;
+        var path="fs://"+timestamp+".jpg";
+        api.download({
+            url: url,
+            savePath: path,
+            report: true,
+            cache: true,
+            allowResume: true
+        },function(ret, err){
+            if(ret.state == 1){
+                api.saveMediaToAlbum({
+                    path: path
+                 }, function(ret, err){
+                    if( ret ){
+                      api.toast({
+                          msg: '照片已保存',
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                    }else{
+                      api.toast({
+                          msg: '保存失败',
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                    }
+                });
+            }
+        });
+    }
+    apiready = function(){
+      var Header = $api.byId('imgheader');
+      $api.fixStatusBar(Header);
+      api.addEventListener({
+          name: 'Set_Index'
+      }, function(ret, err){
+          setIndex(ret.value.index)
+      });
+      $(".imgnumber").html(api.pageParam.imgnumber);
+      $(".imgindex").html(api.pageParam.imgindex);
+    };
+  </script>
+</html>

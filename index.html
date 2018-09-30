@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+  <title>车客</title>
+  <link rel="stylesheet" type="text/css" href="css/api.css" />
+  <script src="script/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <style>
+    html, body { height: 100%; width: 100%; }
+    </style>
+</head>
+
+<body>
+</body>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/sha1.js"></script>
+<script type="text/javascript">
+  apiready = function() {
+    api.openFrame({
+      name: 'index',
+      url: 'html/index.html',
+      rect: {
+        x: 0,
+        y: 0,
+        w: 'auto',
+        h: 'auto'
+      },
+      useWKWebView: true,
+      bgColor: '#FAFAFA',
+    });
+  }
+</script>
+
+</html>

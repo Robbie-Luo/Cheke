@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>型号</title>
+		<script type="text/javascript" src="../../../script/vue.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="http://at.alicdn.com/t/font_420420_jrzewrwrpi0h33di.css" />
+		<style>
+			* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+		  html,body { -webkit-touch-callout:none; -webkit-text-size-adjust:none; -webkit-tap-highlight-color:rgba(0, 0, 0, 0); -webkit-user-select:none; width: 100%; }
+			body { line-height: 1.5; font-size: 0.8rem; color: #212121; background-color: #FFF; outline: 0; }
+			[v-cloak] { display: none; }
+			.list-item{ width: 100%; height:50px; position: relative; }
+			.list-logo{ display: inline-block; height:40px;width: 40px;margin:5px; position: absolute; left:0px;background-size: cover;}
+			.list-name{  height:50px; line-height:50px; font-size: 15px; position: absolute; left:50px; }
+			.list-name-none{  height:50px; line-height:50px; font-size: 15px; position: absolute; left:15px; }
+			.list-header { background-color: #F5F5F5; color: #555; line-height: 1.5rem; padding-left: 15px; font-weight: 600; }
+			.touchlist{ width: 30px; padding-left:5px; padding-right: 7px; position: fixed; bottom: 0; right: 0; text-align: center; color:#515151; font-size: 12px; font-weight: 500; }
+			.touch-info { background: rgba(0, 0, 0, 0.6); color: #ffffff; font-size:5vw !important; position: fixed; top: 40%; left: 41.5%; padding: 5% 0; width: 17%; text-align: center; border-radius: 20%; }
+			.bottom-area{width: 100%;height: 50px;}
+			.bottom-btn{ position: fixed; bottom:0px; width: 100%; height:50px; background-color: #FAFAFA; -webkit-box-shadow:0px -1px 5px #ddd; }
+			.bottom-text{ color:#555; width: 100%; line-height: 50px; text-align: center; font-size: 16px;
+				background: -webkit-linear-gradient(top,#ffee22, #FFD03C);		}
+			.close-btn{ position: fixed; bottom:0px; line-height: 45px; font-size: 15px; color:#515151; width: 100%; text-align: center; background-color: #FDDC3C; -webkit-box-shadow:0px -1px 5px #ddd; }
+			.back-btn{ position: fixed; bottom:0px; line-height: 45px; font-size: 15px; color:#515151; width: 100%; text-align: center; background-color: #FDDC3C; -webkit-box-shadow:0px -1px 5px #ddd; display: none;}
+			.more{display: none}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+				<div class="list-item" v-on:click="loadmore('',-1)">
+						<div class="list-name-none" v-cloak>不限品牌</div>
+				</div>
+				<div v-for="(r,index) in rows" v-cloak>
+				<div class="list-header hc1" v-if="r.name=='letter'" v-cloak>
+						{{r.initial}}
+				</div>
+				<div class="myborder-bottom list-item" v-if="r.name!='letter'" v-on:click="loadmore(r.brand,r.brandID)">
+					 	<img class="list-logo" :src="geturl(r)"/>
+						<div class="list-name" v-cloak>{{r.brand}}</div>
+				</div>
+				</div>
+		</div>
+		<div class="touchlist" id="touch">
+			<div v-for="letter in letters">{{letter}}</div>
+		</div>
+		<div class="touch-info" style="display: none;">
+			A
+		</div>
+		<div id="more">
+			<div class="list-item" v-on:click="select()">
+					<div class="list-name-none" v-cloak>不限车系</div>
+			</div>
+			<div v-for="list in series" v-cloak>
+				<div class="list-header" v-cloak>
+						{{list.series}}
+				</div>
+				<div class="myborder-bottom list-item"  v-for="model in models" v-if="model.series==list.series" v-on:click="select(model.model)">
+						<div class="list-name-none" v-cloak>{{model.model}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="bottom-area"></div>
+		<div class="bottom-btn close" onclick="closeframe()">
+			<div class="bottom-text">关闭</div>
+		</div>
+		<div class="bottom-btn back" onclick="goback()" style="display:none">
+			<div class="bottom-text">返回</div>
+		</div>
+	</body>
+	<script src="../../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../../script/api.js"></script>
+	<script>
+	var main,more;
+	function closeframe(){
+		api.sendEvent({
+		    name: 'CloseSelectBrand',
+		});
+  }
+	function goback(){
+		window.location.href=window.location.href;
+		// window.location.href=window.location.href;
+	}
+	function uniqueArray(array, key){
+	    var result = [array[0]];
+	    for(var i = 0; i < array.length; i++){
+	        var item = array[i];
+	        var repeat = false;
+	        for (var j = 0; j < result.length; j++) {
+	            if (item[key] == result[j][key]) {
+	                repeat = true;
+	                break;
+	            }
+	        }
+	        if (!repeat) {
+	            result.push(item);
+	        }
+	    }
+	    return result;
+	}
+	apiready=function(){
+		$("#main").hide();
+		if(isiPhoneX()){
+			$(".bottom-btn").height(80);
+		}
+		api.ajax({
+					url: 'http://www.chekehome.com/public/index.php/cheke_brand',
+		 }, function(res, err) {
+			if(res){
+				var data=[];
+				var letters=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+				for(var i=0;i<letters.length;i++){
+						var count=0;
+						var letter={
+								"name":"letter",
+								"initial":letters[i]
+						}
+						data.push(letter);
+						for(var j=0;j<res.length;j++)
+						{
+							if(res[j].initial==letters[i]) {
+								data.push(res[j]);
+								res.splice(j,1);
+								j--;count++;
+							}
+						}
+						if (count==0){
+								data.pop();
+								letters.splice(i,1);
+								i--;
+						}
+				}
+				main = new Vue({
+					el: '#main',
+					data: {
+							rows:data,
+							letters:letters,
+							curLetter:'a',
+					},
+					mounted: function() {
+											new Vue({
+												el: '#touch',
+												data: {
+														letters:this.letters,
+												},
+												mounted: function() {
+													$(".touchlist").css("top",100);
+													var listgt = $(".touchlist div").eq(0).height();
+													var ic = [];
+													$(".touchlist div").each(
+														function(r) {
+															ic.push($(".touchlist div").eq(r).offset().top - $(window).scrollTop());
+														}
+													);
+													$(".touchlist").on("touchstart", function(event) {
+														TouchEvent(event);
+														$(".touch-info").show();
+													});
+													$(".touchlist").on("touchend", function() {
+														$("html, body").animate({
+															scrollTop: $(".list-header").eq(icae).offset().top + "px"
+														}, {
+															duration: 500,
+															easing: "swing"
+														});
+														$(".touch-info").hide();
+														return false;
+													});
+													$(".touchlist").on("touchmove", function(event) {
+														event.preventDefault();
+														TouchEvent(event);
+													});
+													function TouchEvent(event) {
+														var dheight = event.changedTouches[0].clientY;
+														$(ic).each(
+															function(ri) {
+																if(dheight < ic[0]) {
+																	overfun(0);
+																	return false;
+																}
+																if(dheight > ic[ic.length - 1]) {
+																	overfun(ic.length - 1);
+																	return false;
+																}
+																if(ic[ri] < dheight && dheight < ic[ri] + listgt) {
+																	overfun(ri);
+																	return false;
+																}
+															}
+														);
+													}
+													var icae = 0;
+													function overfun(aic) {
+														icae = aic;
+														$(".touch-info").html($(".touchlist div").eq(aic).html());
+														$("html, body").stop(true);
+														return false;
+													}
+												},});
+												$("#main").show();
+					},//mounted
+					methods:{
+						loadmore: function(name,id){
+							name=name.replace(/\s+/g,"");
+							if(id==-1){
+								api.sendEvent({
+										name: 'CloseSelectBrand',
+										extra: {
+												Car_Brand:name
+										}
+								});
+								return;
+							}
+							$("#main").hide();
+							api.ajax({
+						        url: 'http://www.chekehome.com/public/index.php/cheke_series',
+						        method: 'post',
+						        data: {
+						              values: {
+						                  brandId:id
+						              }
+						          }
+						  }, function(ret, err) {
+						      if (ret) {
+										var series=uniqueArray(ret,"series");
+										more = new Vue({
+											el: '#more',
+											data: {
+													series:series,
+													models:ret
+											},
+											mounted: function(){
+												$("#more").show();
+												$(".close").hide();
+												$(".back").show();
+											},
+											methods:{
+												select:function(type){
+													var brand;
+													if(type){
+														type=type.replace(name,"");
+														brand=name+type;
+													}
+													else{
+														brand=name
+													}
+													api.sendEvent({
+															name: 'CloseSelectBrand',
+															extra: {
+																	Car_Brand:brand
+															}
+													});
+													goback();
+												}
+											}
+										});
+									}
+							});
+						},
+						geturl:function(r){
+							return 'http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/'+r.logo+'?x-oss-process=image/resize,w_100'
+						}
+				}//methods
+				});//vue-v
+			}
+
+    });
+	}
+	</script>
+</html>

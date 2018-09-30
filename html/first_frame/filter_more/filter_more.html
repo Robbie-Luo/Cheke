@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+<style>
+html, body {width: 100%;background: #ffffff;box-sizing: border-box;}
+*,*:before,*:after{
+	box-sizing: inherit;
+}
+* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+.list-area{padding-bottom: 80px;}
+.list-title{ width: 100%;height:50px;line-height: 50px;padding-left: 15px;padding-right: 10px;}
+.list-img{position:absolute;height:10px;top:20px;right:10px;}
+.list-input{float: right;text-align: right;line-height:20px;padding: 15px;font-size:15px; background: transparent;color:#555;outline: none;overflow: hidden;text-overflow: ellipsis;width:calc(100% - 120px);}
+.list-input::-webkit-input-placeholder {color:#555; }
+.title{ color:#555;font-size: 16px;float: left;line-height: 50px;}
+.scales{font-size: 13px;color: #888}
+.tips{color:#555;line-height: 50px;font-size: 15px;position: absolute;right:0;padding-right: 15px;}
+.range { width: 100%; height: 70px;text-align: center;position: relative;}
+.price-range { height: 40px; position: relative; }
+.price-range .price-range-slider { width: 80%; height: 4px; overflow: hidden; position: absolute; top:13px;left:10%;background-color: #F5F5F5;}
+.price-range .bg-darkgrey, .price-range .bg-darkgrey-hand { left: 0; width: 80%; position: absolute; top: 0; height: 4px; overflow: hidden;border-radius: 2px;}
+.price-range .bg-darkgrey { background-color: #F5F5F5; }
+.price-range .bg-darkgrey-hand { cursor: pointer; z-index: 5; }
+.price-range .slide-selected { height: 4px; line-height: 0; overflow: hidden; background-color: #FFDC3C; position: absolute; top:13px; left: 10px; z-index: 6; cursor: pointer; }
+.price-range .btn-price { display: inline-block; width: 30px; height: 30px;position: absolute; top: 0px; z-index:10; border-radius: 4px; background-image: url(../../../image/button.png); background-repeat: no-repeat; background-size: 40%; background-position:
+center; background-color: #FAFAFA; -webkit-box-shadow:2px 2px 5px #ddd; }
+.price-range .price-range-text { display: -webkit-box; display: -webkit-flex; display: flex;height: 20px; color: #999;position: absolute;top:40px;left:5%;width:90%;display: flex;flex-wrap: wrap;}
+.price-range .price-range-text .number { -webkit-box-flex: 1; -webkit-flex: 1; flex:1;text-align: center;font-size: 13px;height: 20px; line-height: 20px;color:#888}
+.colors{width:100%;display: flex;flex-wrap: wrap;justify-content: left;padding-left:3%;padding-right: 3%;padding-bottom: 10px;}
+.color{width:29.3%;margin-left:2%;margin-right: 2%;margin-bottom: 10px;background-color: #F5F5F5;border-radius:6px;height:30px;text-align: center;position: relative;}
+.color-circle{display: inline-block;height:30px;width: 30px;line-height: 20px;border-radius: 50%;position: relative;top:0px;right:15px;outline: none;border:1px solid #ddd;transform: scale(0.5,0.5);}
+.color-txt{position: absolute;top:0;left:50%}
+.color-name{display: inline-block;line-height:30px;font-size: 12px;}
+.color-active{background-color:#FFF9BB;}
+#color-other{background-image: url(../../../image/other.png);background-position: center;background-size: cover;margin-right:0px;border:none}
+.cartypes{width:100%;display: flex;flex-wrap: wrap;justify-content: left;padding-left:3%;padding-right: 3%;padding-bottom: 10px;}
+.cartype{width:29.3%;margin-left:2%;margin-right: 2%;margin-bottom: 10px;background-color: #F5F5F5;border-radius:6px;height:30px;text-align: center;}
+.cartype-name{display: inline-block;line-height:30px;font-size: 12px;}
+.cartype-active{background-color:#FFF9BB;}
+.discharges{width:100%;display: flex;flex-wrap: wrap;justify-content: left;padding-left:3%;padding-right: 3%;padding-bottom: 10px;}
+.discharge{width:29.3%;margin-left:2%;margin-right: 2%;margin-bottom: 10px;background-color: #F5F5F5;border-radius:6px;height:30px;text-align: center;}
+.discharge-name{display: inline-block;line-height:30px;font-size: 12px;}
+.discharge-active{background-color:#FFF9BB;}
+.bottom-area{position: fixed; bottom:0px;height:50px; line-height: 50px; background-color: #FAFAFA;font-size: 15px;width: 100%;display: flex;flex-wrap: wrap;justify-content: left;-webkit-box-shadow:0px -1px 5px #ddd;  }
+.reset-btn{color:#515151;height:50px; width: 20%; text-align: center; background-color: #FAFAFA;}
+.confirm-btn{  color:#515151;height:50px; width: 80%; text-align: center; background-color: #FDDC3C; }
+</style>
+</head>
+<body>
+	<div class="list-area">
+		<div class="list-title myborder-bottom" onclick="SelectBrand()">
+			<div class="title">品牌</div>
+			<img class="list-img" src="../../../image/titlebar/right-arrow.png">
+			<input placeholder="不限" id="carbrand" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="list-title ">
+			<div class="title">价格&thinsp;<span class="scales"> (万)</span></div>
+			<div class="tip-price tips">不限</div>
+		</div>
+		<div class="range myborder-bottom">
+		    <div id="price-range" class="price-range">
+		        <div class="price-range-slider">
+		            <div class="bg-darkgrey"></div>
+		            <div class="bg-darkgrey-hand"></div>
+		        </div>
+		        <div class="slide-selected"></div>
+		        <i class="btn-price btn-left"></i>
+		        <i class="btn-price btn-right"></i>
+		        <div class="tip">
+		            <div class="tip-content"></div>
+		            <span class="tip-top tip-arrow"></span>
+		        </div>
+		        <div class="price-range-text">
+		            <span class="number number-first">0</span>
+								<span class="number">5</span>
+								<span class="number">10</span>
+								<span class="number">20</span>
+								<span class="number">50</span>
+								<span class="number">100</span>
+								<span class="number">不限</span>
+		        </div>
+		    </div>
+		</div>
+		<div class="list-title">
+			<div class="title">车龄&thinsp;<span class="scales"> (年)</span></div>
+			<div class="tip-age tips">不限</div>
+		</div>
+		<div class="range myborder-bottom">
+		    <div id="age-range" class="price-range">
+		        <div class="price-range-slider">
+		            <div class="bg-darkgrey"></div>
+		            <div class="bg-darkgrey-hand"></div>
+		        </div>
+		        <div class="slide-selected"></div>
+		        <i class="btn-price btn-left"></i>
+		        <i class="btn-price btn-right"></i>
+		        <div class="tip">
+		            <div class="tip-content"></div>
+		            <span class="tip-top tip-arrow"></span>
+		        </div>
+		        <div class="price-range-text">
+		            <span class="number number-first">0</span>
+								<span class="number">2</span>
+								<span class="number">4</span>
+								<span class="number">6</span>
+								<span class="number">8</span>
+								<span class="number">10</span>
+								<span class="number">不限</span>
+		        </div>
+		    </div>
+		</div>
+		<div class="list-title">
+			<div class="title">里程&thinsp;<span class="scales">(万公里)</span></div>
+			<div class="tip-miles tips">不限</div>
+		</div>
+		<div class="range myborder-bottom">
+		    <div id="miles-range" class="price-range">
+		        <div class="price-range-slider">
+		            <div class="bg-darkgrey"></div>
+		            <div class="bg-darkgrey-hand"></div>
+		        </div>
+		        <div class="slide-selected"></div>
+		        <i class="btn-price btn-left"></i>
+		        <i class="btn-price btn-right"></i>
+		        <div class="tip">
+		            <div class="tip-content"></div>
+		            <span class="tip-top tip-arrow"></span>
+		        </div>
+		        <div class="price-range-text">
+		            <span class="number number-first">0</span>
+								<span class="number">2</span>
+								<span class="number">4</span>
+								<span class="number">6</span>
+								<span class="number">8</span>
+								<span class="number">10</span>
+								<span class="number">不限</span>
+		        </div>
+		    </div>
+		</div>
+		<div class="list-title">
+			<div class="title">颜色</div>
+			<input placeholder="不限" id="carcolor" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="colors myborder-bottom">
+			<div class="color color-active color-first">
+				<div class="color-name">不限</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#FFFFFF"></div>
+				<div class="color-name color-txt">白色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#515151"></div>
+				<div class="color-name color-txt">黑色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#ddd"></div>
+				<div class="color-name color-txt">银色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#aaa"></div>
+				<div class="color-name color-txt">灰色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#DC143C"></div>
+				<div class="color-name color-txt">红色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#6495ED"></div>
+				<div class="color-name color-txt">蓝色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#CD853F"></div>
+				<div class="color-name color-txt">棕色</div>
+			</div>
+			<div class="color">
+				<div class="color-circle" style="background-color:#FFDC3C"></div>
+				<div class="color-name color-txt">黄色</div>
+			</div>
+		</div>
+		<div class="list-title">
+			<div class="title">车型</div>
+			<img class="list-img" src="../../../image/titlebar/right-arrow.png">
+			<input placeholder="不限" id="cartype" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="cartypes myborder-bottom">
+			<div class="cartype cartype-active cartype-first">
+				<div class="cartype-name">不限</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">轿车</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">SUV</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">MPV</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">面包车</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">工程车</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">客车</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">皮卡</div>
+			</div>
+			<div class="cartype">
+				<div class="cartype-name">跑车</div>
+			</div>
+		</div>
+		<div class="list-title">
+			<div class="title">排放标准</div>
+			<img class="list-img" src="../../../image/titlebar/right-arrow.png">
+			<input placeholder="不限" id="discharge" type="text" readonly="true" class="list-input">
+		</div>
+		<div class="discharges">
+			<div class="discharge discharge-active discharge-first">
+				<div class="discharge-name">不限</div>
+			</div>
+			<div class="discharge">
+				<div class="discharge-name">国五</div>
+			</div>
+			<div class="discharge">
+				<div class="discharge-name">国四</div>
+			</div>
+			<div class="discharge">
+				<div class="discharge-name">国三</div>
+			</div>
+			<div class="discharge">
+				<div class="discharge-name">国二</div>
+			</div>
+			<div class="discharge">
+				<div class="discharge-name">国一</div>
+			</div>
+		</div>
+	</div>
+	<div class="bottom-area">
+		<div class="reset-btn" onclick="ResetCondition()">重置</div>
+		<div class="confirm-btn" onclick="Finish()">筛选</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../../../script/slider.js"></script>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript">
+var Conditions={};
+var row={}
+function GetCondition(){
+	Conditions=api.pageParam.Conditions;
+	if(Conditions.Province) row.Province=Conditions.Province;
+	if(Conditions.City) row.City=Conditions.City;
+	if(Conditions.Color){
+		row.Color=Conditions.Color;
+		$("#carcolor").val(Conditions.Color);
+		$(".color").each(function(){
+			var value=$(this).children(".color-name").html();
+			if(value==Conditions.Color){
+				$(".color-active").removeClass("color-active");
+				$(this).addClass("color-active");
+			}
+		});
+	}
+	if(Conditions.Car_type){
+		row.Car_type=Conditions.Car_type;
+		$("#cartype").val(Conditions.Car_type);
+		$(".cartype").each(function(){
+			var value=$(this).children(".cartype-name").html();
+			if(value==Conditions.Car_type){
+				$(".cartype-active").removeClass("cartype-active");
+				$(this).addClass("cartype-active");
+			}
+		});
+	}
+	if(Conditions.Discharge){
+		row.Discharge=Conditions.Discharge;
+		$("#discharge").val(Conditions.Discharge);
+		$(".discharge").each(function(){
+			var value=$(this).children(".discharge-name").html();
+			if(value==Conditions.Discharge){
+				$(".discharge-active").removeClass("discharge-active");
+				$(this).addClass("discharge-active");
+			}
+		});
+	}
+	// car-brand
+	if(Conditions.Car_Brand){
+		row.Car_Brand=Conditions.Car_Brand;
+		$("#carbrand").val(row.Car_Brand);
+	}
+	// car_price
+	if(Conditions.Car_Price_Min) row.Car_Price_Min=Conditions.Car_Price_Min
+	else row.Car_Price_Min=0;
+	if(Conditions.Car_Price_Max) row.Car_Price_Max=Conditions.Car_Price_Max
+	else row.Car_Price_Max=110;
+	// car_age
+	if(Conditions.Car_Year_Min) row.Car_Year_Min=Conditions.Car_Year_Min
+	else row.Car_Year_Min=0;
+	if(Conditions.Car_Year_Max) row.Car_Year_Max=Conditions.Car_Year_Max
+	else row.Car_Year_Max=11;
+	//Miles
+	if(Conditions.Car_Miles_Min) row.Car_Miles_Min=Conditions.Car_Miles_Min
+	else row.Car_Miles_Min=0;
+	if(Conditions.Car_Miles_Max) row.Car_Miles_Max=Conditions.Car_Miles_Max
+	else row.Car_Miles_Max=11;
+}
+function ResetCondition(){
+	$("#carbrand").val('');
+	$("#price-range").data("slider").setRange({
+		leftValue: 0,
+		rightValue: 110
+	});
+	$("#age-range").data("slider").setRange({
+		leftValue: 0,
+		rightValue: 11
+	});
+	$("#miles-range").data("slider").setRange({
+		leftValue: 0,
+		rightValue: 11
+	});
+	$(".color-active").removeClass("color-active");
+	$(".color-first").addClass("color-active");
+	$("#carcolor").val("不限");
+	$(".cartype-active").removeClass("cartype-active");
+	$(".cartype-first").addClass("cartype-active");
+	$("#cartype").val("不限");
+	$(".discharge-active").removeClass("discharge-active");
+	$(".discharge-first").addClass("discharge-active");
+	$("#discharge").val("不限");
+	row='';
+	$api.setStorage('Conditions', "");
+	api.sendEvent({
+	    name:  'Conditions_Reset',
+	});
+}
+function Finish(){
+	 if(row.Car_Price_Max==110) row.Car_Price_Max=0;
+	 if(row.Car_Year_Max==11) row.Car_Year_Max=0;
+	 if(row.Car_Miles_Max==11) row.Car_Miles_Max=0;
+	 var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+	 row.Car_Age_Max=0,row.Car_Age_Min=0;
+	 if(row.Car_Year_Min){
+		 row.Car_Age_Max=(parseInt(curr_time.substring(0,4))-row.Car_Year_Min).toString()+curr_time.substring(4,curr_time.length);
+	 }
+	 if(row.Car_Year_Max){
+		 row.Car_Age_Min=(parseInt(curr_time.substring(0,4))-row.Car_Year_Max).toString()+curr_time.substring(4,curr_time.length);
+	 }
+	 if(row){
+		 api.sendEvent({
+ 		    name: 'SetCondition_More',
+ 		    extra: {
+ 		        Conditions:row
+ 		    }
+ 			});
+	 }
+	 else{
+		 api.sendEvent({
+ 		    name:  'Conditions_Reset',
+ 		 });
+		 api.closeWin({
+		     name: 'filter_more_header'
+		 });
+	 }
+}
+function SelectBrand(){
+	api.sendEvent({
+	    name: 'OpenSelectBrand',
+	});
+	api.addEventListener({
+      name: 'CloseSelectBrand'
+   }, function(ret, err){
+			api.removeEventListener({
+			    name: 'CloseSelectBrand'
+			});
+      api.closeWin({
+          name: 'filter_more_brand_header'
+      });
+      if(ret.value.Car_Brand){
+        $("#carbrand").val(ret.value.Car_Brand);
+				row.Car_Brand=ret.value.Car_Brand;
+      }
+			else{
+				$("#carbrand").val("不限");
+				row.Car_Brand=0;
+			}
+  });
+}
+function SelectCartype(){
+	api.sendEvent({
+	    name: 'OpenSelectCartype',
+	});
+	api.addEventListener({
+      name: 'CloseSelectCartype'
+   }, function(ret, err){
+			api.removeEventListener({
+			    name: 'CloseSelectCartype'
+			});
+      api.closeFrame({
+          name: 'filter_type'
+      });
+      if(ret.value.Car_Type){
+        $("#cartype").val(ret.value.Car_Type);
+				row.Car_Type=ret.value.Car_Type;
+      }
+			else{
+				$("#cartype").val("不限");
+				row.Car_Type=0;
+			}
+  });
+}
+apiready=function() {
+	GetCondition();
+	if(isiPhoneX()){
+		$(".bottom-area").height(80);
+	}
+	$("#price-range").slider({
+		unit: "万",
+		tip:"tip-price",
+		beyondMax: true,
+		beyondMin: true,
+		firstWidth: $(".number").width()*1.1,
+		lastWidth: $(".number").width()*1.1,
+		scale: [
+			{
+				key: 0,
+				value: [1, 1, 1, 1, 1]
+			},
+			{
+				key: 5,
+				value: [1, 1, 1, 1, 1]
+			},
+			{
+				key: 10,
+				value: [2, 2, 2, 2, 2]
+			},
+			{
+				key: 20,
+				value: [10,10,10]
+			},
+			{
+				key: 50,
+				value: [10, 10, 10, 10, 10]
+			},
+			{
+				key: 100,
+				value: 0.5
+			},
+			{
+				key: 110
+			}
+		]
+		}).on("changed", function(e, args) {
+			row.Car_Price_Min = args.value.leftValue;
+			row.Car_Price_Max = args.value.rightValue;
+		});
+	$("#price-range").data("slider").setRange({
+		leftValue: row.Car_Price_Min,
+		rightValue: row.Car_Price_Max
+	});
+	$("#age-range").slider({
+		unit: "年",
+		tip:"tip-age",
+		beyondMax: true,
+		beyondMin:true,
+		firstWidth: $(".number").width()*1.1,
+		lastWidth: $(".number").width()*1.1,
+		scale: [
+			{
+				key: 0,
+				value: [1, 1]
+			},
+			{
+				key: 2,
+				value: [1, 1]
+			},
+			{
+				key: 4,
+				value: [1, 1]
+			},
+			{
+				key: 6,
+				value: [1, 1]
+			},
+			{
+				key: 8,
+				value: [1, 1]
+			},
+			{
+				key:10,
+				value: 0.5
+			},
+			{
+				key: 11
+			}
+		]
+		}).on("changed", function(e, args) {
+			row.Car_Year_Min = args.value.leftValue;
+			row.Car_Year_Max=args.value.rightValue;
+		});
+	$("#age-range").data("slider").setRange({
+		leftValue: row.Car_Year_Min,
+		rightValue: row.Car_Year_Max
+	});
+	$("#miles-range").slider({
+		unit: "万公里",
+		tip:"tip-miles",
+		beyondMax: true,
+		beyondMin: true,
+		firstWidth: $(".number").width()*1.1,
+		lastWidth: $(".number").width()*1.1,
+		scale: [
+			{
+				key: 0,
+				value: [1, 1]
+			},
+			{
+				key: 2,
+				value: [1, 1]
+			},
+			{
+				key: 4,
+				value: [1,1]
+			},
+			{
+				key: 6,
+				value: [1,1]
+			},
+			{
+				key: 8,
+				value: [1,1]
+			},
+			{
+				key: 10,
+				value: 0.5
+			},
+			{
+				key: 11
+			}
+		]
+		}).on("changed", function(e, args) {
+			row.Car_Miles_Min = args.value.leftValue;
+			row.Car_Miles_Max = args.value.rightValue;
+	});
+	$("#miles-range").data("slider").setRange({
+		leftValue: row.Car_Miles_Min,
+		rightValue: row.Car_Miles_Max
+	});
+	$(".color").click(function(){
+			$(".color-active").removeClass("color-active");
+			$(this).addClass("color-active");
+			var value=$(this).children(".color-name").html();
+			$("#carcolor").val(value);
+			if(value=="不限"){
+				row.Color='';
+			}
+			else{
+				row.Color=value;
+			}
+	});
+	$(".cartype").click(function(){
+			$(".cartype-active").removeClass("cartype-active");
+			$(this).addClass("cartype-active");
+			var value=$(this).children(".cartype-name").html();
+			$("#cartype").val(value);
+			if(value=="不限"){
+				row.Car_type=""	;
+			}
+			else{
+				row.Car_type=value;
+			}
+	});
+	$(".discharge").click(function(){
+			$(".discharge-active").removeClass("discharge-active");
+			$(this).addClass("discharge-active");
+			var value=$(this).children(".discharge-name").html();
+			$("#discharge").val(value);
+			if(value=="不限"){
+				row.Discharge=""	;
+			}
+			else{
+				row.Discharge=value;
+			}
+	});
+}
+</script>
+</body>
+</html>

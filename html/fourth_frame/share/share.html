@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>HTML</title>
+  <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+  <script type="text/javascript" src="../../../script/api.js"></script>
+  <script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		html {width: 100%;height: 100%;background:#000;}
+    .trans{position: relative;top:30px;}
+    .trans-back{position: absolute;left:10px;top:7px;width:36px;height:36px;background-color: rgba(0,0,0,0.3);border-radius: 100%;z-index:999 }
+    .trans-backimg{position: absolute;left:6px;top:8px;height:20px;width:20px; }
+    .trans-forward{position: absolute;right:10px;top:7px;width:36px;height:36px;background-color: rgba(0,0,0,0.3);border-radius: 100%}
+    .trans-forwardimg{position: absolute;left:6px;top:6px;height:24px;width:24px;}
+    .poster{width:100%;background-color: #000;}
+    .posterimg{position: absolute;top:0}
+		.footerbox {position: absolute; text-align: center; background: #fff; bottom: 0;width: 100%;-webkit-box-shadow:0px -1px 5px #eee;}
+		.footerheader {height: 40px; line-height: 40px; font-size: 14px; color: #999; text-align: left; margin-left: 20px;}
+		.footerbody {}
+		.footerbodybtn {width: 20px;height: 20px;background: #0fc;}
+		.footerfooter {height: 40px; line-height: 40px; font-size: 18px;}
+    .footerback{width: 100%;height:40px;line-height: 40px;text-align: center;font-size: 14px;}
+		/* 水平等宽样式 */
+		.row {display: -webkit-box;display: -webkit-flex;}
+		.col {-webkit-box-flex:1; -webkit-flex:1; flex:1;padding:10px;}
+		.col img {width:50px;display: block; margin: 0 auto;}
+		.col span {font-size: 12px;padding-top: 10px;color:#666;padding-bottom:10px;}
+	</style>
+</head>
+<body>
+  <div id="detailheader">
+    <div class="trans">
+    <div onclick="goback()" class="trans-back">
+      <img src="../../../image/titlebar/back-white.png" class="trans-backimg trans-img">
+    </div>
+    <!-- <div onclick="share()" class="trans-forward">
+      <img src="../../../image/titlebar/forward-white.png" class="trans-forwardimg trans-img">
+    </div> -->
+  </div>
+  </div>
+  <div class="poster">
+    <img class="posterimg" src='../../../image/poster.png' alt="">
+  </div>
+	<div class="footerbox">
+		<div class="footerheader">分享到</div>
+		<div class="footerbody myborder-bottom">
+			<div class="row">
+        <div class="col" onclick="ShareToWechat()">
+					<img src="../../../image/share/share_to_icon_wx.png" alt="">
+					<span>微信好友</span>
+				</div>
+        <div class="col" onclick="ShareToMoment()">
+          <img src="../../../image/share/share_to_icon_wxq.png" alt="">
+          <span>微信朋友圈</span>
+        </div>
+				<div class="col" onclick="ShareToQQ()">
+					<img src="../../../image/share/share_to_icon_qq.png" alt="">
+					<span>QQ</span>
+				</div>
+        <div class="col" onclick="ShareToLocal()">
+					<img src="../../../image/share/share_to_icon_local.png" alt="">
+					<span>保存到本地</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+  var detail,cover,downloaded=false;
+	function goback(){
+    api.setFrameAttr({
+        name: 'shareapp',
+        hidden:true
+    });
+    $(".footerbox").show();
+	}
+  function share(){
+    $(".footerbox").show();
+  }
+  function hideshare(){
+    $(".footerbox").hide();
+  }
+  function ShareToMoment(){
+    var wx = api.require('wx');
+    wx.shareImage({
+          apiKey: '',
+          scene: 'timeline',
+          contentUrl: 'fs://image/compose.png'
+       }, function(ret, err) {
+          if (ret.status) {
+            goback();
+            api.toast({
+                msg: '分享成功',
+                duration: 2000,
+                location: 'bottom'
+            });
+          }
+          else{
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            goback();
+          }
+      });
+  }
+  function ShareToWechat(){
+      var wx = api.require('wx');
+      wx.shareImage({
+          apiKey: '',
+          scene: 'session',
+          contentUrl: 'fs://image/compose.png'
+       }, function(ret, err) {
+          goback();
+          if (ret.status) {
+            api.toast({
+                msg: '分享成功',
+                duration: 2000,
+                location: 'bottom'
+            });
+          }
+          else{
+            console.log(JSON.stringify(ret));
+            console.log(JSON.stringify(err));
+            goback();
+          }
+      });
+  }
+  function ShareToQQ(){
+    var qq = api.require('qq');
+    qq.shareImage({
+      title: '车客APP',
+      description: '车客APP下载二维码',
+      imgPath: 'fs://image/compose.png',
+      type:'QFriend'
+    },function(ret, err) {
+      goback();
+    });
+  }
+  function ShareToLocal(){
+    var path='fs://image/compose.png';
+    api.saveMediaToAlbum({
+        path:path
+     }, function(ret, err){
+       if( ret ){
+         api.toast({
+             msg: '已保存至相册',
+             duration: 2000,
+             location: 'bottom'
+         });
+       }else{
+         api.toast({
+             msg: '保存失败',
+             duration: 2000,
+             location: 'bottom'
+         });
+       }
+    });
+  }
+  apiready=function(){
+    $(".poster").height(api.frameHeight-$(".footerbox").height());
+    $(".posterimg").height(api.frameHeight-$(".footerbox").height());
+    $(".posterimg").css("left",(api.frameWidth-$(".posterimg").width())/2);  
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '生成专属海报...',
+        text: '请稍后...',
+        modal: true
+    });
+    var User_ID=$api.getStorage("User_ID");
+    var makeSharePic=api.require('makeSharePic');
+    makeSharePic.createErweimaPic({
+        bgColor:"#FFFFFF",
+        width:150,
+        height:150,
+        savePath:"fs://image",
+        fileName:'share.png',
+        qrCode:"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd01dbf64ad2a583c&redirect_uri=http%3A%2F%2Fwww.chekehome.com%2Fdownload%2F?ID="+User_ID+"&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect",
+     },function(ret,err){
+        if(err){
+          api.toast({
+              msg: '图片生成失败',
+          });
+        }
+        else{
+          makeSharePic.composePic({
+              savePath:"fs://image",
+              bgPicUrl:'http://www.chekehome.com/image/poster1.png',
+              attachPicUrl:'fs://image/share.png',
+              fileName:'compose.png',
+              mainWidth:750,
+              mainHeight:1334,
+              subWidth:200,
+              subHeight:200,
+              l:260,
+              t:1100,
+          },function(ret,err){
+              if(err){
+                api.toast({
+                    msg: '图片生成失败',
+                });
+              }else{
+                $(".posterimg")[0].src=api.fsDir+'/image/compose.png';
+                api.hideProgress();
+                api.toast({
+                    msg: '成功生成专属海报',
+                });
+              }
+          });
+        }
+    });
+
+  }
+</script>
+</html>

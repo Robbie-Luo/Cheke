@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title></title>
+		<script type="text/javascript" src="../../../script/vue.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+		<style>
+		* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+		html,body { -webkit-touch-callout:none; -webkit-text-size-adjust:none; -webkit-tap-highlight-color:rgba(0, 0, 0, 0); -webkit-user-select:none; width: 100%; }
+		body { line-height: 1; font-size: 0.8rem; color: #212121; background-color: #FFF; outline: 0; }[v-cloak] { display: none; }
+		#main{display: none}
+		.list-header { background-color: #F5F5F5; color: #555; line-height: 2rem ; padding-left: 15px; font-weight: 600;}
+		.city{font-size: 14px;text-align: center;padding-top:10px;padding-bottom: 10px;border: 1px solid;border-radius:5px;overflow: hidden;line-height: 24px;white-space: nowrap;text-overflow: ellipsis;}
+		.hot-cities{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding:3%}
+		.hot-city{width:29.3%;margin-left:2%;margin-right: 2%;margin-top: 8px;margin-bottom: 8px;}
+		.all-city{width:29.3%;margin-left:2%;margin-right: 2%;margin-top: 5px;margin-bottom: 10px;}
+		.location-img{position: relative;height:50px;width: 40px;padding:14px 5px 16px 15px;float: left;}
+		.list-item{ width: 100%; min-height:50px; position: relative; }
+		.list-name{ line-height:50px; font-size: 14px;padding-left: 20px; white-space: nowrap; text-overflow: ellipsis; }
+		.list-child{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;vertical-align: middle;padding-bottom: 10px;padding-left:3%;padding-right: 3%}
+		.toggleright{position: absolute;right:0;top:0;height:50px;padding: 18px;transform: rotate(-90deg);}
+		.toggledown{position: absolute;right:0;top:0;height:50px;padding: 18px;}
+	</style>
+	</head>
+	<body>
+	<div id="main">
+		<div class="list-header" v-if="local.city!='全国'">
+			定位城市
+		</div>
+		<div class="list-item myborder-bottom" v-if="local.city!='全国'" v-on:click="SendCity(local.province,local.city)" v-cloak>
+			<img src="../../../image/titlebar/location-active.png" class="location-img">
+			<div class="list-name" style="color:#8290AE">{{local.city}}</div>
+		</div>
+		<!-- <div class="list-item myborder-bottom" v-on:click="SendCity('全国','')"><div class="list-name">全国</div></div> -->
+		<div class="list-header">
+			热门城市
+		</div>
+		<div class="hot-cities list-child" v-cloak>
+				<div class="hot-city city" v-on:click="SendCity(hotcity.province,hotcity.city)" v-for="hotcity in hotcities">{{hotcity.city}}</div>
+		</div>
+		<div class="list-header">
+			全部城市
+		</div>
+		<div v-for="(r,index) in allcities" v-cloak>
+				<div class="myborder-bottom list-item" v-on:click="CitySelect(r,index)">
+						<div class="list-name" v-cloak>{{r.name}}</div>
+						<img src="../../../image/titlebar/down.png" class="toggleright" v-if="r.childCities" v-show="index!=showindex">
+						<img src="../../../image/titlebar/down.png" class="toggledown" v-if="r.childCities" v-show="index==showindex">
+						<div class="list-child" v-if="r.childCities" v-show="index==showindex">
+								<div v-for="city in r.childCities" class="all-city city"  v-if="filter(city.name)" v-on:click="SendCity(r.name,city.name)" >{{replace(city.name)}}</div>
+						</div>
+				</div>
+		</div>
+	</div>
+	</body>
+	<script src="../../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../../script/api.js"></script>
+	<script>
+	apiready=function(){
+		var map = api.require('bMap');
+		map.getOfflineCityList(function(ret){
+	    if(ret.status){
+					var allcities=[];
+					for(var i=1;i<ret.records.length;i++){
+						if(ret.records[i].cityID>3000) break;
+						allcities.push(ret.records[i]);
+					}
+					var hotcities=[{province:"北京市",city:"北京市"},
+												 {province:"上海市",city:"上海市"},
+												 {province:"广东省",city:"广州市"},
+												 {province:"四川省",city:"成都市"},
+												 {province:"重庆市",city:"重庆市"},
+												 {province:"广东省",city:"深圳市"},
+												 {province:"浙江省",city:"杭州市"},
+												 {province:"湖北省",city:"武汉市"},
+												 {province:"江苏省",city:"南京市"}];
+					var v = new Vue({
+						el: '#main',
+						data: {
+								local:api.pageParam.City,
+								hotcities:hotcities,
+								allcities:allcities,
+								showindex:0
+						},
+						mounted: function() {
+							$("#main").show();
+						},
+						methods:{
+							CitySelect:function(r,index){
+								 if(r.childCities){
+									 if(this.showindex==index) this.showindex=0;
+									 else this.showindex=index;
+								 }
+								 else{
+									 api.sendEvent({
+											name: 'CarCitySelect',
+											extra: {
+													province: r.name,
+													city: r.name
+											}
+									});
+									api.closeWin({
+		                  name: 'carcity_header'
+		              });
+								 }
+							},
+							SendCity:function(province,city){
+								api.sendEvent({
+									 name: 'CarCitySelect',
+									 extra: {
+											 province:province,
+											 city:city
+									 }
+							 });
+							 api.closeWin({
+	                 name: 'carcity_header'
+	             });
+						  },
+							filter:function(name){
+							 if(name.indexOf("县级行政单位")==-1&&name!="全省地图"){
+								 return true;
+							 }
+							 else return false;
+							},
+							replace:function(name){
+							 return name.replace("自治州",'');
+							 }
+			 			 }
+					});
+	    }
+		});
+	}
+	</script>
+</html>

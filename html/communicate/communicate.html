@@ -1,0 +1,776 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" href="../../css/mescroll.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/idangerous.swiper.css"/>
+    <script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="../../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+         html,body { width: 100%; position: relative;background-color: #F5F5F5;}[v-cloak] { display: none; }
+        .fr{float: right;}
+        .fl{float: left;}
+        .footerline{display: inline-block;line-height:20px;}
+        .footerimg{height:16px;padding:12px 5px 12px 0px;display: inline-block;line-height: 40px;float: left;}
+        .footeritem{line-height:40px;font-size:15px;}
+        .chatarea{width: 100%;overflow: scroll;padding-bottom: 40px;position: fixed;top:0;}
+        .message-times{text-align: center;padding-top: 10px;}
+        .message-time{padding-left:8px;padding-right:8px;display: inline-block;text-align: center;background-color:#ddd;color:#FFF;height:20px;line-height:20px;font-size: 12px;border-radius: 2px;}
+        .message-order{background-color: #FFF;border-radius: 8px;position: relative;text-align: left;margin:15px 20px;}
+        .message-send{position: relative;width: 100%;text-align: right;padding-top:15px;padding-bottom: 5px;}
+        .message-receive{position: relative;width: 100%;text-align: left;padding-top:15px;padding-bottom: 5px;}
+        .headimg-send{width:50px;position: absolute;right:10px;top:10px;border-radius: 100%}
+        .headimg-receive{width:50px;position: absolute;left:10px;top:10px;border-radius: 100%}
+        .box-text{display: inline-block; position: relative;text-align: justify;line-height:24px; font-size: 16px;border-radius:4px;
+          word-break: break-all;}
+        .box-send{  margin-right: 70px; max-width: calc(100% - 120px);min-height: 24px; padding:8px 10px 8px 10px; background: #FDDC3C;}
+        .box-send:after{ position: absolute; content: ""; width: 0; height: 0; left:100%; top:14px; border-top: 6px solid transparent; border-left: 6px solid #FDDC3C; border-bottom: 6px solid transparent; }
+        .box-receive{ margin-left: 70px; max-width:calc(100% - 120px);min-height:24px;padding:8px 10px 8px 10px;background: #FFF;}
+        .box-receive:before{ position: absolute; content: ""; width: 0; height: 0; right:100%; top:14px; border-top: 6px solid transparent; border-right: 6px solid #FFF; border-bottom: 6px solid transparent; }
+        .emotion{width: 24px;line-height: 24px;vertical-align: middle;}
+         #msg-end{height:1px; overflow:hidden}
+        .top{height:10px;width: 100%;display:inline-block;background-color: #F5F5F5;}
+        .bottom{height:0px;width: 100%;display:inline-block;background-color: #F5F5F5;}
+        .Picture{width: 100%;display: inline-block;border-radius: 6px;background-color: #eee}
+        .pic-send{ margin-right: 70px;width: calc(50% - 30px);display: inline-block; }
+        .pic-receive{margin-left: 70px;width:calc(50% - 30px);display: inline-block; }
+        .order-title{margin:0px 20px;height:50px;line-height: 50px;font-size: 16px;}
+        .order-content{display:inline-block;font-size: 16px;line-height: 30px;text-indent: 25px;padding:10px 20px;}
+        .order-options{height:50px;margin:0px 20px;}
+        .order-button{width:100px;height:30px;line-height: 30px;border-radius: 4px;color:#F70;text-align: center;border: 1px solid #F70;position: absolute;right:0px;bottom:10px;}
+    </style>
+  </head>
+  <body>
+    <div class="chatarea" readonly="true" id="chatarea" style="display:none">
+      <div class="top"></div>
+      <div v-for="(message,index) in messages" >
+        <div v-if="message.objectName=='RC:TxtMsg'" class="message">
+          <div class="message-times" v-if="isShowTime(messages,index)"><div class="message-time">{{fmtDate(message.sentTime)}}</div></div>
+          <div class="message-order" v-if="isOrder(message)">
+            <div class="order-title myborder-bottom">交易提醒</div>
+            <div class="order-content">{{getOrderInfo(message.content.text)}}</div>
+            <div class="order-options myborder-top">
+              <div class="order-button" @click="OpenOrder()">查看订单</div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="message-send" v-if="message.messageDirection=='SEND'">
+              <img :src="Host_Pic" class="headimg-send" @load="imgLoaded()" @click="openuser(Host_ID)">
+              <div class="box-send box-text" v-html="ShowText(message)" @touchstart="ShowOption(message.content.text)" @touchend="clearLoop"></div>
+            </div>
+            <div class="message-receive" v-if="message.messageDirection=='RECEIVE'">
+              <img :src="Client_Pic" class="headimg-receive" @load="imgLoaded()" @click="openuser(Client_ID)">
+              <div class="box-receive box-text" v-html="ShowText(message)" @touchstart="ShowOption(message.content.text)" @touchend="clearLoop"></div>
+            </div>
+          </div>
+        </div>
+        <div v-if="message.objectName=='RC:ImgMsg'" class="message">
+          <div class="message-times" v-if="isShowTime(messages,index)"><div class="message-time">{{fmtDate(message.sentTime)}}</div></div>
+          <div class="message-send" v-if="message.messageDirection=='SEND'">
+            <img :src="Host_Pic" class="headimg-send" @load="imgLoaded()" @click="openuser(Host_ID)">
+            <div class="pic-send" v-html="ShowPic(message)" @click="openPic(message)"@touchstart="ShowOptionPic(message)" @touchend="clearLoop"></div>
+          </div>
+          <div class="message-receive" v-if="message.messageDirection=='RECEIVE'">
+            <img :src="Client_Pic" class="headimg-receive" @load="imgLoaded()" @click="openuser(Client_ID)">
+            <div class="pic-receive" v-html="ShowPic(message)"@click="openPic(message)" @touchstart="ShowOptionPic(message)" @touchend="clearLoop"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom"></div>
+      <div id="msg_end"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/swipe.js"></script>
+  <script src="../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <script type="text/javascript" charset="utf-8">
+  var Conversation,Host_ID,Client_ID,Publish_ID,frameHeight;
+  var Conversation_ID,conversationTitle,vm,emotion_data;
+  var User_ID=$api.getStorage("User_ID");
+  var User_Info=$api.getStorage("User_Info");
+  var Host_Pic;
+  var Client_Pic;
+  var imgW=",w_150";
+  var imgH=",h_150";
+  var offset=0;
+  apiready=function(){
+    if(isiPhoneX()){
+      offset=20;
+    }
+    frameHeight=api.frameHeight;
+    Conversation=api.pageParam.Conversation;  //获取会话信息
+    Host_ID=api.pageParam.User_ID;
+    Client_ID=Conversation.User_ID;
+    Host_Pic=User_Info.Picture;
+    Client_Pic=Conversation.User_Pic;
+    Host_Pic="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+Host_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+    Client_Pic="http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/"+Client_Pic+"?x-oss-process=image/resize,m_fill"+imgH+imgW;
+    if(Conversation.Publish){
+      Publish_ID=Conversation.Publish.Publish_ID;
+    }
+    else{
+      Publish_ID='0';
+    }
+    conversationTitle=Publish_ID+'%'+Host_ID+'%'+Client_ID;
+    $(".chatarea").height(frameHeight-offset-60);
+    $.getJSON("../../res/img/emotion/emotion.json", function (res, status) {
+      emotion_data=res;
+      // 判断是否是已知会话
+      Conversation_ID=api.pageParam.Conversation_ID;
+      if(api.pageParam.Conversation_ID!="NULL"){
+          LoadChat();
+      }
+      else{
+        // 搜索消息列表是否存在相关会话，监听搜索结果
+        api.addEventListener({
+            name: 'Search_Result'
+         }, function(ret, err){
+            if( ret ){
+                api.removeEventListener({
+                    name: 'Search_Result'
+                });
+                //获取搜索结果
+                var Search_Result=ret.value.result;
+                if(Search_Result){
+                  LoadChat();
+                }
+            }
+        });
+        // 开始搜索
+        Conversation_Search();
+      }
+      LoadChatBox();
+    });
+    $(window).resize(function(){
+        $(".top").height(frameHeight-$(window).height);
+    });
+  }
+  function GetMessage(){
+    // 载入消息
+    var messages=[];
+    var rong = api.require('rongCloud2');
+    rong.getLatestMessages({
+        conversationType: 'DISCUSSION',
+        targetId: Conversation_ID,
+        count: 100
+      }, function(ret, err) {
+        if(ret){
+          //倒序载入消息数组
+          for(var i=ret.result.length-1;i>=0;i--){
+            if(ret.result[i].objectName=='RC:TxtMsg'){
+               if(ret.result[i].content.text.indexOf("#交易提醒#")!=0||ret.result[i].messageDirection!='SEND'){
+                  messages.push(ret.result[i]);
+               }
+            }
+            if(ret.result[i].objectName=='RC:ImgMsg'){
+              messages.push(ret.result[i]);
+            }
+          }
+          api.sendEvent({
+              name: 'GetMessage',
+              extra: {
+                  messages:messages
+              }
+          });
+        }
+        else{
+          api.sendEvent({
+              name: 'GetMessage',
+              extra: {
+                  messages:messages
+              }
+          });
+        }
+      });
+  }
+  function LoadChat(){
+    api.addEventListener({
+        name: 'GetMessage'
+     }, function(ret, err){
+        api.removeEventListener({
+            name: 'GetMessage'
+        });
+        if( ret ){
+          var messages=ret.value.messages;
+          vm = new Vue({
+              el: "#chatarea",
+              data: {
+                messages:messages,
+                loadedImages:0,
+                Host_Pic:Host_Pic,
+                Client_Pic:Client_Pic
+              },
+              mounted:function(){
+                api.sendEvent({
+                    name: 'ChatLoaded',
+                });
+                api.removeEventListener({
+                    name: 'New_Message'
+                });
+                api.addEventListener({
+                    name: 'New_Message'
+                 }, function(ret, err){
+                    if(ret.value.message.targetId==Conversation_ID){
+                      ReloadChat();
+                      Message_Read();
+                      setTimeout(function(){
+                        ScrollToBottom();
+                      },100);
+                    }
+                });
+                ScrollToBottom();
+                $(".chatarea").show();
+                Message_Read();
+              },
+              methods:{
+                // 聊天文字显示
+                ShowText:function(message){
+                  return GetEmotion(message);
+                },
+                isOrder:function(message){
+                  return message.content.text.indexOf("#交易提醒#")==0
+                },
+                getOrderInfo:function(text){
+                  return text.slice(6);
+                },
+                ShowPic:function(message){
+                  var pic_url=message.content.imageUrl;
+                  text='<img src="'+pic_url+'" class="Picture" alt="">';
+                  return text;
+                },
+                //判断当前消息是否显示时间
+                isShowTime:function(messages,index){
+                    var time;
+                    time=messages[index].sentTime;
+                    if(index==0){
+                      this.timeshowing=time;
+                      return true;
+                    }
+                    else{
+                      var mins=parseInt(time - this.timeshowing) / 1000 / 60;
+                      if(mins>5){
+                        this.timeshowing=time;
+                        return true;
+                      }
+                      else{
+                        return false;
+                      }
+                    }
+                },
+                // 时间格式化输出
+                fmtDate:function(inputTime){
+                  var h,m,s;
+                  var input_date = new Date(inputTime);
+                  var curr_date=new Date();
+                  var input_year = input_date.getFullYear();
+                  var curr_year=input_date.getFullYear();
+                  var input_month=input_date.getMonth() + 1;
+                  var curr_month=curr_date.getMonth() + 1;
+                  var input_day = input_date.getDate();
+                  var curr_day = curr_date.getDate();
+                  h = input_date.getHours();
+                  var input_hour = h < 10 ? ('0' + h) : h;
+                  h = curr_date.getHours();
+                  var curr_hour = h < 10 ? ('0' + h) : h;
+                  m = input_date.getMinutes();
+                  var input_min = m < 10 ? ('0' + m) : m;
+                  m = curr_date.getMinutes();
+                  var curr_min = m < 10 ? ('0' + m) : m;
+                  if(input_year==curr_year){
+                    if(input_month==curr_month&&input_day==curr_day){
+                        return input_hour+':'+input_min;
+                    }
+                    else{
+                      return input_month+'月'+input_day+'日 '+input_hour+':'+input_min;
+                    }
+                  }
+                  else return input_year+'年'+input_month+'月'+input_day+'日 ';
+                  // return y + '年' + m + '月' + d+ '日'+' '+h+':'+minute+':'+second;
+                },
+                // 打开用户信息
+                openuser:function(ID){
+                  api.sendEvent({
+                      name: 'ShowNotification',
+                      extra: {
+                          ShowNotification: true,
+                      }
+                  });
+                  api.openWin({
+                      name: 'user_header',
+                      url: '../user/user_header.html',
+                      useWKWebView:true,
+                      bgColor:'#FAFAFA',
+                      pageParam: {
+                          ID: ID
+                      }
+                  });
+                },
+                openPic:function(message){
+                  var address_array_origin=[];
+                  address_array_origin.push(message.content.imageUrl);
+                      api.openWin({
+                          name: 'browse_img',
+                          url: './browse_img.html',
+                          useWKWebView:true,
+                          bgColor:'#FAFAFA',
+                          pageParam: {
+                              data: message.content.imageUrl,
+                              index:1,
+                              StatusBarHeight:api.pageParam.titleheight
+                          }
+                      });
+                  },
+                imgLoaded:function() {
+                    this.loadedImages ++;
+                    if (this.loadedImages==this.messages.length)	{
+                          $("#chatarea").show();
+                          ScrollToBottom();
+                     }
+                },
+                ShowOption:function(text){
+                  this.Loop=setTimeout(function(){
+                      api.actionSheet({
+                          cancelTitle: '取消',
+                          buttons: ['复制消息']
+                      }, function(ret, err){
+                          if( ret.buttonIndex==1 ){
+                            CopyMessage(text);
+                          }
+                      });
+                  }.bind(this),500);
+                },
+                ShowOptionPic:function(message){
+                  this.Loop=setTimeout(function(){
+                      api.actionSheet({
+                          cancelTitle: '取消',
+                          buttons: ['保存图片']
+                      }, function(ret, err){
+                          if( ret.buttonIndex==1 ){
+                            SavePic(message);
+                          }
+                      });
+                  }.bind(this),500);
+                },
+                clearLoop:function() {
+                  clearInterval(this.Loop);
+                },
+              }
+          });
+        }
+    });
+    GetMessage();
+  }
+  function ReloadChat(){
+    api.addEventListener({
+        name: 'GetMessage'
+     }, function(ret, err){
+        api.removeEventListener({
+            name: 'GetMessage'
+        });
+        if(ret){
+          var messages=ret.value.messages;
+          vm.messages=messages;
+          ScrollToBottom();
+        }
+    });
+    setTimeout(function(){GetMessage();},50);
+  }
+  function Message_Read(){
+    var rong = api.require('rongCloud2');
+    rong.clearMessagesUnreadStatus({
+      conversationType: 'DISCUSSION',
+      targetId: Conversation_ID
+     }, function(ret, err) {
+        api.sendEvent({
+            name: 'Message_Read',
+        });
+    });
+  }
+  function SendTextMessage(Message){
+    api.removeEventListener({
+        name:'SendMessage_Success'
+    });
+    api.addEventListener({
+        name: 'SendMessage_Success'
+     }, function(ret, err){
+        api.removeEventListener({
+            name:'SendMessage_Success'
+        });
+        if( ret.value.targetId ){
+          Conversation_ID=ret.value.targetId;
+          LoadChat();
+        }
+        else{
+          ReloadChat();
+        }
+
+    });
+    api.sendEvent({
+        name: 'SendMessage',
+        extra: {
+            Conversation_ID: Conversation_ID,
+            Message: Message,
+            Publish_ID:Publish_ID,
+            Client_ID:Client_ID,
+            Host_ID:Host_ID
+        }
+    });
+  }
+  function SendImageMessage(Message){
+    api.removeEventListener({
+        name:'SendImage_Success'
+    });
+    api.addEventListener({
+        name: 'SendImage_Success'
+     }, function(ret, err){
+        api.removeEventListener({
+            name:'SendImage_Success'
+        });
+        if( ret.value.targetId ){
+          Conversation_ID=ret.value.targetId;
+          api.hideProgress();
+          LoadChat();
+        }
+        else{
+          api.hideProgress();
+          ReloadChat();
+        }
+    });
+    api.sendEvent({
+        name: 'SendImage',
+        extra: {
+            Conversation_ID: Conversation_ID,
+            Message: Message,
+            Publish_ID:Publish_ID,
+            Client_ID:Client_ID,
+            Host_ID:Host_ID
+        }
+    });
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '图片上传中...',
+        modal: false
+    });
+
+    // var rong = api.require('rongCloud2');
+    // rong.setDiscussionName({
+    //     discussionId: Conversation_ID,
+    //     name: conversationTitle
+    //  }, function(ret, err) {
+    // });
+    // var imgArr=Message;
+    // for (var i = 0; i < imgArr.length; i++) {
+    //     var rong = api.require('rongCloud2');
+    //     rong.sendImageMessage({
+    //           conversationType: 'DISCUSSION',
+    //           targetId: Conversation_ID,
+    //           imagePath: imgArr[i],
+    //           extra:Publish_ID
+    //       }, function(ret, err) {
+    //         if(ret){
+    //           vm.messages.push(ret.result.message);
+    //           ScrollToBottom();
+    //           api.sendEvent({
+    //               name: 'Message_Send',
+    //           });
+    //         }
+    //       });
+    // }
+  }
+  function CreateNewConversation(Message,Type){
+    conversationTitle=Publish_ID+'%'+Host_ID+'%'+Client_ID;
+    var rong = api.require('rongCloud2');
+    rong.createDiscussion({
+        name: conversationTitle,
+        userIdList: [Host_ID, Client_ID]
+     }, function(ret, err) {
+        if (ret.status == 'success'){
+          Conversation_ID=ret.result.discussionId;
+          api.removeEventListener({
+              name: 'ChatLoaded'
+          });
+          api.addEventListener({
+              name: 'ChatLoaded'
+            }, function(ret, err){
+              api.removeEventListener({
+                  name: 'ChatLoaded'
+              });
+              if(Type==0){
+                SendTextMessage(Message);
+              }
+              else{
+                SendImageMessage(Message);
+              }
+          });
+          setTimeout(function(){LoadChat();},200);
+        }
+    });
+  }
+  function LoadChatBox(){
+    var H=api.frameHeight;
+    var panelHeight,inputBarHeight;
+    var UIChatBox = api.require('UIChatBox');
+    UIChatBox.open({
+        placeholder: '',
+        maxRows: 4,
+        emotionPath: 'widget://res/img/emotion',
+        texts: {
+            sendBtn: {
+                title: '发送'
+            }
+        },
+        styles: {
+            inputBar: {
+                borderColor: '#d9d9d9',
+                bgColor: '#f2f2f2'
+            },
+            inputBox: {
+                borderColor: '#B3B3B3',
+                bgColor: '#FFFFFF'
+            },
+            emotionBtn: {
+                normalImg: 'widget://res/img/face1.png'
+            },
+            extrasBtn: {
+                normalImg: 'widget://res/img/add1.png'
+            },
+            keyboardBtn: {
+                normalImg: 'widget://res/img/key1.png'
+            },
+            indicator: {
+                target: 'both',
+                color: '#c4c4c4',
+                activeColor: '#FFEE00'
+            },
+            sendBtn: {
+                titleColor: '#000',
+                bg: '#FDDC3C',
+                titleSize: 14
+            }
+        },
+        extras: {
+            titleSize: 10,
+            titleColor: '#a3a3a3',
+            btns: [{
+                title: '图片',
+                normalImg: 'widget://res/img/album1.png',
+                activeImg: 'widget://res/img/album2.png'
+            }]
+        }
+     }, function(ret, err) {
+        if (ret) {
+            var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+            if(ret.eventType == "send"){
+              var Message=ret.msg;
+              if(ret.msg){
+                SendTextMessage(ret.msg);
+              }
+            }
+           if(ret.eventType == "clickExtras"){
+             if(ret.index == 0) { imgAdd(curr_time); }
+           }//new
+        }
+    });
+    UIChatBox.addEventListener({
+        target: 'inputBar',
+        name: 'move'
+     }, function(ret, err) {
+        if (ret) {
+            if(api.frameHeight!=H){
+              $(".bottom").height(ret.panelHeight+ret.inputBarHeight+offset);//new
+            }
+            else{
+              if(ret.panelHeight>0){
+                $(".bottom").height(ret.panelHeight+offset);
+              }
+              else{
+                $(".bottom").height(offset);
+              }
+            }
+            ScrollToBottom();
+        }
+    });
+  }
+  function Conversation_Search(){
+    var rong = api.require('rongCloud2');
+    rong.getConversationList(function(ret, err) {
+			if (ret) {
+				var result=ret.result;
+        //消息列表为空
+        if(result.length==0) {
+          api.sendEvent({
+              name: 'Search_Result',
+              extra: {
+                  result:false
+              }
+          });
+        }
+        else{
+          for(var i=0;i<result.length;i++){
+            if(result[i].conversationTitle)
+            {
+              var res=result[i].conversationTitle.split("%");
+              if(res[0]==Publish_ID&&res[1]==User_ID&&res[2]==Client_ID){
+                Conversation_ID=result[i].targetId;
+                api.sendEvent({
+                    name: 'Search_Result',
+                    extra: {
+                        result:true
+                    }
+                });
+                return;
+              }
+              if(res[0]==Publish_ID&&res[2]==User_ID&&res[1]==Client_ID){
+                Conversation_ID=result[i].targetId;
+                api.sendEvent({
+                    name: 'Search_Result',
+                    extra: {
+                        result:true
+                    }
+                });
+                return;
+              }
+            }
+
+          }
+          api.sendEvent({
+              name: 'Search_Result',
+              extra: {
+                  result:false
+              }
+          });
+        }
+
+      }
+    });
+  }
+  function ScrollToBottom(){
+    setTimeout(function(){
+      document.getElementById('msg_end').scrollIntoView();
+    },100);
+  }
+  function GetEmotion(message){
+    if(message.objectName=='RC:TxtMsg'){
+      text=message.content.text;
+      if(text.match( /\[(.+?)\]/g)){
+        var result=text.match( /\[(.+?)\]/g);
+        for(var i=0;i<result.length;i++){
+          for(var j=0;j<emotion_data.length;j++){
+            if(emotion_data[j].text==result[i]){
+              var src="../../res/img/emotion/"+emotion_data[j].name+".png";
+              text=text.replace(result[i],'<img src="'+src+'" class="emotion">');
+              break;
+            }
+          }
+        }
+        return text;
+      }
+      else{
+        return text;
+      }
+    }
+    else if (message.objectName=='RC:ImgMsg'){
+        pic_url=message.content.imageUrl;
+        text='<img src="'+pic_url+'" class="Picture">';
+        return text;
+    }
+  }
+  function CopyMessage(text){
+    var clipBoard = api.require('clipBoard');
+    clipBoard.set({
+      value: text
+    }, function(ret, err) {
+      if (ret) {
+          api.toast({
+              msg: '复制成功',
+              duration: 2000,
+              location: 'bottom'
+          });
+      }
+    });
+  }
+  function SavePic(message){
+    var url=message.content.imageUrl;
+    var timestamp = Date.parse(new Date())/1000;
+    var path="fs://"+timestamp+".jpg";
+    api.download({
+        url: url,
+        savePath: path,
+        report: true,
+        cache: true,
+        allowResume: true
+     },function(ret, err){
+        if(ret.state == 1){
+            api.saveMediaToAlbum({
+                path: path
+            }, function(ret, err){
+                if( ret ){
+                  api.toast({
+                      msg: '已保存到相册',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else{
+                  api.toast({
+                      msg: '保存失败',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            });
+        }
+    });
+  }
+  function imgAdd(curr_time) {
+      var fileList;
+      var imgContainer = document.getElementsByClassName('z_photo')[0];
+      var imgArr=[];
+      var max=9-document.getElementsByClassName("z_addimg").length;
+      var selectPic = api.require('selectPic');
+      var param = {
+        maxNum : max //用户选择的最多图片张数
+      };
+      selectPic.showPics(param, function(ret, err) {
+          if(isAndroid())
+          {
+              imgArr=ret.data;
+          }
+          else{
+               var address=ret.data;
+               address=address.substring(2,address.length-2);
+               imgArr=address.replace(/"/g,"").split(",");
+          }
+          SendImageMessage(imgArr);
+      });
+  }
+  function OpenOrder(){
+    api.closeWin({
+        name: 'order_header',
+    });
+    var index=0;
+    if(User_ID==Conversation.Publish.User_ID){
+      index=1;
+    }
+    api.openWin({
+        name: 'order_header',
+        url: '../fourth_frame/order/order_header.html',
+        useWKWebView:true,
+        bgColor:'#FAFAFA',
+        pageParam:{
+          ID:$api.getStorage("User_ID"),
+          index:index
+        }
+    });
+  }
+  function RemoveEvents(){
+    api.removeEventListener({
+        name: 'New_Message'
+    });
+  }
+  </script>
+  </html>

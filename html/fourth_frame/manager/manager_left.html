@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<title>首页</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+  <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+	<link rel="stylesheet" href="../../../css/mescroll.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../css/idangerous.swiper.css"/>
+	<script src="../../../script/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		html, body {width: 100%;min-height: 100%;background: #F5F5F5;}
+		[v-cloak] { display: none; }
+		* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
+		.home-car-list .item {position: relative;background-color:#ffffff }
+		.home-car-list .cnt {display: box; display: -webkit-box;overflow: hidden;width: 100%;padding:2vw}
+		.home-car-list .pic-area {width: 36vw;height:24vw;text-align: center;border-radius:4%;overflow: hidden;background-color: #F5F5F5;background-size: cover;background-position: center;}
+		.home-car-list .pic {width:100%;display:inline-block;margin: 0 auto;vertical-align:middle;}
+		.home-car-list .wrap {-webkit-box-flex: 1; padding-left:2vw;padding-right: 2vw;}
+		.home-car-list .wrap2 {display: table; height:24vw;width: 100%; }
+		.home-car-list .content {-webkit-box-flex: 1; box-flex: 1; display: table-cell; vertical-align: middle; }
+    .home-car-list .maintitle {height:12vw;line-height: 6vw;font-size:4vw;color: #333;text-align: justify;word-wrap:normal;word-break: break-all;text-overflow: clip; overflow: hidden;display: inline-block; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+		.home-car-list .title {height:5vw;color: #666; font-size:3vw;line-height: 5vw;overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+		.home-car-list .sale {height:7vw;color: #666; font-size:5vw; }
+		.home-car-list .symbol { color: #f60;float:left;line-height:7vw;}
+		.home-car-list .price {color: #f60;line-height:7vw;}
+    .tools {display: -webkit-box; display: -webkit-flex; display: flex; }
+	  .view-info{float:right;padding-top: 5px;height: 7vw;}
+    .normalbtn{-webkit-box-flex: 1; -webkit-flex: 1; flex:1;overflow: hidden;text-align: center;}
+		.filter-divider{width:1px;height:10vw;background-color: #888;transform: scale(0.5);}
+		.item-active{background-color: #e0e0e0;}
+    .footerline{display: inline-block;line-height:10vw;}
+    .footerimg{height:10vw;padding:3vw;display: inline-block;line-height: 10vw;float: left;}
+    .footeritem{line-height:10vw;font-size:4vw;}
+		.divider{height:10px;width: 100%;background-color: #F5F5F5}
+		.mescroll-totop { width:40px; height: 40px; }
+ </style>
+</head>
+<body>
+	<div id="mescroll" class="mescroll">
+	<ul id="carlist" class="news-list home-car-list" v-cloak>
+		<li class="item hightitem"  v-for="pd in pdlist" >
+			<div class="cnt" v-on:click='openDetail(pd.Publish_ID)'>
+				<div class="pic-area" :style="{backgroundImage: 'url(' + 'http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/'+pd.Pic_add+'?x-oss-process=image/resize,w_400' + ')'}"></div>
+				<div class="wrap">
+					<div class="wrap2">
+						<div class="content">
+							<div class="maintitle">{{pd.Title}}</div>
+							<div class="title">{{pd.City}} | {{parseFloat(pd.Miles)}}万公里 | {{Translate(pd.Time_license)}}</div>
+							<div class="sale">
+								<span class="symbol">¥</span>
+								<span class="price">{{pd.Price_out}}万</span>
+								<div class="view-info" v-if= pd.Broadcast>
+									<span class="title .fr" style="border:thin solid red">推广</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tools" v-if="pd.Selling == '在售'">
+					<div tapmode="item-active" v-on:click='deal_publish(pd.Publish_ID)' class="normalbtn">
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/deal.png" class="footerimg">
+						<a class="footeritem">成交</a>
+						</div>
+					</div>
+					<hr class="filter-divider"></hr>
+					<div tapmode="item-active" v-on:click="edit_publish(pd.Publish_ID)" class="normalbtn">
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/edit.png" class="footerimg">
+						<a class="footeritem">编辑</a>
+						</div>
+			  	</div>
+					<hr class="filter-divider"></hr>
+					<div tapmode="item-active" v-on:click='del_publish(pd.Publish_ID)' class="normalbtn">
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/delete.png" class="footerimg">
+						<a class="footeritem">删除</a>
+					</div>
+				</div>
+			</div>
+			<div class="tools" v-if="pd.Selling == '交易'">
+					<div tapmode="item-active"  class="normalbtn">
+						<div class="footerline"  tapmode="item-active">
+						<a class="footeritem">正在交易，禁止管理</a>
+						</div>
+					</div>
+			</div>
+			<!-- <div class="tools">
+					<div tapmode="item-active" v-on:click='broadcast(pd.Publish_ID)' class="normalbtn" v-if=!pd.Broadcast>
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/broadcast.png" class="footerimg">
+						<a class="footeritem" >推广</a>
+						</div>
+					</div>
+					<div tapmode="item-active" v-on:click='Stopbroadcast(pd.Publish_ID)' class="normalbtn" v-if=pd.Broadcast>
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/broadcast.png" class="footerimg">
+						<a class="footeritem" >终止推广</a>
+						</div>
+					</div>
+					<hr class="filter-divider"></hr>
+					<div tapmode="item-active" v-on:click="refresh(pd.Publish_ID)" class="normalbtn">
+						<div class="footerline"  tapmode="item-active">
+						<img src="../../../image/common/refresh.png" class="footerimg">
+						<a class="footeritem">更新</a>
+						</div>
+					</div>
+			</div> -->
+			<div class="divider"></div>
+		</li>
+	</ul>
+  </div>
+</body>
+<script src="../../../script/jquery.md5.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script src="../../../script/mescroll.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../script/weiXinPay.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	var User_ID=$api.getStorage("User_ID");
+		var selection = [];
+	function edit_publish(ID){
+		api.openWin({
+				name: 'publish_frame_header',
+				url: '../../publish_frame/publish_frame_header.html',
+				useWKWebView:true,
+				bgColor:'#FAFAFA',
+				pageParam:{
+					ID:ID
+				},
+		});
+		api.addEventListener({
+				 name: 'publish_success'
+			 }, function(ret, err){
+				 api.removeEventListener({
+						 name: 'publish_success'
+				 });
+				 api.closeWin({
+				     name: 'publish_frame_header'
+				 });
+				 window.location.href=	window.location.href;
+	  });
+ 	}
+	function broadcast(ID){
+		api.openWin({
+			name: 'citylist_header',
+			url: '../citylist/citylist_header.html',
+			useWKWebView:true,
+			bgColor:'#FAFAFA',
+		});
+		api.addEventListener({
+				name: 'Set_CityTime'
+		 }, function(ret, err){
+			 api.openFrame({
+					name: 'broadcast',
+					url: './broadcast.html',
+					rect: {
+							x:0,
+							y:0,
+							w:'auto',
+	            h:'auto'
+					},
+					pageParam:{
+						city:selection,
+						ID:ID
+					},
+				 bounces: false,
+			});
+		});
+	}
+	function refresh(ID){
+	 WeiXinPay_getOrderId(2);
+	 alert("Finish");
+
+		// var row = {}
+		// var curr_time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+		// row.Publish_ID = ID;
+		// row.Time_update = curr_time;
+		// api.ajax({
+		// 			url: 'http://www.chekehome.com/public/index.php/editpublish',
+		// 			method: 'post',
+		// 			data: {
+		// 						values: row
+		// 				}
+		// 	}, function(ret, err) {
+		// 			if (ret) {
+		// 				api.toast({
+		// 						msg: '更新成功',
+		// 						duration: 2000,
+		// 						location: 'bottom'
+		// 				});
+		// 					api.hideProgress();
+		// 					api.sendEvent({
+		// 							name: 'publish_success'
+		// 					});
+		// 			}
+		// 			else{
+		// 				api.hideProgress();
+		// 				api.toast({
+		// 						msg: '服务器未响应',
+		// 						duration: 2000,
+		// 						location: 'bottom'
+		// 				});
+		// 			}
+		// });
+	}
+	function openDetail(ID){
+		api.addEventListener({
+				name: 'cardetail_failed'
+		 }, function(ret, err){
+			setTimeout(function(){
+					api.closeWin({
+					    name: ID
+					});
+					api.toast({
+					    msg: '请检查网络设置',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+			},500);
+		});
+		api.openWin({
+			name: ID,
+			url: '../../cardetail/cardetail_footer.html',
+			pageParam:{ID:ID},
+			useWKWebView:true,
+			bgColor:'#FAFAFA',
+		});
+	}
+	function deal_publish(ID){
+		 api.openFrame({
+		     name: 'deal',
+		     url: './deal.html',
+		     rect: {
+		         x:0,
+		         y:0,
+		     },
+				 pageParam:{
+					 ID:ID
+				 },
+	      bounces: false,
+		 });
+	}
+	apiready=function(){
+				var vm = new Vue({
+								el: "#carlist",
+								data: {
+									mescroll: null,
+									pdlist: []
+								},
+								mounted: function() {
+									var self = this;
+									self.mescroll = new MeScroll("mescroll", {
+										up: {
+												callback: self.upCallback,
+												isBounce: false,
+												//page:{size:8},
+												toTop:{
+													src : "../../../image/titlebar/backtotop.png",
+												},
+												empty:{
+												  tip:'没有在售车源~',
+													warpId:"carlist",
+												},
+											}
+									 });
+								},
+								methods: {
+										Translate:function(date){
+												date=date.replace("-","年");
+												date=date.replace("-","月");
+												date=date.substring(0,date.length-2);
+												return date;
+										},
+										del_publish:function(ID){
+											api.confirm({
+											    title: '确认删除',
+											    msg: '真的要删除吗？',
+											    buttons: ['确定', '取消']
+											  }, function(ret, err){
+											    if( ret ){
+											         if(ret.buttonIndex==1)
+															 {
+																 api.ajax({
+																			 url: 'http://www.chekehome.com/public/index.php/delpublish',
+																			 method: 'post',
+																			 data: {
+																						 values: {
+																								 ID: ID
+																						 }
+																				 }
+																 }, function(ret, err) {
+																		 api.sendEvent({
+																				name: 'publish_updated',
+																		 });
+																		 window.location.href=window.location.href;
+																 });
+
+															 }
+											    }
+											});
+										},
+										upCallback: function(page) {
+											var self = this;
+											getListDataFromNet(page.num, page.size, function(curPageData) {
+											if(page.num == 1) self.pdlist = [];
+												self.pdlist = self.pdlist.concat(curPageData);
+											  self.mescroll.endSuccess(curPageData.length);
+											}, function() {
+												self.mescroll.endErr();
+												api.toast({
+														msg: '网络错误',
+														duration: 2000,
+														location: 'bottom'
+												});
+											});
+										},
+							   },
+				});
+		api.addEventListener({
+		    name: 'Manager_Updated'
+		}, function(ret, err){
+		    window.location.href=window.location.href;
+		});
+		api.addEventListener({
+				name: 'Set_BroadCity'
+		 }, function(ret, err){
+				selection = ret.value.value;
+		});
+	}
+	function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+			var data;
+			api.ajax({
+						url: 'http://www.chekehome.com/public/index.php/getselling',
+						method: 'post',
+						data:{
+							values:{
+									User_ID:User_ID
+							}
+						}
+				 }, function(ret, err) {
+						if (ret) {
+							var listData=[];//模拟分页数据
+							for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+											if(i==ret.length) break;
+											listData.push(ret[i]);
+							}
+							successCallback&&successCallback(listData);//成功回调
+						}
+						else{
+							errorCallback&&errorCallback();
+						}
+			});
+	}
+</script>
+</html>

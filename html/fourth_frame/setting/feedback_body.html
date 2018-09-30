@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />    
+  	<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        * { -webkit-box-sizing: border-box; box-sizing: border-box; outline: none; }
+        html,body { width: 100%; height: 100%; position: relative;background-color: #F5F5F5; }
+        .fr{float: right;}
+        .fl{float: left;}
+        .list-header {  color: #666; line-height: 30px ;height:30px; font-size: 14px;padding-left: 15px; font-weight: 600;}
+        .list-item{ width: 100%;height:50px;color: #555;font-size:14px;line-height: 50px;background-color: #FFF;padding-left: 15px;}
+        .feedback-types{background-color:#FFF;width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding:3%}
+        .feedback-type{color:#333;width:27%;margin-left:3%;margin-right: 3%;margin-top: 8px;margin-bottom: 8px;font-size: 14px;text-align: center;padding: 8px 0 8px 0;border: 1px solid #666;border-radius:5px;overflow: hidden;line-height: 24px;}
+        .active{border-color: #FFDC3C;color: #FFDC3C}
+    	  .describe-area{background-color:#FFF;width: 100%;position:relative;padding:10px 15px 10px 15px;}
+        .describe{width:100%;height:120px;line-height:20px;font-size:16px;background: transparent;color:#333;outline: none;resize:none;}
+        .describe-wordnum{width: 100%;text-align: right;height:20px;line-height: 20px;color: #888;}
+        .feedback-contact{background-color: #FFF;font-size:16px;width: 100%;height:50px;line-height: 20px;outline: none;color:#333;padding:15px}
+        .bottom-area{height: 80px;}
+    </style>
+</head>
+<body>
+  <div class="list-header">问题分类</div>
+  <div class="feedback-types">
+      <div class="feedback-type active">功能问题</div>
+      <div class="feedback-type">体验优化</div>
+      <div class="feedback-type">其他</div>
+  </div>
+  <div class="list-header">问题描述</div>
+  <div class="describe-area">
+    <textarea placeholder="请详细描述您的问题" type="text" class="describe"></textarea>
+    <div class="describe-wordnum">0/200</div>
+  </div>
+  <div class="list-header">联系方式</div>
+  <input class="feedback-contact" placeholder="请输入手机号或邮箱">
+  <div class="list-header">设备信息</div>
+  <div class="list-item myborder-bottom device-type"></div>
+  <div class="list-item system-type"></div>
+  <div class="bottom-area"></div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript">
+Date.prototype.Format = function (fmt) { //author: meizz
+  var o = {
+      "M+": this.getMonth() + 1, //月份
+      "d+": this.getDate(), //日
+      "h+": this.getHours(), //小时
+      "m+": this.getMinutes(), //分
+      "s+": this.getSeconds(), //秒
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+      "S": this.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
+function UploadFeedback(){
+  var row={};
+  row.User_ID=$api.getStorage("User_ID");
+  row.Type=$(".active").html();
+  if($(".describe").val()){
+    if($(".describe").val().length>=10) row.Text=$(".describe").val();
+    else{
+      api.toast({
+          msg: '请至少输入十个字',
+          duration: 2000,
+          location: 'middle'
+      });
+      return;
+    }
+  }
+  else{
+    api.toast({
+        msg: '请输入问题描述',
+        duration: 2000,
+        location: 'middle'
+    });
+    return;
+  }
+  row.Contact=$(".feedback-contact").val();
+  row.DeviceType=api.deviceModel;
+  row.SystemType=api.systemType+api.systemVersion;
+  row.Time=new Date().Format("yyyy-MM-dd hh:mm:ss");
+  api.showProgress({
+      style: 'default',
+      animationType: 'fade',
+      title: '正在提交',
+      text:'',
+      modal: true
+  });
+  api.ajax({
+        url: 'http://www.chekehome.com/public/index.php/Feedback',
+        method: 'post',
+        data: {
+              values: row
+        }
+    }, function(ret, err) {
+        if (ret) {
+            api.hideProgress();
+            api.alert({
+                title: '提交成功！',
+                msg: '感谢您的反馈,我们将及时跟进解决',
+            }, function(ret, err){
+              api.closeToWin({
+                  name: 'root'
+              });
+            });
+        }
+  });
+}
+apiready=function(){
+
+  $(".feedback-type").click(function(){
+       $(".feedback-type").removeClass("active");
+       $(this).addClass("active");
+   });
+  $(".describe").on("keyup",function(){
+    $(".describe").val($(".describe").val().slice(0,200));
+    $(".describe-wordnum").html($(".describe").val().length+"/200");
+  });
+  $(".feedback-contact").on("keyup",function(){
+    $(".feedback-contact").val($(".feedback-contact").val().slice(0,30));
+  });
+  $(".device-type").html("手机型号: "+api.deviceModel);
+  $(".system-type").html("系统版本: "+api.systemType+api.systemVersion);
+  api.addEventListener({
+      name: 'Submit_Feedback'
+  }, function(ret, err){
+      UploadFeedback();
+  });
+
+}
+</script>
+</html>

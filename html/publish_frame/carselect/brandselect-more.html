@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>车客</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <script type="text/javascript" src="../../../script/vue.min.js"></script>
+  	<script src="../../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        [v-cloak] {
+    		display: none;
+  			}
+        .fr{float: right;}
+        .fl{float: left;}
+         .list-header{position: relative;height:45px;background-color: #e0e0e0;font-weight: 700;}
+         .list-item{position: relative;height:45px;}
+         .active{background-color: #F5F5F5;}
+         .list-title{float:left;line-height:45px;font-size:13px;padding-left:20px;color:#515151;word-break:keep-all; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+         .list{display: none;}
+    </style>
+</head>
+
+<body class="myborder-right">
+  <div id="model" >
+        <div class="list-item myborder-bottom" v-for="(model,index) in models" v-cloak @click="ClickEvent(model,index)">
+            <div class="list-title" >{{model.model}}</div>
+        </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type="text/javascript">
+function goback(){
+  api.closeWin({
+      name: 'carselect'
+  });
+}
+var data,series,model;
+apiready=function(){
+    data=api.pageParam.data;
+    series=api.pageParam.series;
+    api.addEventListener({
+        name: 'SeriesSelected'
+    }, function(ret, err){
+        if( ret.value.series!=series ){
+            series=ret.value.series;
+            var models=[];
+            for(var i=0;i<data.length;i++){
+              if(data[i].series==series){
+                models.push(data[i]);
+              }
+            }
+            model.models=models;
+        }
+    });
+    var models=[];
+    for(var i=0;i<data.length;i++){
+      if(data[i].series==series){
+        models.push(data[i]);
+      }
+    }
+    model = new Vue({
+        el: '#model',
+        data: {
+            models:models,
+        },
+        mounted: function(){
+        },
+        methods:{
+          ClickEvent:function(li,index){
+                api.openWin({
+                    name: 'typeselect_header',
+                    url: './typeselect_header.html',
+                    useWKWebView:true,
+                    bgColor:'#FAFAFA',
+                    pageParam: {
+                        name:li.model,
+                        index: index,
+                        modelId:li.model,
+                        serieId:li.seriesID,
+                        brandId:li.brand,
+                    }
+                });
+              }
+        }
+      });
+}
+</script>
+</html>

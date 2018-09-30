@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>型号</title>
+		<script type="text/javascript" src="../../../script/vue.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+		<style>
+		* { -webkit-box-sizing: border-box; box-sizing: border-box; outline: none; }
+		html,body { width: 100%; height: 100%; position: relative;background-color: #F5F5F5; }
+		.list-header {  color: #666; line-height: 40px ;height:40px; font-size: 16px;padding-left: 15px; font-weight: 600;background-color: #eee}
+		.list-input{background-color: #FFF;font-size:16px;width: 100%;height:50px;line-height: 20px;outline: none;color:#333;padding:15px}
+		</style>
+	</head>
+	<body>
+		<div class="list-header">品牌</div>
+	  <input class="list-input" placeholder="请输入品牌" id="brand" onKeyUp="value =value.slice(0,10)">
+		<div class="list-header">车系</div>
+	  <input class="list-input" placeholder="请输入车系" id="series" onKeyUp="value =value.slice(0,15)">
+		<div class="list-header">车型</div>
+	  <input class="list-input" placeholder="请输入车型" id="type" onKeyUp="value =value.slice(0,30)">
+	</body>
+	<script src="../../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../../script/api.js"></script>
+	<script>
+	function finish(){
+		if(!$("#brand").val()){
+			api.toast({
+			    msg: '请填写车辆品牌',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			return;
+		}
+		if(!$("#series").val()){
+			api.toast({
+			    msg: '请填写车系',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			return;
+		}
+		if(!$("#type").val()){
+			api.toast({
+			    msg: '请填写车型',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			return;
+		}
+		var brand=$("#brand").val();
+		var name=$("#series").val();
+		var value=$("#type").val();
+		name=name.replace(brand,"");
+		value=brand+name+" "+value;
+		api.sendEvent({
+				name: 'Set_Brand',
+				extra: {
+						value:value
+				}
+		});
+		api.closeToWin({
+				name: 'publish_frame_header'
+		});
+	}
+	apiready=function(){
+
+
+	}
+	</script>
+</html>
