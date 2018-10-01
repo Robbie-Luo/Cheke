@@ -219,6 +219,13 @@
 		var QQ_ID;
 		qq.login(function(ret, err) {
 				if(ret.status){
+					api.showProgress({
+					    style: 'default',
+					    animationType: 'fade',
+					    title: '正在登录...',
+					    text: '',
+					    modal: true
+					});
 					QQ_ID=ret.openId;
 					//判断是否是新用户
 					api.ajax({
@@ -285,6 +292,13 @@
 		var info;
 		wx.auth({apiKey: ''}, function(ret, err) {
 			if (ret.status) {
+				api.showProgress({
+				    style: 'default',
+				    animationType: 'fade',
+				    title: '正在登录...',
+				    text: '',
+				    modal: true
+				});
 				var wx = api.require('wx');
 				var code=ret.code;
 				wx.getToken({

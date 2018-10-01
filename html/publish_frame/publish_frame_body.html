@@ -492,8 +492,13 @@
 		} else {
 			province = $api.getStorage('Location').province;
 			city = $api.getStorage('Location').city;
-			$("#carcity").val(province + city);
-		}
+			if(province!=city){
+				$("#carcity").val(province + city);
+			}
+			else{
+				$("#carcity").val(city);
+			}
+		}	
 		//车辆类型点击事件
 		$("#type-option .list-option").click(function() {
 			setData('cartype', $(this).html());

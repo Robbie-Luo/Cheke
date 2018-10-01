@@ -918,7 +918,16 @@
       name: 'logout'
     }, function(ret, err) {
       login_status = false;
-      $api.setStorage('login_status', 'false');
+      var row={};
+  		row.User_ID='';
+  		row.Phone='';
+  		row.Name='注册/登录';
+  		row.Picture='';
+  		row.Signature='';
+  		$api.setStorage('User_ID', '');
+      $api.setStorage('VIP', 0);
+  		$api.setStorage('User_Info',row);
+  		$api.setStorage('login_status',false);    
       api.sendEvent({
         name: 'Reload_First'
       });

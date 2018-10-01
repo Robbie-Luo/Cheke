@@ -627,7 +627,6 @@
 	}
 
 	function hide() {
-
 		if ($api.getStorage("login_status") == 'true') {
 			if ($api.getStorage('VIP')) {
 				$(".hide-btn").hide();
@@ -641,7 +640,6 @@
 		} else {
 			openLogin();
 		}
-
 	}
 	function addvip(){
 		api.openWin({
@@ -666,28 +664,32 @@
 			vScrollBarEnabled: false,
 			hScrollBarEnabled: false
 		});
-		api.ajax({
-	    url: 'http://www.chekehome.com/public/index.php/getUserInfo',
-	    method: 'post',
-	    data: {
-	      values: {
-	        ID: User_ID
-	      },
-	    }
-	  }, function(ret, err) {
-	    $api.setStorage('User_Info', ret);
-	    $api.setStorage('VIP', ret.VIP);
-			isVip=  ret.VIP;
-			if(isVip==1){
-				$(".isvip").show();
-				$(".notvip").hide();
-			}
-			else{
-				$(".isvip").hide();
-				$(".notvip").show();
-			}
-	  });
-
+		if($api.getStorage('login_status')=='true'){
+			api.ajax({
+		    url: 'http://www.chekehome.com/public/index.php/getUserInfo',
+		    method: 'post',
+		    data: {
+		      values: {
+		        ID: $api.getStorage('User_ID')
+		      },
+		    }
+		  }, function(ret, err) {
+		    $api.setStorage('User_Info', ret);
+		    $api.setStorage('VIP', ret.VIP);
+				isVip=  ret.VIP;
+				if(isVip==1){
+					$(".isvip").show();
+					$(".notvip").hide();
+				}
+				else{
+					$(".isvip").hide();
+					$(".notvip").show();
+				}
+		  });
+		}
+		else{
+			$(".isvip").hide();
+		}
 		$(window).scroll(function() {
 			setOpacity();
 		});

@@ -84,7 +84,7 @@ function OpenList(){
   var isSearchOpen=false;
   $api.fixStatusBar(myheader);
   var myheader = $api.offset(myheader);
-  var city=$api.getStorage('Location').city;
+  var Local=$api.getStorage('Location');  
   api.openFrame ({
         name:"carcity",
         url: './carcity_body.html',
@@ -95,7 +95,8 @@ function OpenList(){
             h:api.frameHeight-myheader.h
         },
         pageParam:{
-          City:city
+          City:Local.city,
+          Province:Local.province
         },
         bgcolor:'#e0e0e0',
         bounces: false,

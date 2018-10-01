@@ -11,7 +11,7 @@
 		* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; }
 		html,body { -webkit-touch-callout:none; -webkit-text-size-adjust:none; -webkit-tap-highlight-color:rgba(0, 0, 0, 0); -webkit-user-select:none; width: 100%; }
 		body { line-height: 1; font-size: 0.8rem; color: #212121; background-color: #FFF; outline: 0; }[v-cloak] { display: none; }
-		#main{display: none}
+		#main{display: block}
 		.list-header { background-color: #F5F5F5; color: #555; line-height: 2rem ; padding-left: 15px; font-weight: 600;}
 		.city{font-size: 14px;text-align: center;padding-top:10px;padding-bottom: 10px;border: 1px solid;border-radius:5px;overflow: hidden;line-height: 24px;white-space: nowrap;text-overflow: ellipsis;}
 		.hot-cities{width: 100%;display: flex;flex-wrap: wrap;justify-content: left;padding:3%}
@@ -27,12 +27,12 @@
 	</head>
 	<body>
 	<div id="main">
-		<div class="list-header" v-if="local.city!='全国'">
+		<div class="list-header" v-if="localcity!='全国'">
 			定位城市
 		</div>
-		<div class="list-item myborder-bottom" v-if="local.city!='全国'" v-on:click="SendCity(local.province,local.city)" v-cloak>
+	 	<div class="list-item myborder-bottom" v-if="localcity!='全国'" v-on:click="SendCity(localprovince,localcity)" v-cloak>
 			<img src="../../../image/titlebar/location-active.png" class="location-img">
-			<div class="list-name" style="color:#8290AE">{{local.city}}</div>
+			<div class="list-name" style="color:#8290AE">{{localcity}}</div>
 		</div>
 		<!-- <div class="list-item myborder-bottom" v-on:click="SendCity('全国','')"><div class="list-name">全国</div></div> -->
 		<div class="list-header">
@@ -80,7 +80,8 @@
 					var v = new Vue({
 						el: '#main',
 						data: {
-								local:api.pageParam.City,
+								localcity:api.pageParam.City,
+								localprovince:api.pageParam.Province,
 								hotcities:hotcities,
 								allcities:allcities,
 								showindex:0
