@@ -105,10 +105,10 @@
 					<span class="priceout-symbol">¥</span>
 					{{Publish.Price_out}}万
 				</div>
-				<div class="pricein notvip" onclick="addvip()">
+				<div class="pricein hide-btn" onclick="hide()">
 				 查看底价
 				</div>
-				<div class="pricein isvip">
+				<div class="pricein hide">
 					VIP价：¥{{Publish.Price_in}}万
 				</div>
 			</div>
@@ -628,7 +628,7 @@
 
 	function hide() {
 		if ($api.getStorage("login_status") == 'true') {
-			if ($api.getStorage('VIP')) {
+			if ($api.getStorage('VIP') == 1) {
 				$(".hide-btn").hide();
 				$(".hide").show();
 			} else {
@@ -642,12 +642,17 @@
 		}
 	}
 	function addvip(){
-		api.openWin({
-			name: "vip_header",
-			url: '../fourth_frame/VIP/VIP_header.html',
-			useWKWebView: true,
-			bgColor: '#FAFAFA',
-		});
+		if ($api.getStorage("login_status") == 'true') {
+			api.openWin({
+				name: "vip_header",
+				url: '../fourth_frame/VIP/VIP_header.html',
+				useWKWebView: true,
+				bgColor: '#FAFAFA',
+			});
+		} else {
+			openLogin();
+		}
+
 	}
 	apiready = function() {
 		api.openFrame({
@@ -678,16 +683,22 @@
 		    $api.setStorage('VIP', ret.VIP);
 				isVip=  ret.VIP;
 				if(isVip==1){
+					$(".hide-btn").hide();
+					$(".hide").show();
 					$(".isvip").show();
 					$(".notvip").hide();
 				}
 				else{
+					$(".hide-btn").show();
+					$(".hide").hide();
 					$(".isvip").hide();
 					$(".notvip").show();
 				}
 		  });
 		}
 		else{
+			$(".hide-btn").show();
+			$(".hide").hide();
 			$(".isvip").hide();
 		}
 		$(window).scroll(function() {
@@ -714,8 +725,7 @@
 					$(".hide").show();
 					$(".hide-btn").hide();
 				} else {
-					$(".hide").hide();
-					$(".hide-btn").show();
+
 				}
 				if ((detail.User_ID == User_ID || User_ID == "88888888") && detail.Selling == "在售") {
 					$(".footer-common").hide();

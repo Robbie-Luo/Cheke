@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>weiXinPay</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" href="../../css/mescroll.min.css">
+<link rel='stylesheet' href='../css/github.css'>
+	<script src="../../script/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<style>
+		html, body { width: 100%; min-height: 100%; background: #fff; }
+		.info-item{height: 50px; line-height: 50px; background-color: #fff; font-size: 15px;margin: 0 auto;font-size:20px;}
+		.info-title{height:30px;line-height: 30px;font-size: 15px}
+		.fr{float: right;}
+		.fl{float: left;}
+		 #myheader{height:50px;overflow: hidden;text-align: center;background-color:#fafafa }
+		.back {width:80px;height:50px;position: absolute;left:10px;}
+		.backimg { float: left; height: 16px;padding-top: 18px;padding-bottom:17px; }
+		.mytitle{ display: inline-block; margin: 0 auto; font-size: 16px; color: #515151; text-align: center; line-height: 50px; }
+
+	</style>
+</head>
+<body>
+	<div id="wrap">
+				<div id="myheader" class="myborder-bottom">
+						<div onclick="goback()" class="back">
+							<img src="../../image/titlebar/back.png" class="backimg">
+						</div>
+						<div class="mytitle">测试</div>
+				</div>
+	</div>
+				<div class="info-item" onclick="WeiXinPay_getOrderId()">click</div>
+					<div id="payorderidis"class="info-title">0</div>
+					<div id="payResult"class="info-title">0</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.md5.js"></script>
+<script type="text/javascript" src="../../script/jquery.sha1.js"></script>
+<script type="text/javascript" charset="utf-8">
+var appid="wx3b5beedc2c9e8715";//应用ID，微信开放平台审核通过的应用APPID
+var mch_id="1503068211";//商户号 微信支付分配的商户号
+var notify_url="https://api.mch.weixin.qq.com/pay/unifiedorder";//通知地址 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+var out_trade_no="1_abc";//商户订单号 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一。详见商户订单号
+var spbill_create_ip="192.168.43.41";//终端IP 用户端实际ip
+var key="Cheke123456Cheke123456Cheke12345";//注：key为商户平台设置的密钥key
+var total_fee="1";
+function goback(){
+    api.closeWin({
+        name: 'weiXinPay_header'
+    });
+}
+function getInfo_weiXinPay(noncestr,timestamp){
+
+	var info_weiXinPay="appid="+appid;//应用ID，微信开放平台审核通过的应用APPID
+  info_weiXinPay+="&attach=支付测试";//附加数据(不必要)，
+  info_weiXinPay+="&body=APP支付测试";//商品描述 商品描述交易字段格式根据不同的应用场景按照以下格式：
+                                              //APP——需传入应用市场上的APP名字-实际商品名称，天天爱消除-游戏充值。
+  info_weiXinPay+="&mch_id="+mch_id;//商户号 微信支付分配的商户号
+  info_weiXinPay+="&nonce_str="+noncestr;//随机字符串 随机字符串，不长于32位。推荐随机数生成算法
+  info_weiXinPay+="&notify_url="+notify_url;//通知地址 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+  info_weiXinPay+="&out_trade_no="+out_trade_no;//商户订单号 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一。详见商户订单号
+  info_weiXinPay+="&spbill_create_ip="+spbill_create_ip;//终端IP 用户端实际ip
+  info_weiXinPay+="&total_fee="+total_fee;//总金额 订单总金额，单位为分，详见支付金额
+  info_weiXinPay+="&trade_type=APP";//交易类型  支付类型
+  var packageInfoSign= info_weiXinPay + "&key="+key;//注：key为商户平台设置的密钥key
+   packageInfoSign = $.md5(packageInfoSign).toUpperCase();
+
+  info_weiXinPay="<xml><appid>"+appid+"</appid>";//应用ID，微信开放平台审核通过的应用APPID
+    info_weiXinPay+="<attach>支付测试</attach>";//附加数据(不必要)，
+    info_weiXinPay+="<body>APP支付测试</body>";//商品描述 商品描述交易字段格式根据不同的应用场景按照以下格式：
+                                                //APP——需传入应用市场上的APP名字-实际商品名称，天天爱消除-游戏充值。
+    info_weiXinPay+="<mch_id>"+mch_id+"</mch_id>";//商户号 微信支付分配的商户号
+    info_weiXinPay+="<nonce_str>"+noncestr+"</nonce_str>";//随机字符串 随机字符串，不长于32位。推荐随机数生成算法
+    info_weiXinPay+="<notify_url>"+notify_url+"</notify_url>";//通知地址 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    info_weiXinPay+="<out_trade_no>"+out_trade_no+"</out_trade_no>";//商户订单号 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一。详见商户订单号
+    info_weiXinPay+="<spbill_create_ip>"+spbill_create_ip+"</spbill_create_ip>"; //终端IP 用户端实际ip
+    info_weiXinPay+="<total_fee>"+total_fee+"</total_fee>";//总金额 订单总金额，单位为分，详见支付金额
+    info_weiXinPay+="<trade_type>APP</trade_type>";//交易类型  支付类型
+  info_weiXinPay+="<sign>"+packageInfoSign+"</sign></xml>";//签名 签名，详见签名生成算法
+	alert(JSON.stringify(info_weiXinPay));
+  return info_weiXinPay;
+}
+function getNoncestr() {
+    var timestamp = new Date().getTime();
+    var Num = "";
+    for (var i = 0; i < 6; i++) {
+        Num += Math.floor(Math.random() * 10);
+    }
+    timestamp = timestamp + Num;
+    return timestamp;
+}
+function WeiXinPay_getOrderId(){
+  var info_weiXinPay={};
+  var wxPay = api.require('wxPay');
+	var noncestr = getNoncestr();//防重发字符串，
+	var timestamp = new Date().getTime();//订单时间戳
+	  timestamp=parseInt(timestamp/1000);
+  var info_weiXinPay=getInfo_weiXinPay(noncestr,timestamp);
+	//alert(JSON.stringify(info_weiXinPay));
+  wxPay.getOrderId({
+      info: info_weiXinPay
+  }, function(ret, err) {
+					if (ret.return_code=="SUCCESS")
+		      {
+		               document.getElementById("payorderidis").value = ret.prepay_id;
+												timestamp = new Date().getTime();
+												timestamp=parseInt(timestamp/1000);
+		                    var signatureInfoT = "apiKey="+appid;
+												signatureInfoT += "&mchId="+mch_id;
+		                    signatureInfoT += "&noncestr=" + noncestr;
+		                    signatureInfoT += "&orderId="+ ret.prepay_id;
+		                    signatureInfoT += "&package=" + 'Sign=WXPay';
+		                    signatureInfoT += "&timestamp=" + timestamp;
+												signatureInfoT +="&key="+key;
+													alert(JSON.stringify(signatureInfoT));
+		                    signatureInfoT=$.md5(signatureInfoT).toUpperCase();
+
+		                wxPay.payOrder({
+												apiKey:appid,//appid
+												mchId:mch_id,
+		                    nonceStr:noncestr,
+		                    orderId:ret.prepay_id,
+		                    timeStamp:timestamp,
+		                    package:'Sign=WXPay',
+		                    sign:signatureInfoT
+		                },function(ret,err) {
+		                    if (ret.status)
+		                    {
+		                        document.getElementById("payResult").innerHTML = ret.status;
+														alert("sucess");
+		                    }else
+		                    {
+														alert("error 2");
+														alert(JSON.stringify(signatureInfoT));
+														alert(JSON.stringify(ret));
+		                        //api.alert({msg:err.msg});
+		                    }
+		                });
+		            }else
+		            {
+										alert("error 1");
+										alert(JSON.stringify(ret));
+		              //  api.alert({msg:err.msg});
+		            }
+
+  });
+}
+function weiXinPay_gotoPayOrder(){
+    var noncestr = getNoncestr();//防重发字符串
+    var timestamp = new Date().getTime();//订单时间戳
+    //特别提醒 ： 这个是个细节难点，我们必须把时间戳精确的秒，而不是毫秒
+    //时间戳作用1：生成订单信息时，其中有两个参数：timestamp和app_signature 都需要传递这个防重发字符串
+    //时间戳作用2：调用支付订单功能时，其中有两个参数：timestamp和sign 都需要传递这个防重发字符串
+    timestamp=parseInt(timestamp/1000);
+
+
+    var subject='电商宝支付';
+    var body='来自电商宝平台支付';
+    var orderId='1234567';
+    var amount='0.01';
+    var packageInfo = getPackage(orderId,amount, subject, body);//生成package
+
+		var signatureInfoT = "apiKey=******";
+		signatureInfoT += "&orderId="+ document.getElementById("payorderidis").value;
+		signatureInfoT += "&mchId=****";
+		signatureInfoT += "&noncestr=" + noncestr;
+		signatureInfoT += "&package=" + 'Sign=WXPay';
+		signatureInfoT += "&timestamp=" + timestamp;
+
+		signatureInfoT=$.sha1(signatureInfoT);
+    var weiXin = api.require('weiXin');
+    weiXin.payOrder({
+			apiKey:"****",//appid
+			orderId:document.getElementById("payorderidis").value,
+			mchId:"****",
+			nonceStr:noncestr,
+			timeStamp:timestamp,
+			package:'Sign=WXPay',
+			sign:signatureInfoT
+    },function(ret,err) {
+            if (ret.status)
+            {
+                document.getElementById("payResult").innerHTML = ret.result;
+            }else
+            {
+                api.alert({msg:err.msg});
+            }
+    });
+};
+apiready=function() {
+	var myheader = $api.byId('myheader');
+  $api.fixStatusBar(myheader);
+  var myheader = $api.offset(myheader);
+}
+//支付类接口
+// function getPayToken(){
+//     var weiXin = api.require('weiXin');
+//     weiXin.getToken({
+//                     appId:'***',
+//                     secret:'****'
+//     },function(ret,err){
+//         if (ret.status) {
+//             document.getElementById("paytokenis").value = ret.token;
+//             document.getElementById("exipires").value = ret.expires;
+//         }else{
+//             api.alert({msg:err.msg});
+//         }
+//     });
+// };
+//
+// function getPayOrder(){
+//     var subject='电商宝支付';
+//     var body='来自电商宝平台支付';
+//     var orderId='1234567';
+//     var amount='0.01';
+//     var noncestr = getNoncestr();//防重发字符串，
+//     var timestamp = new Date().getTime();//订单时间戳
+//     //特别提醒 ： 这个是个细节难点，我们必须把时间戳精确的秒，而不是毫秒
+//     //时间戳作用1：生成订单信息时，其中有两个参数：timestamp和app_signature 都需要传递这个防重发字符串
+//     //时间戳作用2：调用支付订单功能时，其中有两个参数：timestamp和sign 都需要传递这个防重发字符串
+//     timestamp=parseInt(timestamp/1000);
+//     var packageInfo = getPackage(orderId,amount, subject, body);//生成package
+//
+//     var info = getOrderInfo(noncestr,timestamp,packageInfo);
+//
+//     var weiXin = api.require('weiXin');
+//     weiXin.getOrder({
+//             token: document.getElementById("paytokenis").value,
+//             orderInfo:info
+//         },function(ret,err){
+//             if (ret.status)
+//             {
+//                 document.getElementById("payorderidis").value = ret.orderId;
+//
+//                     var signatureInfoT = "appid=******";
+//                     signatureInfoT += "&appkey=v2appkey*****";
+//                     signatureInfoT += "&noncestr=" + noncestr;
+//                     signatureInfoT += "&package=" + 'Sign=WXPay';
+//                     signatureInfoT += "&partnerid=" + '******';
+//                     signatureInfoT += "&prepayid=" + ret.orderId;
+//                     signatureInfoT += "&timestamp=" + timestamp;
+//
+//                     signatureInfoT=$.sha1(signatureInfoT);
+//                 weiXin.payOrder({
+//                     orderId:ret.orderId,
+//                     partnerId:'******',
+//                     nonceStr:noncestr,
+//                     timeStamp:timestamp,
+//                     package:'Sign=WXPay',
+//                     sign:signatureInfoT
+//                 },function(ret,err) {
+//                     if (ret.status)
+//                     {
+//                         document.getElementById("payResult").innerHTML = ret.result;
+//                     }else
+//                     {
+//                         api.alert({msg:err.msg});
+//                     }
+//                 });
+//             }else
+//             {
+//                 api.alert({msg:err.msg});
+//             }
+//     });
+// };
+//
+// function gotoPayOrder(){
+//     var noncestr = getNoncestr();//防重发字符串
+//     var timestamp = new Date().getTime();//订单时间戳
+//     //特别提醒 ： 这个是个细节难点，我们必须把时间戳精确的秒，而不是毫秒
+//     //时间戳作用1：生成订单信息时，其中有两个参数：timestamp和app_signature 都需要传递这个防重发字符串
+//     //时间戳作用2：调用支付订单功能时，其中有两个参数：timestamp和sign 都需要传递这个防重发字符串
+//     timestamp=parseInt(timestamp/1000);
+//
+//
+//     var subject='电商宝支付';
+//     var body='来自电商宝平台支付';
+//     var orderId='1234567';
+//     var amount='0.01';
+//     var packageInfo = getPackage(orderId,amount, subject, body);//生成package
+//
+//     var signatureInfo = "appid=wx79b2627b32e7950f";
+//     signatureInfo += "&appkey=v2appkey*****";
+//     signatureInfo += "&noncestr=" + noncestr;
+//     signatureInfo += "&package=" + packageInfo;
+//     signatureInfo += "&partnerid=" + '*******';
+//     signatureInfo += "&prepayid=" + document.getElementById("payorderidis").value;
+//     signatureInfo += "&timestamp=" + timestamp;
+//
+//     signatureInfo=$.sha1(signatureInfo);
+//     var weiXin = api.require('weiXin');
+//     weiXin.payOrder({
+//             orderId:document.getElementById("payorderidis").value,
+//             partnerId:'*********',
+//             nonceStr:noncestr,
+//             timeStamp:timestamp,
+//             package:'Sign=WXPay',
+//             sign:signatureInfo
+//     },function(ret,err) {
+//             if (ret.status)
+//             {
+//                 document.getElementById("payResult").innerHTML = ret.result;
+//             }else
+//             {
+//                 api.alert({msg:err.msg});
+//             }
+//     });
+// };
+//
+//
+// //生成订单信息
+// function getOrderInfo(noncestr,timestamp,packageInfo) {
+//     var traceid = "crestxu";//用户唯一biaosh
+//
+//     var signatureInfo = "appid=*********";
+//     signatureInfo += "&appkey=v2appkey*****";
+//     signatureInfo += "&noncestr=" + noncestr;
+//     signatureInfo += "&package=" + packageInfo;
+//     signatureInfo += "&timestamp=" + timestamp;
+//     signatureInfo += "&traceid=" + traceid;
+//     var signatureInfoSign = $.sha1(signatureInfo);
+//
+//     var orderInfo = {
+//         appid : "*******",
+//         traceid : traceid,
+//         noncestr : noncestr,
+//         package : packageInfo,
+//         timestamp : timestamp+"",
+//         app_signature : signatureInfoSign,
+//         sign_method : "sha1"
+//     };
+//
+//     //			alert("orderInfo-->"+$api.jsonToStr(orderInfo));
+//     return orderInfo;
+// };
+// //生成package,
+// //作用1：生成订单信息时,其中有两个参数：package和app_signature 都需要这个package
+// //作用2：调用支付订单功能时，其中有两个参数：package和sign 都需要传递这个package
+// function getPackage(orderId,amount, subject, body) {
+//     var packageInfo = "bank_type=WX";
+//     packageInfo += "&body="+body;
+//     packageInfo += "&fee_type=1";
+//     packageInfo += "&input_charset=UTF-8";
+//     packageInfo += "&notify_url=http://www.*****.cc";
+//     packageInfo += "&out_trade_no="+orderId;
+//     packageInfo += "&partner=*******";
+//     packageInfo += "&spbill_create_ip=127.0.0.0";
+//     packageInfo += "&total_fee=2";
+//     var packageInfoSign= packageInfo + "&key=***********";
+//     packageInfoSign = $.md5(packageInfoSign).toUpperCase();
+//
+//     //因为生成sign(即packageInfoSign)之前packageInfo必须是原文,
+//     //函数返回值：packageInfo+sign，其中package必须是进行URL编码的,所以又重新拼接了packageInfo
+//     packageInfo = "bank_type=WX";
+//     packageInfo += "&body="+encodeURIComponent(body);
+//     packageInfo += "&fee_type=1";
+//     packageInfo += "&input_charset=UTF-8";
+//     packageInfo += "&notify_url="+encodeURIComponent("http://www.2dian.cc");
+//     packageInfo += "&out_trade_no="+orderId;
+//     packageInfo += "&partner=1224219301";
+//     packageInfo += "&spbill_create_ip=127.0.0.0";
+//     packageInfo += "&total_fee=2";
+//
+//     return packageInfo + "&sign=" + packageInfoSign;
+// }
+// //生成防重发随机字符串，作用1：生成订单信息时，其中有两个参数：noncestr和app_signature 都需要传递这个防重发字符串
+// //作用2：调用支付订单功能时，其中有两个参数：nonceStr和sign 都需要传递这个防重发字符串
+
+// function configStore(){
+//     var weiXin = api.require('weiXin');
+//     weiXin.config({
+//                   appId:"*******",
+//                   mchId:"*******",
+//                   partnerKey:"*******",
+//                   notifyUrl:"http://www.apicloud.com"
+//     },function(ret,err){
+//        if (ret.status) {
+//            api.alert({msg:''+ret.status});
+//        }else{
+//            api.alert({msg:'注册失败'});
+//        }
+//     })
+// };
+// function payStoreOrder(){
+//     var weiXin = api.require('weiXin');
+//     weiXin.pay({
+//                body:"如意金钩棒",
+//                totalFee:"1",
+//                tradeNo:"123456789abcdefghijklmnopqrstuvw"
+//     },function(ret,err){
+//            if (ret.status) {
+//                api.alert({msg:''+ret.status});
+//            }else{
+//                api.alert({msg:'注册失败'});
+//            }
+//     })
+// };
+</script>
+</html>

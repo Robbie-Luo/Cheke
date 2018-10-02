@@ -134,7 +134,7 @@
 			var url = "http://cheke-oss.oss-cn-hangzhou.aliyuncs.com/" + ret.Picture + "?x-oss-process=image/resize,m_fill" + imgH + imgW;
 			$(".user_picture")[0].src = url;
 			if (ret.VIP == 1) {
-				$(".vipimg").css("left", $(".title").width());
+				$(".vipimg").css("left", ret.Name.length*20);
 				$(".vipimg").show();
 				$(".vip-hint").hide();
 			} else {
@@ -344,7 +344,7 @@
 		api.addEventListener({
 			name: 'UserInfo_updated'
 		}, function(ret, err) {
-			window.location.href = window.location.href;
+		 	window.location.href = window.location.href;
 		});
 		api.addEventListener({
 			name: 'Manager_Updated'
